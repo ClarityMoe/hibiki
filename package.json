@@ -1,0 +1,41 @@
+{
+  "name": "hibiki",
+  "version": "0.3.0",
+  "description": "A powerful but simple Discord bot framework.",
+  "main": "src/lib/module.js",
+  "scripts": {
+    "test": "node src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/noud02/hibiki.git"
+  },
+  "keywords": [
+    "eris",
+    "discord",
+    "framework",
+    "hibiki",
+    "thonkang"
+  ],
+  "author": "noud02",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/noud02/hibiki/issues"
+  },
+  "homepage": "https://github.com/noud02/hibiki#readme",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "bufferutil": "^3.0.0",
+    "eris": "^0.7.0",
+    "erlpack": "github:hammerandchisel/erlpack",
+    "eventemitter3": "^2.0.3",
+    "mongoose": "^4.10.0",
+    "node-opus": "^0.2.6",
+    "redis": "^2.7.1",
+    "sodium-native": "^1.9.0",
+    "uws": "^0.14.5"
+  },
+  "devDependencies": {
+    "eslint": "^3.19.0"
+  }
+}
