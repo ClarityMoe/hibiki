@@ -5,6 +5,7 @@ class Message extends Eris.Message {
     constructor (data, client) {
         super(data, client);
         this.data = data;
+        this.channel = new Channel(data);
     }
 
     get guild() {
