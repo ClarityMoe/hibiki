@@ -1,0 +1,14 @@
+// Place your settings in this file to overwrite default and user settings.
+{
+    "files.autoSave": "afterDelay",
+    "background.customImages": [
+        "https://cat.girlsare.life/8b7d03.png"
+    ],
+    "background.style": {
+        "background-position": "100% 100%",
+        "background-repeat": "no-repeat",
+        "background-size": "35%"
+    },
+    "background.useDefault": false,
+    "background.enabled": true
+}

@@ -33,7 +33,9 @@
     "minimist": "^1.2.0",
     "moment": "^2.18.1",
     "node-opus": "^0.2.6",
+    "recursive-readdir": "^2.2.1",
     "redis": "^2.7.1",
+    "rethinkdbdash": "^2.3.28",
     "sodium-native": "^1.9.0",
     "uws": "^0.14.5"
   },

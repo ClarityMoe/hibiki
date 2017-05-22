@@ -3,7 +3,7 @@ global.Promise = require('bluebird');
 const Eris = require('eris');
 const Message = require('./structures/Message.js');
 const CommandManager = require('./managers/CommandManager.js');
-const DatabaseConnection = require('./structurs/DatabaseConnection.js');
+const DatabaseConnection = require('./structures/DatabaseConnection.js');
 const Logger = require('./structures/Logger.js');
 
 /**
@@ -25,8 +25,13 @@ class Hibiki extends Eris.Client {
         if (!opt) throw new Error("No options for the framework specified");
         super(token, options);
         this.opt = opt;
-        this.db = new DatabaseConnection(this.opt.db);
+        this.db = new DatabaseConnection(this, this.opt.db);
         this.logger = new Logger(this.opt.logger);
+        this.cm = new CommandManager(this, opt);
+
+        this.on('ready', () => {
+            this.cm.loadAll();
+        })
 
         this.on('rawWS', p => {
             const d = p.d;

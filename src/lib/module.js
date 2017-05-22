@@ -14,9 +14,7 @@ Hibiki.Command = require('./structures/Command.js');
 Hibiki.Cache = require('./structures/Cache.js');
 Hibiki.Manager = require('./managers/Manager.js');
 Hibiki.CommandManager = require('./managers/CommandManager.js');
-Hibiki.guildModel = require('./models/Guild.js');
-Hibiki.userModel = require('./models/User.js');
-Hibiki.DiscordBots = require('./wrappers/DiscordBots.js');
+Hibiki.DiscordBots = require('./utils/DiscordBots.js');
 Hibiki.DatabaseConnection = require('./structures/DatabaseConnection.js');
 
 module.exports = Hibiki;

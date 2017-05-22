@@ -1,6 +1,18 @@
 const EventEmitter = require('eventemitter3');
 
+/**
+ * Command base class.
+ * 
+ * @class Command
+ * @extends {EventEmitter}
+ */
 class Command extends EventEmitter {
+    /**
+     * Creates an instance of Command.
+     * @param {object?} client 
+     * 
+     * @memberof Command
+     */
     constructor(client) {
         super();
         this.client = client;
@@ -8,15 +20,23 @@ class Command extends EventEmitter {
         this.db = client.db;
         this.logger = client.logger;
 
-        this.cooldown = 10000;
+        this.cooldown = 5000;
         this.aliases = [];
+        this.subcommands = {};
         this.flags = {};
         this.arguments = {};
         this.buttons = {};
 
     }
 
-    run (ctx) {
+    /**
+     * Runs the command.
+     * 
+     * @param {object?} ctx 
+     * 
+     * @memberof Command
+     */
+    run(ctx) {
 
     }
 }

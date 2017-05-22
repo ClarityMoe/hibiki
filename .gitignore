@@ -57,3 +57,6 @@ typings/
 # dotenv environment variables file
 .env
 
+# Config files, we don't want you to leak your token on GitHub.
+config.json
+

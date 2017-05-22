@@ -20,31 +20,29 @@ class DatabaseConnection extends EventEmitter {
         super();
         this.client = client;
         this.opt = options;
-        this.r = rethinkdb(options.rethinkdb);
-
-        this.r.tableList().run().then(list => {
+        this.r = rethinkdb(options.rethinkdb)
+        
+        /*this.r.tableList().run().then(list => {
             if (!list.includes('Users')) this.r.tableCreate('Users').run().error(console.error);
             if (!list.includes('Guilds')) this.r.tableCreate('Guilds').run().error(console.error);
             if (!list.includes('Messages')) this.r.tableCreate('Messages').run().error(console.error);
-        })
-
+        });*/
     }
 
     getUser(id = "") {
-        return this.r.table('Users').get(id).run().error(console.error)
-            .then(user => user || this.addUser(this.client.users.get(id)));
+        return this.r.table('Users').get(id).run().error(console.error).then(user => user || this.addUser(this.client.users.get(id)));
     }
 
     getGuild(id = "") {
-        return this.r.table('Guilds').get(id).run().error(console.error)
-            .then(guild => guild || this.addGuild(this.client.guilds.get(id)));
+        return this.r.table('Guilds').get(id).run().error(console.error).then(guild => guild || this.addGuild(this.client.guilds.get(id)));
     }
 
     addUser(user) {
         this.r.table('Users').insert({
             id: user.id,
             lang: 'en',
-            commandsExecuted: 0
+            commandsExecuted: 0,
+            dev: false
         }).run().error(console.error);
         return this.r.table('Users').get(user.id).run().error(console.error);
     }
@@ -62,7 +60,7 @@ class DatabaseConnection extends EventEmitter {
             queue: []
         }).run().error(console.error);
         return this.r.table('Users').get(guild.id).run().error(console.error);
-    } 
+    }
 
     logMessage(msg, event, opt) {
         return this.r.table('Messages').insert({

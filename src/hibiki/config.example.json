@@ -1,0 +1,69 @@
+{
+    "token": "",
+    "beta": false,
+    "admins": [
+        "your_id"
+    ],
+    "eris": {
+        "_note": "See https://abal.moe/Eris/docs/Client",
+        "autoreconnect": true,
+        "compress": true,
+        "connectionTimeout": 30000,
+        "disableEvents": {
+            "TYPING_START": true,
+            "CHANNEL_CREATE": true,
+            "CHANNEL_DELETE": true,
+            "CHANNEL_UPDATE": true,
+            "PRESENCE_UPDATE": true,
+            "MESSAGE_DELETE_BULK": true,
+            "GUILD_MEMBER_UPDATE": true
+        },
+        "getAllUsers": true,
+        "disableEveryone": true,
+        "firstShardID": 0,
+        "guildCreateTimeout": 2000,
+        "largeTreshold": 250,
+        "lastShardID": 0,
+        "maxShards": 1,
+        "messageLimit": 2000,
+        "seedVoiceConnections": true,
+        "opusOnly": false,
+        "restMode": false,
+        "sequencerWait": 20,
+        "defaultImageFormat": "png",
+        "defaultImageSize": 2048
+    },
+    "hibiki": {
+        "commandDir": "./commands",
+        "languageDir": "./languages",
+        "db": {
+            "rethinkdb": {
+                "_note": "See https://www.npmjs.com/package/rethinkdbdash#importing-the-driver",
+                "host": "localhost",
+                "port": 29015,
+                "password": null,
+                "db": "hibiki",
+                "_note2": "You probably won't have to change much under this note.",
+                "ssl": false,
+                "user": "admin",
+                "discovery": false,
+                "pool": false,
+                "buffer": 50,
+                "max": 1000,
+                "timeout": 20,
+                "pingInterval": -1,
+                "timeoutError": 1000,
+                "timeoutGb": 3600000,
+                "maxExponent": 6,
+                "silent": true,
+                "servers": {},
+                "optionalRun": false
+            },
+            "tables": [
+                "Users",
+                "Guilds",
+                "Messages"
+            ]
+        }
+    }
+}
