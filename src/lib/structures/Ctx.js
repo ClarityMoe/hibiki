@@ -18,10 +18,16 @@ class Ctx extends Message {
         else return this.channel.createMessage(content, options).catch(this.createError);
     }
 
+    createCode(lang, content, options, mOptions) {
+        mOptions = mOptions || {};
+        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(this.createError) : Promise.reject(new Error("Channel not found"));
+        else return this.channel.createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(this.createError);
+    }
+
     createError(content, options, mOptions) {
         mOptions = mOptions || {};
-        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(content, options).catch(this._client.logger.error) : Promise.reject(new Error("Channel not found"));
-        else return this.channel.createMessage(content, options).catch(this._client.logger.error);
+        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(`\`\`\`diff\n- ${content}\`\`\``, options).catch(this._client.logger.error) : Promise.reject(new Error("Channel not found"));
+        else return this.channel.createMessage(`\`\`\`diff\n- ${content}\`\`\``, options).catch(this._client.logger.error);
     }
 
 }

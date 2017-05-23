@@ -7,7 +7,8 @@ class User extends Eris.User {
     }
 
     get language() {
-        return this._client.db.getUser(this.id).lang
+        return this._client.db.cache.get(`user_${this.id}`).lang || 'en';
     }
-
 }
+
+module.exports = User;

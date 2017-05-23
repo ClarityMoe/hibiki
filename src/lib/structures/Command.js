@@ -36,9 +36,11 @@ class Command extends EventEmitter {
      * 
      * @memberof Command
      */
-    run(ctx) {
+    
+    /* eslint-disable no-unused-vars */
+    run(ctx) { 
 
-    }
+    } /* eslint-enable no-unused-vars */
 }
 
 module.exports = Command;

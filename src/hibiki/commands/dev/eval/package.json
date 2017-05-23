@@ -1,7 +1,7 @@
 {
-    "name": "ping",
+    "name": "eval",
     "version": "0.0.1",
-    "main": "ping.js",
+    "main": "eval.js",
     "author": {
         "name": "noud02"
     },

@@ -6,7 +6,6 @@ const exec = require('child_process').exec;
 const execSync = require('child_process').execSync;
 const fs = require('fs');
 
-bluebird.promisify(rreaddir);
 class CommandManager extends Manager {
     constructor(client, options) {
         super(client, options);
@@ -16,7 +15,7 @@ class CommandManager extends Manager {
     }
 
     loadAll() {
-        rreaddir(this.commandDir, (err, files) => {
+        rreaddir(`${__base}/${this.commandDir}`, (err, files) => {
             if (err) return this.logger.error(err);
             for (const file of files) {
                 if (!file.endsWith('package.json')) return;
@@ -25,7 +24,7 @@ class CommandManager extends Manager {
                 const pkg = require(file);
                 if (!pkg || !pkg.main || !fs.existsSync(file.replace('package.json', pkg.main) || !pkg.name)) return;
                 if (pkg.dependencies && Object.keys(pkg.dependencies)) {
-                    for (const awau of Object.kyes(pkg.dependencies)) try { require.resolve(awau) } catch (e) { if (!nya.includes(awau)) nya.push(awau) };
+                    for (const awau of Object.keys(pkg.dependencies)) try { require.resolve(awau) } catch (e) { if (!nya.includes(awau)) nya.push(awau) };
                     exec(`npm i ${nya.join(' ')}`, (err, stdout, stderr) => {
                         if (err) return this.logger.error(`Error while installing packages: ${err}`);
                         if (stderr) return this.logger.error(`Error while installing packages: ${stderr}`);
@@ -86,6 +85,8 @@ class CommandManager extends Manager {
 
         try {
             user = await this.db.getUser(msg.author.id);
+            console.log(user);
+            this.db.cache.set(`user_${msg.author.id}`, await user);
         } catch (e) {
             try {
                 user = this.db.cache.get(`user_${msg.author.id}`);
@@ -100,11 +101,13 @@ class CommandManager extends Manager {
 
         const cmd = msg.content.substring(prefix.length).split(" ")[0];
 
+        if (this.commands.hasOwnProperty(cmd)) this.run(msg, prefix, cmd);
+        else if (this.aliases.hasOwnProperty(cmd)) this.run(msg, prefix, this.aliases[cmd]);
 
 
     }
 
-    run(msg, prefix) {
+    run(msg, prefix, cmd) {
 
     }
 

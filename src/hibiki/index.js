@@ -11,6 +11,9 @@ const config = require(`${__dirname}/config.json`);
 const qt = new Hibiki.Client(config.token, config.hibiki, config.eris);
 const logger = qt.logger;
 
-qt.on('ready', () => logger.info(`Connected to Discord!`))
+qt.on('ready', () => logger.info(`Connected to Discord!`));
+qt.on('messageCreate', (msg) => {
+    console.log(msg)
+})
 
 qt.connect();
