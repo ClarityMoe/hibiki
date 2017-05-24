@@ -38,9 +38,7 @@
     "ws": "^3.0.0"
   },
   "devDependencies": {
-    "esdoc": "^0.5.2",
-    "eslint": "^3.19.0",
-    "ink-docstrap": "^1.3.0"
+    "eslint": "^3.19.0"
   },
   "optionalDependencies": {
     "uws": "^0.14.5",
