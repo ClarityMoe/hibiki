@@ -1,9 +1,9 @@
 "use strict";
 
-const Eris = require('eris');
+const Collection = require("../util/Collection");
 const Shard = require("./Shard");
 
-class ShardManager extends Eris.Collection {
+class ShardManager extends Collection {
     constructor(client) {
         super(Shard);
         this.client = client;
@@ -50,7 +50,8 @@ class ShardManager extends Eris.Collection {
             shard.on("ready", () => {
                 /**
                 * Fired when a shard turns ready
-                * @event Hibiki#shardReady
+                * @event shardReady
+                * @memberof Hibiki
                 * @prop {Number} id The ID of the shard
                 */
                 this.client.emit("shardReady", shard.id);
@@ -66,13 +67,15 @@ class ShardManager extends Eris.Collection {
                 this.client.startTime = Date.now();
                 /**
                 * Fired when all shards turn ready
-                * @event Hibiki#ready
+                * @event ready
+                * @memberof Hibiki
                 */
                 this.client.emit("ready");
             }).on("resume", () => {
                 /**
                 * Fired when a shard resumes
-                * @event Hibiki#shardResume
+                * @event shardResume
+                * @memberof Hibiki
                 * @prop {Number} id The ID of the shard
                 */
                 this.client.emit("shardResume", shard.id);
@@ -90,7 +93,8 @@ class ShardManager extends Eris.Collection {
             }).on("disconnect", (error) => {
                 /**
                 * Fired when a shard disconnects
-                * @event Hibiki#shardDisconnect
+                * @event shardDisconnect
+                * @memberof Hibiki
                 * @prop {Error?} error The error, if any
                 * @prop {Number} id The ID of the shard
                 */
@@ -104,7 +108,8 @@ class ShardManager extends Eris.Collection {
                 this.client.startTime = 0;
                 /**
                 * Fired when all shards disconnect
-                * @event Hibiki#disconnect
+                * @event disconnect
+                * @memberof Hibiki
                 */
                 this.client.emit("disconnect");
             });

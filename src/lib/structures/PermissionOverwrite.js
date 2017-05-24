@@ -1,9 +1,18 @@
-const Eris = require('eris');
+"use strict";
 
-class PermissionOverwrite extends Eris.PermissionOverwrite {
+const Permission = require("./Permission");
+
+/**
+* Represents a permission overwrite
+* @extends Permission
+* @prop {String} id The ID of the overwrite
+* @prop {String} type The type of the overwrite, either "user" or "role"
+*/
+class PermissionOverwrite extends Permission {
     constructor(data) {
-        super(data);
-        this.data = data;
+        super(data.allow, data.deny);
+        this.id = data.id;
+        this.type = data.type;
     }
 }
 

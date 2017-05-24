@@ -1,0 +1,27 @@
+{
+    "tags": {
+        "allowUnknownTags": true,
+        "dictionaries": ["jsdoc","closure"]
+    },
+    "source": {
+        "exclude": [
+            "node_modules/"
+        ],
+        "include": [
+            "src/lib/",
+            "src/lib/gateway/",
+            "src/lib/managers/",
+            "src/lib/rest/",
+            "src/lib/structures/",
+            "src/lib/util/",
+            "src/lib/voice/"
+        ],
+        "includePattern": ".+\\.js(doc|x)?$",
+        "excludePattern": "(^|\\/|\\\\)_"
+    },
+    "plugins": [],
+    "templates": {
+        "cleverLinks": false,
+        "monospaceLinks": false
+    }
+}
