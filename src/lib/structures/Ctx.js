@@ -1,5 +1,4 @@
 const Message = require('./Message.js');
-const minimist = require('minimist');
 
 class Ctx extends Message {
     constructor(client, msg, options) {
@@ -8,8 +7,10 @@ class Ctx extends Message {
         this.options = options;
         this.prefix = options.prefix;
         this.command = options.command;
-        this.argv = minimist(msg.content.substring(this.prefix.length).split(" ").slice(1).split(/\s+/));
-        this.args = this.argv._;
+        this.argv = options.argv;
+        this.args = options.args;
+        this.msg = msg;
+        this.suffix = options.suffix;
     }
 
     createMessage(content, options, mOptions) {

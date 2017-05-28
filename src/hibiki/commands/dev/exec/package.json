@@ -1,8 +1,8 @@
 {
-    "name": "eval",
+    "name": "exec",
     "version": "0.0.1",
-    "main": "eval.js",
-    "description": "Evaluate code",
+    "main": "exec.js",
+    "description": "Execute shell commands.",
     "author": {
         "name": "noud02"
     },

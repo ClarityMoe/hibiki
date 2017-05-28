@@ -1,5 +1,3 @@
-const rethinkdb = require('rethinkdbdash');
-const Eris = require('eris');
 const EventEmitter = require('eventemitter3');
 
 /**
@@ -20,13 +18,13 @@ class DatabaseConnection extends EventEmitter {
         super();
         this.client = client;
         this.opt = options;
-        this.r = rethinkdb(options.rethinkdb)
+        this.r = require('rethinkdbdash')(options.rethinkdb);
         
-        /*this.r.tableList().run().then(list => {
+        this.r.tableList().run().then(list => {
             if (!list.includes('Users')) this.r.tableCreate('Users').run().error(console.error);
             if (!list.includes('Guilds')) this.r.tableCreate('Guilds').run().error(console.error);
             if (!list.includes('Messages')) this.r.tableCreate('Messages').run().error(console.error);
-        });*/
+        });
     }
 
     getUser(id = "") {

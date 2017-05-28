@@ -3,6 +3,7 @@
 const CommandManager = require('./managers/CommandManager.js');
 const DatabaseConnection = require('./structures/DatabaseConnection.js');
 const Logger = require('./structures/Logger.js');
+const Cache = require('./structures/Cache.js');
 
 const GuildChannel = require("./structures/GuildChannel");
 const Collection = require("./util/Collection");
@@ -140,6 +141,12 @@ class Hibiki extends EventEmitter {
             this.options.defaultImageSize = 128;
         }
 
+        this.config = opt;
+        this.db = new DatabaseConnection(this, this.config.db);
+        this.logger = new Logger(this.config.logger);
+        this.cache = new Cache();
+        this.cm = new CommandManager(this, this.config);
+
         this.token = token;
 
         this.requestHandler = new RequestHandler(this);
@@ -170,11 +177,7 @@ class Hibiki extends EventEmitter {
         this.userSettings = {};
         this.notes = {};
         this.voiceConnections = new VoiceConnectionManager();
-
-        this.opt = opt;
-        this.db = new DatabaseConnection(this, this.opt.db);
-        this.logger = new Logger(this.opt.logger);
-        this.cm = new CommandManager(this, this.opt);
+        
     }
 
     get uptime() {

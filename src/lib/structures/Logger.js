@@ -16,24 +16,35 @@ class Logger {
         return clk.cyan.bold(`[${moment().format('l')} @ ${moment().format('HH:mm:ss')}]`);
     }
 
-    info(...args) {
-        return console.info(this.time, this.s.info, args.join(' '));
+    info() {
+        return console.info(this.time, this.s.info, Array.from(arguments).join(' '));
     }
 
-    warn(...args) {
-        return console.warn(this.time, this.s.warn, args.join(' '));
+    warn() {
+        return console.warn(this.time, this.s.warn, Array.from(arguments).join(' '));
     }
 
-    error(...args) {
-        return console.error(this.time, this.s.error, args.join(' '));
+    error() {
+        return console.error(this.time, this.s.error, Array.from(arguments).join(' '));
     }
 
-    log(...args) {
-        return console.log(this.time, args.join(' '));
+    log() {
+        return console.log(this.time, Array.from(arguments).join(' '));
     }
 
-    message(msg, ...args) {
-        return console.log(this.time, clk.green(msg.channel.guild.name), clk.blue(msg.author.username), clk.cyan(msg.cleanContent), args.join(' '));
+    message(msg) {
+        return console.log(this.time, clk.green(msg.channel.guild.name), clk.blue(msg.author.username), clk.cyan(msg.cleanContent), Array.from(arguments).slice(1).join(' '));
+    }
+
+    custom(opt) {
+        if (!opt) throw new Error("No options specified");
+        if (!opt.bgColor) opt.bgColor = 'black';
+        if (!opt.color) opt.color = 'white';
+        if (!clk[opt.color.toLocaleLowerCase()]) throw new Error("Invalid color");
+        const bg = clk[`bg${opt.bgColor.toLocaleLowerCase().charAt(0).toLocaleUpperCase()}${opt.bgColor.toLocaleLowerCase().slice(1)}`];
+        if (!bg) throw new Error("Invalid background color");
+        const str = `${this.time} ${bg[opt.color.toLocaleLowerCase()](` ${opt.name} `)} ${Array.from(arguments).slice(1).join(' ')}`;
+        return opt.error && console.error(str) || console.log(str);
     }
 
 }

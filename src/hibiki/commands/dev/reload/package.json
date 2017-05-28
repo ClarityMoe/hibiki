@@ -1,8 +1,8 @@
 {
-    "name": "eval",
+    "name": "reload",
     "version": "0.0.1",
-    "main": "eval.js",
-    "description": "Evaluate code",
+    "main": "reload.js",
+    "description": "Reload commands.",
     "author": {
         "name": "noud02"
     },

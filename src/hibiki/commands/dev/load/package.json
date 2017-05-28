@@ -1,8 +1,8 @@
 {
-    "name": "eval",
+    "name": "load",
     "version": "0.0.1",
-    "main": "eval.js",
-    "description": "Evaluate code",
+    "main": "load.js",
+    "description": "Load commands.",
     "author": {
         "name": "noud02"
     },
