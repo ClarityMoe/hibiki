@@ -12,40 +12,50 @@ class CommandManager extends Manager {
         this.commandDir = options.commandDir;
         this.commands = {};
         this.aliases = {};
+        this.cooldowns = {};
         this.__base = options.__base;
     }
 
     unload(name) {
-        if (!this.commands.hasOwnProperty(name)) throw new Error(`Command ${name} is not loaded`);
-        return delete this.commands[name];
+        return new Promise((resolve, reject) => {
+            if (!this.commands.hasOwnProperty(name)) return reject(new Error(`Command ${name} is not loaded`))
+            resolve(delete this.commands[name]);
+            this.client.emit('commandUnloaded', name);
+        });
     }
 
     reload(name) {
-        try {
-            this.unload(name);
-            return this.load(name);
-        } catch (e) {
-            throw e;
-        }
+        return new Promise((resolve, reject) => {
+            this.unload(name)
+                .catch(reject)
+                .then(() => {
+                    this.load(name)
+                        .catch(reject)
+                        .then(resolve);
+                });
+        });
     }
 
-    // TODO: Fix this lol
-    /*load(name) {
-        return new Promise((r, e) => {
+    load(name) {
+        return new Promise((resolve, reject) => {
             rreaddir(`${process.cwd()}/${this.commandDir}`, (err, files) => {
-                if (err) return e(new Error(err));
+                if (err) return reject(err);
                 for (const file of files) {
                     if (!file.endsWith('package.json')) continue;
                     let cmd;
+                    let pkg;
                     const nya = [];
-                    const pkg = require(file);
+                    try {
+                        pkg = require(file);
+                    } catch (e) {
+                        this.logger.error(new Error(`${file}: couldn't load package: ${e}`));
+                    }
 
                     if (pkg.name !== name) continue;
 
                     if (!pkg || !pkg.main || !fs.existsSync(file.replace('package.json', pkg.main) || !pkg.name || !pkg.description)) {
-                        e(new Error(`${file}: invalid package.json`));
-                        break;
-                    };
+                        return reject(new Error(`${file}: invalid package.json`));
+                    }
 
                     if (pkg.dependencies && Object.keys(pkg.dependencies)) {
                         for (const awau of Object.keys(pkg.dependencies)) {
@@ -56,14 +66,12 @@ class CommandManager extends Manager {
                             }
                         }
                         exec(`npm i ${nya.join(' ')}`, (err, stdout, stderr) => {
-                            if (err) return e(new Error(`Error while installing packages: ${err}`));
-                            if (stderr) return e(new Error(`Error while installing packages: ${stderr}`));
+                            if (err) reject(new Error(`Error while installing packages: ${err}`));
                         });
                     }
 
                     if (this.commands.hasOwnProperty(pkg.name)) {
-                        e(new Error(`Duplicate command: ${pkg.name} (${file})`));
-                        break;
+                        return reject(new Error(`Duplicate command: ${pkg.name} (${file})`));
                     }
 
                     try {
@@ -77,15 +85,16 @@ class CommandManager extends Manager {
                         } catch (e) { // I assume you forgot to add module.exports.
                         }
                         if (!cmd) {
-                            e(new Error(`Couldn't load command ${pkg.name}, did you forget to add module.exports?`));
-                            break;
+                            return reject(new Error(`Couldn't load command ${pkg.name}, did you forget to add module.exports?`));
                         }
 
                         if (!cmd.run) {
-                            e(new Error(`Couldn't find the run function for command ${pkg.name}`));
-                            break;
+                            return reject(new Error(`Couldn't find the run function for command ${pkg.name}`));
                         }
-                        cmd.name = cmd.name || pkg.name;
+
+                        cmd.path = file.replace('package.json', '');
+                        cmd.main = pkg.main;
+                        cmd.name = cmd.name || pkg.displayName || pkg.name;
                         cmd.cooldown = cmd.cooldown || 5000;
                         cmd.check = cmd.check || true;
                         cmd.version = cmd.version || pkg.version;
@@ -95,12 +104,10 @@ class CommandManager extends Manager {
 
                         if (cmd.check) {
                             if (cmd.run.toString().indexOf('eval') > -1 && !cmd.dev) {
-                                e(new Error(`Run function for command ${cmd.name} contains an eval function, but it's not listed as dev command.\nYou can disable this check by adding \`this.check = false;\` to the command.`));
-                                break;
+                                return reject(new Error(`Run function for command ${cmd.name} contains an eval function, but it's not listed as dev command.\nYou can disable this check by adding \`this.check = false;\` to the command.`));
                             }
                             if (cmd.run.toString().indexOf('this.client.token') > -1 && !cmd.dev) {
-                                e(new Error(`this.client.token :ThoughTs:`));
-                                break;
+                                return reject(new Error(`this.client.token :ThoughTs:`));
                             }
                         }
 
@@ -113,18 +120,18 @@ class CommandManager extends Manager {
                         }
 
                         this.commands[cmd.name] = cmd;
-                        r();
                         this.client.emit('commandLoaded', cmd.name, cmd);
 
                         //TODO: Complete TestCtx to test for memecode
                         //if (!cmd.cantTestThis) cmd.run(new TestCtx());
                     } catch (e) {
-                        e(new Error(`${file}:`, e));
+                        this.logger.error(`${file}:`, e);
                     }
+
                 }
-            });
+            })
         });
-    }*/
+    }
 
     loadAll() {
         rreaddir(`${process.cwd()}/${this.commandDir}`, (err, files) => {
@@ -132,8 +139,13 @@ class CommandManager extends Manager {
             for (const file of files) {
                 if (!file.endsWith('package.json')) continue;
                 let cmd;
+                let pkg;
                 const nya = [];
-                const pkg = require(file);
+                try {
+                    pkg = require(file);
+                } catch (e) {
+                    this.logger.error(`${file}: couldn't load package: ${e}`);
+                }
 
                 if (!pkg || !pkg.main || !fs.existsSync(file.replace('package.json', pkg.main) || !pkg.name || !pkg.description)) {
                     this.logger.error(`${file}: invalid package.json`);
@@ -178,6 +190,9 @@ class CommandManager extends Manager {
                         this.logger.error(`Couldn't find the run function for command ${pkg.name}`);
                         continue;
                     }
+
+                    cmd.path = file.replace('package.json', '');
+                    cmd.main = pkg.main;
                     cmd.name = cmd.name || pkg.name;
                     cmd.cooldown = cmd.cooldown || 5000;
                     cmd.check = cmd.check || true;
@@ -185,6 +200,9 @@ class CommandManager extends Manager {
                     cmd.description = cmd.description || pkg.description;
                     cmd.contributors = cmd.contributors || pkg.contributors || [];
                     cmd.author = cmd.author || pkg.author && pkg.author.name || pkg.author || 'unknown';
+                    cmd.private = cmd.private || pkg.private || false;
+                    cmd.hidden = cmd.hidden || pkg.hidden || false;
+                    cmd.category = cmd.category || pkg.category;
 
                     if (cmd.check) {
                         if (cmd.run.toString().indexOf('eval') > -1 && !cmd.dev) {
@@ -288,30 +306,49 @@ class CommandManager extends Manager {
 
     }
 
-    run(msg, prefix, cmd) {
+    run(msg, prefix, cmd, b) {
         const a = msg.content.substring(prefix.length);
-        const suffix = a.substring(a.indexOf(cmd.name) + cmd.name.length + 1);
+        const suffix = a.substring((b && b.length || cmd.name.length) + 1);
         const argv = minimist(suffix.split(" "));
         const args = argv._;
 
         if (cmd.subcommands.hasOwnProperty(args[0])) {
-            cmd.subcommands[args[0]].name = args[0];
-            return this.run(msg, prefix, cmd.subcommands[args[0]]);
+            cmd.subcommands[args[0]].name = cmd.name;
+            return this.run(msg, prefix, cmd.subcommands[args[0]], `${cmd.name} ${args[0]}`);
+        }
+
+        if (!this.cooldowns.hasOwnProperty(msg.author.id)) this.cooldowns[msg.author.id] = {};
+
+        if (!this.config.admins.includes(msg.author.id) && this.cooldowns[msg.author.id].hasOwnProperty(cmd.name) && Date.now() - this.cooldowns[msg.author.id][cmd.name].date < this.cooldowns[msg.author.id][cmd.name].time) {
+            return this.db.getUser(msg.author.id).then(u => msg.channel.createMessage(this.lm.l(u.lang || 'en', ['commands', 'cooldown'], {
+                username: msg.author.username,
+                time: (this.cooldowns[msg.author.id][cmd.name].time - (Date.now() - this.cooldowns[msg.author.id][cmd.name].date)) / 1000
+            })).catch(this.logger.error)).catch(this.logger.error);
+        }
+
+        if (!this.config.admins.includes(msg.author.id)) {
+            this.cooldowns[msg.author.id][cmd.name] = {
+                date: Date.now(),
+                time: cmd.cooldown
+            }
         }
 
         this.logger.message(msg);
 
-        if (argv.h || argv.help) return this.help(msg, prefix, cmd);
+        if (!cmd.ignoreFlags) if (argv.h || argv.help) return this.help(msg, prefix, cmd);
 
         if (cmd.dev && !this.config.admins.includes(msg.author.id)) return;
 
-        cmd.run(new Ctx(this.client, msg, {
-            prefix: prefix,
-            command: cmd.name,
-            args: args,
-            argv: argv,
-            suffix: suffix
-        }));
+        this.db.getUser(msg.author.id).then(u => {
+            cmd.run(new Ctx(this.client, msg, {
+                prefix: prefix,
+                command: cmd.name,
+                args: args,
+                argv: argv,
+                suffix: suffix,
+                user: u
+            }));
+        }).catch(this.logger.error);
 
     }
 

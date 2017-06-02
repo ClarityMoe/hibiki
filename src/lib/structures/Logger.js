@@ -6,7 +6,7 @@ class Logger {
     constructor(opt) {
         this.opt = opt;
         this.s = {
-            warn: clk.bgYellow(' WARN '),
+            warn: clk.black.bgYellow(' WARN '),
             error: clk.bgRed(' ERROR '),
             info: clk.bgMagenta(' INFO ')
         }

@@ -1,6 +1,7 @@
 "use strict";
 
 const CommandManager = require('./managers/CommandManager.js');
+const LocaleManager = require('./managers/LocaleManager.js');
 const DatabaseConnection = require('./structures/DatabaseConnection.js');
 const Logger = require('./structures/Logger.js');
 const Cache = require('./structures/Cache.js');
@@ -85,7 +86,7 @@ class Hibiki extends EventEmitter {
      * @arg {Number} [options.firstShardID=0] The ID of the first shard to run for this client
      * @arg {Boolean} [options.getAllUsers=false] Get all the users in every guild. Ready time will be severely delayed
      * @arg {Number} [options.guildCreateTimeout=2000] How long in milliseconds to wait for a GUILD_CREATE before "ready" is fired. Increase this value if you notice missing guilds
-     * @arg {Number} [options.largeThreshold=250] The maximum number of offline users per guild during initial guild data transmission
+     * @arg {Number} [option`${process.cwd()}/${this.translationDir}/${file}`s.largeThreshold=250] The maximum number of offline users per guild during initial guild data transmission
      * @arg {Number} [options.lastShardID=options.maxShards - 1] The ID of the last shard to run for this client
      * @arg {Number} [options.maxShards=1] The total number of shards you want to run
      * @arg {Number} [options.messageLimit=100] The maximum size of a channel message cache
@@ -145,6 +146,7 @@ class Hibiki extends EventEmitter {
         this.db = new DatabaseConnection(this, this.config.db);
         this.logger = new Logger(this.config.logger);
         this.cache = new Cache();
+        this.lm = new LocaleManager(this, this.config);
         this.cm = new CommandManager(this, this.config);
 
         this.token = token;

@@ -9,7 +9,7 @@ const EventEmitter = require('eventemitter3');
 class Command extends EventEmitter {
     /**
      * Creates an instance of Command.
-     * @param {object?} client 
+     * @param {Object?} client 
      * 
      * @memberof Command
      */
@@ -28,19 +28,6 @@ class Command extends EventEmitter {
         this.buttons = {};
 
     }
-
-    /**
-     * Runs the command.
-     * 
-     * @param {object?} ctx 
-     * 
-     * @memberof Command
-     */
-    
-    /* eslint-disable no-unused-vars */
-    run(ctx) { 
-
-    } /* eslint-enable no-unused-vars */
 }
 
 module.exports = Command;

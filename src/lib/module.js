@@ -48,6 +48,9 @@ Hibiki.Command = require('./structures/Command.js');
 Hibiki.Cache = require('./structures/Cache.js');
 Hibiki.Manager = require('./managers/Manager.js');
 Hibiki.CommandManager = require('./managers/CommandManager.js');
+Hibiki.LocaleManager = require('./managers/LocaleManager.js');
+Hibiki.CogManager = require('./managers/CogManager.js');
+Hibiki.Script = require('./structures/Script.js');
 Hibiki.DatabaseConnection = require('./structures/DatabaseConnection.js');
 
 module.exports = Hibiki;

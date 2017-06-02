@@ -13,6 +13,7 @@ const logger = qt.logger;
 
 qt.on('ready', () => {
     logger.info(`Connected to Discord!`);
+    qt.lm.loadAll();
     qt.cm.loadAll();
 });
 qt.on('messageCreate', (msg) => {
@@ -20,9 +21,14 @@ qt.on('messageCreate', (msg) => {
 });
 
 qt.on('commandLoaded', (cmd) => {
-    logger.custom({ color: 'black', bgColor: 'green', name: 'SUCCESS' }, 'Command loaded:', cmd)
-})
+    logger.custom({ color: 'black', bgColor: 'green', name: 'SUCCESS' }, 'Command loaded:', cmd);
+});
 
-qt.on('error', logger.error)
+qt.on('localeLoaded', (locale) => {
+    logger.custom({ color: 'black', bgColor: 'green', name: 'SUCCESS' }, 'Locale loaded:', locale);
+});
+
+qt.on('error', e => logger.error(e));
+qt.on('warn', w => logger.warn(w));
 
 qt.connect();

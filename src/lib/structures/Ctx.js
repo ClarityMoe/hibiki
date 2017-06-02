@@ -5,6 +5,7 @@ class Ctx extends Message {
         super(msg.data, client);
         this.client = client;
         this.options = options;
+        this.user = options.user;
         this.prefix = options.prefix;
         this.command = options.command;
         this.argv = options.argv;
@@ -28,7 +29,9 @@ class Ctx extends Message {
     createError(content, options, mOptions) {
         mOptions = mOptions || {};
         if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(`\`\`\`diff\n- ${content}\`\`\``, options).catch(this._client.logger.error) : Promise.reject(new Error("Channel not found"));
-        else return this.channel.createMessage(`\`\`\`diff\n- ${content}\`\`\``, options).catch(this._client.logger.error);
+        else return this.channel.createMessage(this.client.lm.l(this.user.lang || 'en', ['error','error'], {
+            err: content
+        }), options).catch(this._client.logger.error);
     }
 
 }

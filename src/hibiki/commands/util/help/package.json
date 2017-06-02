@@ -1,8 +1,8 @@
 {
-    "name": "unload",
+    "name": "help",
+    "description": "Get a list of commands",
     "version": "0.0.1",
-    "main": "unload.js",
-    "description": "Unload commands.",
+    "main": "help.js",
     "author": {
         "name": "noud02"
     },

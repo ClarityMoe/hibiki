@@ -1,5 +1,6 @@
 const { Command } = require('../../../../../');
 const exec = require('child_process').exec;
+const util = require('util');
 
 class Python extends Command {
     constructor(client) {
@@ -13,7 +14,7 @@ class Python extends Command {
     }
 
     run(ctx) {
-        exec(`python -c "${ctx.suffix}"`, (err, stdout, stderr) => {
+        exec(`python -c "ctx = {'id': ${ctx.id},'content': '${ctx.content}','mentions': ${util.inspect(ctx.mentions.map(u => u.id))},'reactions': ${util.inspect(ctx.reactions)},'attachments': ${util.inspect(ctx.attachments)},'guild': {'id': ${ctx.channel.guild.id}},'channel': {'id': ${ctx.channel.id}},'author': {'discriminator': '${ctx.author.discriminator}', 'username': '${ctx.author.username}', 'id': ${ctx.author.id}},'member': {'id': ${ctx.member.id}}}; ${ctx.suffix}"`, (err, stdout, stderr) => {
             if (stderr) return ctx.createCode('diff', `- ${stderr}`);
             return ctx.createCode('py', stdout);
         });

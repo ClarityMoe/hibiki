@@ -1,0 +1,3 @@
+[submodule "locales"]
+    path = src/hibiki/locales
+    url = https://github.com/kyuubey/translations

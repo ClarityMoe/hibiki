@@ -7,6 +7,8 @@ class Manager extends EventEmitter {
         this.config = client.config
         this.options = options;
         this.db = client.db;
+        this.cm = client.cm;
+        this.lm = client.lm;
         this.logger = client.logger;
         this.cache = client.cache;
     }
