@@ -7,8 +7,7 @@ class Help extends Command {
 /** @todo remove disable once there's an actual help command here */
 /* eslint-disable no-unused-vars */
     run(ctx) {
-        return new Promise((resolve, reject) => { 
-            
+        return new Promise((resolve, reject) => {          
             // put your commands all under here
         });
     }
