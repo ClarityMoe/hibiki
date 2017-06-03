@@ -6,7 +6,9 @@ class Help extends Command {
     }
 
     run(ctx) {
-
+        return new Promise((resolve, reject) => {
+            // put your commands all under here
+        });
     }
 }
 
