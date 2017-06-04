@@ -15,7 +15,11 @@ class LocaleManager extends Manager {
             if (!file.endsWith('.json')) continue;
 
             if (this.locales.hasOwnProperty(file.replace('.json', ''))) {
-                this.logger.warn(`Duplicate locale: ${file.replace('.json', '')}`);
+                this.logger.custom({
+                    name: 'DUPE',
+                    bgColor: 'yellow',
+                    color: 'black'
+                }, `${file.replace('.json', '')}: Duplicate locale!`);
                 continue;
             }
 

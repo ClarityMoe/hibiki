@@ -1,0 +1,17 @@
+{
+    "name": "middleware",
+    "version": "0.0.1",
+    "description": "Says 'hi' everytime a command is executed",
+    "author": {
+        "name": "noud02"
+    },
+    "scripts": {
+        "middleware": "middleware.js"
+    },
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        
+    }
+}

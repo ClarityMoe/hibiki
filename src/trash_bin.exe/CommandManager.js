@@ -347,7 +347,7 @@ class CommandManager extends Manager {
                 argv: argv,
                 suffix: suffix,
                 user: u
-            }));
+            })).catch(this.logger.error)
         }).catch(this.logger.error);
 
     }

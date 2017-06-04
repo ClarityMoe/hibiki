@@ -1,0 +1,15 @@
+{
+    "name": "help",
+    "description": "Get a list of commands",
+    "version": "0.0.1",
+    "main": "help.js",
+    "author": {
+        "name": "noud02"
+    },
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        
+    }
+}

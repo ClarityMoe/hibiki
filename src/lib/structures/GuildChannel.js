@@ -30,10 +30,10 @@ class GuildChannel extends Channel {
     constructor(data, guild, messageLimit) {
         super(data);
         this.guild = guild;
-        if(this.type === 2) {
+        if (this.type === 2) {
             this.voiceMembers = new Collection(Member);
         } else {
-            if(messageLimit == null && guild) {
+            if (messageLimit == null && guild) {
                 messageLimit = guild.shard.client.options.messageLimit;
             }
             this.messages = new Collection(Message, messageLimit);
@@ -49,7 +49,7 @@ class GuildChannel extends Channel {
         this.position = data.position !== undefined ? data.position : this.position;
         this.bitrate = data.bitrate !== undefined ? data.bitrate : this.bitrate;
         this.userLimit = data.user_limit !== undefined ? data.user_limit : this.userLimit;
-        if(data.permission_overwrites) {
+        if (data.permission_overwrites) {
             this.permissionOverwrites = new Collection(PermissionOverwrite);
             data.permission_overwrites.forEach((overwrite) => {
                 this.permissionOverwrites.add(overwrite);
@@ -62,27 +62,53 @@ class GuildChannel extends Channel {
     * @arg {String} memberID The ID of the member
     * @returns {Permission}
     */
+    /*permissionsOf(memberID) {
+        var member = this.guild.members.get(memberID);
+        var permission = member.permission.allow;
+        if (permission & Permissions.administrator) {
+            return new Permission(Permissions.all);
+        }
+        var overwrite = this.permissionOverwrites.get(this.guild.id);
+        permission = (permission & ~overwrite.deny) | overwrite.allow;
+        var deny = 0;
+        var allow = 0;
+        for (var overwrite of this.permissionOverwrites) {
+            if (overwrite[1].type === "role" && ~member.roles.indexOf(overwrite[1].id)) {
+                deny |= overwrite[1].deny;
+                allow |= overwrite[1].allow;
+            }
+        }
+        permission = (permission & ~deny) | allow;
+        overwrite = this.permissionOverwrites.get(memberID);
+        if (overwrite) {
+            permission = (permission & ~overwrite.deny) | overwrite.allow;
+        }
+        return new Permission(permission);
+    }*/
+    
+    
     permissionsOf(memberID) {
         var member = this.guild.members.get(memberID);
         var permission = member.permission.allow;
-        if(permission & Permissions.administrator) {
+        if (permission & Permissions.administrator) {
             return new Permission(Permissions.all);
         }
         var deny = 0;
         var allow = 0;
-        for(var overwrite of this.permissionOverwrites) {
-            if(overwrite[1].type === "role" && (overwrite[1].id === this.guild.id || ~member.roles.indexOf(overwrite[1].id))) {
+        for (var overwrite of this.permissionOverwrites) {
+            if (overwrite[1].type === "role" && (overwrite[1].id === this.guild.id || ~member.roles.indexOf(overwrite[1].id))) {
                 deny |= overwrite[1].deny;
                 allow |= overwrite[1].allow;
             }
         }
         permission = (permission & ~deny) | allow;
         var memberOverwrite = this.permissionOverwrites.get(memberID);
-        if(memberOverwrite) {
+        if (memberOverwrite) {
             permission = (permission & ~memberOverwrite.deny) | memberOverwrite.allow;
         }
         return new Permission(permission);
     }
+    
 
     get mention() {
         return `<#${this.id}>`;

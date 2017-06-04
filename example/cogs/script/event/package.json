@@ -1,0 +1,17 @@
+{
+    "name": "event",
+    "version": "0.0.1",
+    "description": "Welcomes new members",
+    "author": {
+        "name": "noud02"
+    },
+    "scripts": {
+        "event": "event.js"
+    },
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        
+    }
+}

@@ -1,0 +1,15 @@
+{
+    "name": "reload",
+    "version": "0.0.1",
+    "main": "reload.js",
+    "description": "Reload cogs",
+    "author": {
+        "name": "noud02"
+    },
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        
+    }
+}

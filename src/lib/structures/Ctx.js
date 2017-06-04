@@ -6,6 +6,7 @@ class Ctx extends Message {
         this.client = client;
         this.options = options;
         this.user = options.user;
+        this.guild = options.guild;
         this.prefix = options.prefix;
         this.command = options.command;
         this.argv = options.argv;
@@ -16,14 +17,14 @@ class Ctx extends Message {
 
     createMessage(content, options, mOptions) {
         mOptions = mOptions || {};
-        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(content, options).catch(this.createError) : Promise.reject(new Error("Channel not found"));
-        else return this.channel.createMessage(content, options).catch(this.createError);
+        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(content, options).catch(e => this.createError(e)) : Promise.reject(new Error("Channel not found"));
+        else return this.channel.createMessage(content, options).catch(e => this.createError(e));
     }
 
     createCode(lang, content, options, mOptions) {
         mOptions = mOptions || {};
-        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(this.createError) : Promise.reject(new Error("Channel not found"));
-        else return this.channel.createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(this.createError);
+        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(e => this.createError(e)) : Promise.reject(new Error("Channel not found"));
+        else return this.channel.createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(e => this.createError(e));
     }
 
     createError(content, options, mOptions) {

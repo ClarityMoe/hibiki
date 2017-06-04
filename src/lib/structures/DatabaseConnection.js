@@ -28,11 +28,11 @@ class DatabaseConnection extends EventEmitter {
     }
 
     getUser(id = "") {
-        return this.r.table('Users').get(id).run().error(console.error).then(user => user || this.addUser(this.client.users.get(id)));
+        return this.r.table('Users').get(id).run().error(this.client.logger.error).then(user => user || this.addUser(this.client.users.get(id)));
     }
 
     getGuild(id = "") {
-        return this.r.table('Guilds').get(id).run().error(console.error).then(guild => guild || this.addGuild(this.client.guilds.get(id)));
+        return this.r.table('Guilds').get(id).run().error(this.client.logger.error).then(guild => guild || this.addGuild(this.client.guilds.get(id)));
     }
 
     addUser(user) {
@@ -41,8 +41,8 @@ class DatabaseConnection extends EventEmitter {
             lang: 'en',
             commandsExecuted: 0,
             dev: false
-        }).run().error(console.error);
-        return this.r.table('Users').get(user.id).run().error(console.error);
+        }).run().error(this.client.logger.error);
+        return this.r.table('Users').get(user.id).run().error(this.client.logger.error);
     }
 
     addGuild(guild) {
@@ -56,11 +56,21 @@ class DatabaseConnection extends EventEmitter {
             messagelogs: false,
             modlogs: false,
             queue: []
-        }).run().error(console.error);
-        return this.r.table('Users').get(guild.id).run().error(console.error);
+        }).run().error(this.client.logger.error);
+        return this.r.table('Guilds').get(guild.id).run().error(this.client.logger.error);
     }
 
-    logMessage(msg, event, opt) {
+    editUser(id, opt) {
+        this.r.table('Users').update(opt).run().error(this.client.logger.error);
+        return this.r.table('Users').get(id).run().error(this.client.logger.error);
+    }
+
+    editGuild(id, opt) {
+        this.r.table('Guild').update(opt).run().error(this.client.logger.error);
+        return this.r.table('Guild').get(id).run().error(this.client.logger.error);
+    }
+
+    /*logMessage(msg, event, opt) {
         return this.r.table('Messages').insert({
             id: event !== 'CREATE' ? `${msg.id}_${event}` : msg.id,
             author: {
@@ -93,8 +103,8 @@ class DatabaseConnection extends EventEmitter {
             htmlAttachments: msg.htmlAttachments,
             reactions: msg.reactions,
             htmlReactions: msg.htmlReactions
-        }).run().error(console.error);
-    }
+        }).run().error(this.client.logger.error);
+    }*/
 
 }
 

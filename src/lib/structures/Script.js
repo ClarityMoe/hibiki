@@ -7,6 +7,7 @@ class Script {
         this.lm = client.lm;
         this.logger = client.logger;
         this.db = client.db;
+        this.type = 'extension';
         this.init();
     }
 
@@ -49,7 +50,15 @@ class Script {
         this.client.on('commandLoaded', (n, c) => this.commandLoaded(n, c));
     }
 
+    init () {
+
+    }
+
     /* eslint-disable no-unused-vars */
+
+    middleware() {
+        
+    }
 
     messageCreate(m) {
 

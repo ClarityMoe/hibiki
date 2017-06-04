@@ -1,10 +1,15 @@
 "use strict";
 
-const CommandManager = require('./managers/CommandManager.js');
+global.Command = require('./structures/Command.js');
+global.Script = require('./structures/Script.js');
+
 const LocaleManager = require('./managers/LocaleManager.js');
 const DatabaseConnection = require('./structures/DatabaseConnection.js');
 const Logger = require('./structures/Logger.js');
 const Cache = require('./structures/Cache.js');
+const CommandHandler = require('./handlers/CommandHandler.js');
+const CogManager = require('./managers/CogManager.js');
+const YoutubeDL = require('./util/YoutubeDL.js');
 
 const GuildChannel = require("./structures/GuildChannel");
 const Collection = require("./util/Collection");
@@ -38,11 +43,11 @@ try {
     Erlpack = require("erlpack");
 } catch (err) { // eslint-disable no-empty
 }
-try {
+/*try {
     global.Promise = require('bluebird');
 } catch(e) {
     
-}
+}*/
 
 /**
  * Represents the main client
@@ -147,7 +152,12 @@ class Hibiki extends EventEmitter {
         this.logger = new Logger(this.config.logger);
         this.cache = new Cache();
         this.lm = new LocaleManager(this, this.config);
-        this.cm = new CommandManager(this, this.config);
+        //this.cm = new CommandManager(this, this.config);
+        this.cm = new CogManager(this, this.config);
+        this.ch = new CommandHandler(this, this.config);
+        this.ytdl = new YoutubeDL();
+
+        this.Constants = Constants;
 
         this.token = token;
 
@@ -179,7 +189,7 @@ class Hibiki extends EventEmitter {
         this.userSettings = {};
         this.notes = {};
         this.voiceConnections = new VoiceConnectionManager();
-        
+
     }
 
     get uptime() {
@@ -277,6 +287,9 @@ class Hibiki extends EventEmitter {
     * @arg {String} channelID The ID of the voice channel
     */
     leaveVoiceChannel(channelID) {
+        if (!channelID) {
+            return;
+        }
         var channel = this.getChannel(channelID);
         if (!channel) {
             return;
@@ -373,11 +386,6 @@ class Hibiki extends EventEmitter {
     * @returns {Promise<GroupChannel | GuildChannel>}
     */
     editChannel(channelID, options, reason) {
-        var channel = this.getChannel(channelID);
-        if (!channel) {
-            return Promise.reject(new Error(`Channel ${channelID} not found`));
-        }
-
         return this.requestHandler.request("PATCH", Endpoints.CHANNEL(channelID), true, {
             name: options.name,
             icon: options.icon,
@@ -387,8 +395,12 @@ class Hibiki extends EventEmitter {
             user_limit: options.userLimit,
             reason: reason
         }).then((data) => {
-            if (channel.guild) {
-                return new GuildChannel(data, channel.guild);
+            if (!data.type || data.type === 2) { // undefined/0/2
+                var guild = this.channelGuildMap[channelID];
+                if (guild) {
+                    guild = this.guilds.get(guild);
+                }
+                return new GuildChannel(data, guild);
             } else {
                 return new GroupChannel(data, this);
             }

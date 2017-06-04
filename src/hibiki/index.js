@@ -17,11 +17,11 @@ qt.on('ready', () => {
     qt.cm.loadAll();
 });
 qt.on('messageCreate', (msg) => {
-    qt.cm.check(msg);
+    qt.ch.check(msg);
 });
 
-qt.on('commandLoaded', (cmd) => {
-    logger.custom({ color: 'black', bgColor: 'green', name: 'SUCCESS' }, 'Command loaded:', cmd);
+qt.on('cogLoaded', (cmd) => {
+    logger.custom({ color: 'black', bgColor: 'green', name: 'SUCCESS' }, 'Cog loaded:', cmd);
 });
 
 qt.on('localeLoaded', (locale) => {

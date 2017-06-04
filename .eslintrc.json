@@ -20,5 +20,9 @@
         "no-unused-vars": "warn",
         "constructor-super": "warn",
         "valid-typeof": "warn"
+    },
+    "globals": {
+        "Command": true,
+        "Script": true
     }
 }

@@ -1,0 +1,17 @@
+{
+    "name": "test",
+    "version": "0.0.1",
+    "description": "this is a test",
+    "author": {
+        "name": "noud02"
+    },
+    "scripts": {
+        "test": "test.js"
+    },
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        
+    }
+}

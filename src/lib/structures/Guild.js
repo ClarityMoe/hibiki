@@ -7,9 +7,7 @@ const Collection = require("../util/Collection");
 const GuildChannel = require("./GuildChannel");
 const Member = require("./Member");
 const Role = require("./Role");
-
-const Logger = require("./Logger.js");
-const logger = new Logger({ debug: false });
+const ytdl = require('bluebird').promisifyAll(require('youtube-dl'));
 
 /**
 * Represents a guild
@@ -167,7 +165,7 @@ class Guild extends Base {
     * @returns {Promise<GuildChannel>}
     */
     createChannel(name, type, reason) {
-        return this.shard.client.createChannel.call(this.shard.client, this.id, name, type, reason).catch(logger.error);
+        return this.shard.client.createChannel.call(this.shard.client, this.id, name, type, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -180,7 +178,7 @@ class Guild extends Base {
     * @returns {Promise<Object>} A guild emoji object
     */
     createEmoji(options, reason) {
-        return this.shard.client.createGuildEmoji.call(this.shard.client, this.id, options, reason).catch(logger.error);
+        return this.shard.client.createGuildEmoji.call(this.shard.client, this.id, options, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -193,7 +191,7 @@ class Guild extends Base {
     * @returns {Promise<Object>} A guild emoji object
     */
     editEmoji(emojiID, options, reason) {
-        return this.shard.client.editGuildEmoji.call(this.shard.client, this.id, emojiID, options, reason).catch(logger.error);
+        return this.shard.client.editGuildEmoji.call(this.shard.client, this.id, emojiID, options, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -203,7 +201,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     deleteEmoji(emojiID, reason) {
-        return this.shard.client.deleteGuildEmoji.call(this.shard.client, this.id, emojiID, reason).catch(logger.error);
+        return this.shard.client.deleteGuildEmoji.call(this.shard.client, this.id, emojiID, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -218,7 +216,7 @@ class Guild extends Base {
     * @returns {Promise<Role>}
     */
     createRole(options, reason) {
-        return this.shard.client.createRole.call(this.shard.client, this.id, options, reason).catch(logger.error);
+        return this.shard.client.createRole.call(this.shard.client, this.id, options, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -227,7 +225,7 @@ class Guild extends Base {
     * @returns {Promise<Number>} Resolves with the number of users that would be pruned
     */
     getPruneCount(days) {
-        return this.shard.client.getPruneCount.call(this.shard.client, this.id, days).catch(logger.error);
+        return this.shard.client.getPruneCount.call(this.shard.client, this.id, days).catch(this._client.logger.error);
     }
 
     /**
@@ -237,7 +235,7 @@ class Guild extends Base {
     * @returns {Promise<Number>} Resolves with the number of pruned users
     */
     pruneMembers(days, reason) {
-        return this.shard.client.pruneMembers.call(this.shard.client, this.id, days, reason).catch(logger.error);
+        return this.shard.client.pruneMembers.call(this.shard.client, this.id, days, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -245,7 +243,7 @@ class Guild extends Base {
     * @returns {Promise<GuildChannel[]>}
     */
     getRESTChannels() {
-        return this.shard.client.getRESTGuildChannels.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getRESTGuildChannels.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -253,7 +251,7 @@ class Guild extends Base {
     * @returns {Promise<Object[]>} An array of guild emoji objects
     */
     getRESTEmojis() {
-        return this.shard.client.getRESTGuildEmojis.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getRESTGuildEmojis.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -262,7 +260,7 @@ class Guild extends Base {
     * @returns {Promise<Object>} An emoji object
     */
     getRESTEmoji(emojiID) {
-        return this.shard.client.getRESTGuildEmoji.call(this.shard.client, this.id, emojiID).catch(logger.error);
+        return this.shard.client.getRESTGuildEmoji.call(this.shard.client, this.id, emojiID).catch(this._client.logger.error);
     }
 
     /**
@@ -272,7 +270,7 @@ class Guild extends Base {
     * @returns {Promise<Member[]>}
     */
     getRESTMembers(limit, after) {
-        return this.shard.client.getRESTGuildMembers.call(this.shard.client, this.id, limit, after).catch(logger.error);
+        return this.shard.client.getRESTGuildMembers.call(this.shard.client, this.id, limit, after).catch(this._client.logger.error);
     }
 
     /**
@@ -281,7 +279,7 @@ class Guild extends Base {
     * @returns {Promise<Member>}
     */
     getRESTMember(memberID) {
-        return this.shard.client.getRESTGuildMember.call(this.shard.client, this.id, memberID).catch(logger.error);
+        return this.shard.client.getRESTGuildMember.call(this.shard.client, this.id, memberID).catch(this._client.logger.error);
     }
 
     /**
@@ -289,7 +287,7 @@ class Guild extends Base {
     * @returns {Promise<Role[]>}
     */
     getRESTRoles() {
-        return this.shard.client.getRESTGuildRoles.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getRESTGuildRoles.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -297,7 +295,7 @@ class Guild extends Base {
     * @returns {Promise<Object>} A guild embed object
     */
     getEmbed() {
-        return this.shard.client.getGuildEmbed.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getGuildEmbed.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -305,7 +303,7 @@ class Guild extends Base {
     * @returns {Promise<Object[]>} Resolves with an array of voice region objects
     */
     getVoiceRegions() {
-        return this.shard.client.getVoiceRegions.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getVoiceRegions.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -320,7 +318,7 @@ class Guild extends Base {
     * @returns {Promise<Role>}
     */
     editRole(roleID, options) {
-        return this.shard.client.editRole.call(this.shard.client, this.id, roleID, options).catch(logger.error);
+        return this.shard.client.editRole.call(this.shard.client, this.id, roleID, options).catch(this._client.logger.error);
     }
 
     /**
@@ -329,7 +327,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     deleteRole(roleID) {
-        return this.shard.client.deleteRole.call(this.shard.client, this.id, roleID).catch(logger.error);
+        return this.shard.client.deleteRole.call(this.shard.client, this.id, roleID).catch(this._client.logger.error);
     }
 
     /**
@@ -340,7 +338,7 @@ class Guild extends Base {
     * @returns {Promise<Object>} Resolves with an Object containing `users` and `entries` keys
     */
     getAuditLogs(limit, before, actionType) {
-        return this.shard.client.getGuildAuditLogs.call(this.shard.client, this.id, limit, before, actionType).catch(logger.error);
+        return this.shard.client.getGuildAuditLogs.call(this.shard.client, this.id, limit, before, actionType).catch(this._client.logger.error);
     }
 
     /**
@@ -348,7 +346,7 @@ class Guild extends Base {
     * @returns {Promise<GuildIntegration[]>}
     */
     getIntegrations() {
-        return this.shard.client.getGuildIntegrations.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getGuildIntegrations.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -361,7 +359,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     editIntegration(integrationID, options) {
-        return this.shard.client.editGuildIntegration.call(this.shard.client, this.id, integrationID, options).catch(logger.error);
+        return this.shard.client.editGuildIntegration.call(this.shard.client, this.id, integrationID, options).catch(this._client.logger.error);
     }
 
     /**
@@ -370,7 +368,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     syncIntegration(integrationID) {
-        return this.shard.client.syncGuildIntegration.call(this.shard.client, this.id, integrationID).catch(logger.error);
+        return this.shard.client.syncGuildIntegration.call(this.shard.client, this.id, integrationID).catch(this._client.logger.error);
     }
 
     /**
@@ -379,7 +377,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     deleteIntegration(integrationID) {
-        return this.shard.client.deleteGuildIntegration.call(this.shard.client, this.id, integrationID).catch(logger.error);
+        return this.shard.client.deleteGuildIntegration.call(this.shard.client, this.id, integrationID).catch(this._client.logger.error);
     }
 
     /**
@@ -387,7 +385,7 @@ class Guild extends Base {
     * @returns {Promise<Invite[]>}
     */
     getInvites() {
-        return this.shard.client.getGuildInvites.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getGuildInvites.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -403,7 +401,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     editMember(memberID, options, reason) {
-        return this.shard.client.editGuildMember.call(this.shard.client, this.id, memberID, options, reason).catch(logger.error);
+        return this.shard.client.editGuildMember.call(this.shard.client, this.id, memberID, options, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -414,7 +412,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     addMemberRole(memberID, roleID, reason) {
-        return this.shard.client.addGuildMemberRole.call(this.shard.client, this.id, memberID, roleID, reason).catch(logger.error);
+        return this.shard.client.addGuildMemberRole.call(this.shard.client, this.id, memberID, roleID, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -425,7 +423,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     removeMemberRole(memberID, roleID, reason) {
-        return this.shard.client.removeGuildMemberRole.call(this.shard.client, this.id, memberID, roleID, reason).catch(logger.error);
+        return this.shard.client.removeGuildMemberRole.call(this.shard.client, this.id, memberID, roleID, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -435,7 +433,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     kickMember(userID, reason) {
-        return this.shard.client.kickGuildMember.call(this.shard.client, this.id, userID, reason).catch(logger.error);
+        return this.shard.client.kickGuildMember.call(this.shard.client, this.id, userID, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -446,7 +444,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     banMember(userID, deleteMessageDays, reason) {
-        return this.shard.client.banGuildMember.call(this.shard.client, this.id, userID, deleteMessageDays, reason).catch(logger.error);
+        return this.shard.client.banGuildMember.call(this.shard.client, this.id, userID, deleteMessageDays, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -456,7 +454,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     unbanMember(userID, reason) {
-        return this.shard.client.unbanGuildMember.call(this.shard.client, this.id, userID, reason).catch(logger.error);
+        return this.shard.client.unbanGuildMember.call(this.shard.client, this.id, userID, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -475,7 +473,7 @@ class Guild extends Base {
     * @returns {Promise<Guild>}
     */
     edit(options, reason) {
-        return this.shard.client.editGuild.call(this.shard.client, this.id, options, reason).catch(logger.error);
+        return this.shard.client.editGuild.call(this.shard.client, this.id, options, reason).catch(this._client.logger.error);
     }
 
     /**
@@ -483,7 +481,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     delete() {
-        return this.shard.client.deleteGuild.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.deleteGuild.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -491,7 +489,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     leave() {
-        return this.shard.client.leaveGuild.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.leaveGuild.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -499,7 +497,7 @@ class Guild extends Base {
     * @returns {Promise<User[]>}
     */
     getBans() {
-        return this.shard.client.getGuildBans.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getGuildBans.call(this.shard.client, this.id).catch(this._client.logger.error);
     }
 
     /**
@@ -508,7 +506,7 @@ class Guild extends Base {
     * @returns {Promise}
     */
     editNickname(nick) {
-        return this.shard.client.editNickname.call(this.shard.client, this.id, nick).catch(logger.error);
+        return this.shard.client.editNickname.call(this.shard.client, this.id, nick).catch(this._client.logger.error);
     }
 
     /**
@@ -516,7 +514,32 @@ class Guild extends Base {
     * @returns {Promise<Object[]>} Resolves with an array of webhook objects
     */
     getWebhooks() {
-        return this.shard.client.getGuildWebhooks.call(this.shard.client, this.id).catch(logger.error);
+        return this.shard.client.getGuildWebhooks.call(this.shard.client, this.id).catch(this._client.logger.error);
+    }
+
+    /**
+     * Get the current queue
+     * 
+     * @returns {Promise<Object>}
+     * 
+     * @memberof Guild
+     */
+
+    queue() {
+        return new Promise((resolve, reject) => this._client.db.getGuild(this.id).then(resolve).catch(reject));
+    }
+
+    /**
+     * Enqueues a song from url
+     * 
+     * @param {User?} user User to enqueue the song as
+     * @param {String} url Url to add
+     * 
+     * @memberof Guid
+     */
+
+    enqueue(user, url) {
+        // TODO: this
     }
 }
 

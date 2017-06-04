@@ -12,32 +12,32 @@ var WebSocket = typeof window !== "undefined" ? window.WebSocket : require("ws")
 var EventEmitter;
 try {
     EventEmitter = require("eventemitter3");
-} catch(err) {
+} catch (err) {
     EventEmitter = require("events").EventEmitter;
 }
 var NodeOpus;
 try {
     NodeOpus = require("node-opus");
-} catch(err) { // eslint-disable no-empty
+} catch (err) { // eslint-disable no-empty
 }
 var OpusScript;
 try {
     OpusScript = require("opusscript");
-} catch(err) { // eslint-disable no-empty
+} catch (err) { // eslint-disable no-empty
 }
 var Sodium = false;
 var NaCl = false;
 try {
     Sodium = require("sodium-native");
-} catch(err) {
+} catch (err) {
     try {
         NaCl = require("tweetnacl");
-    } catch(err) { // eslint-disable no-empty
+    } catch (err) { // eslint-disable no-empty
     }
 }
 try {
     WebSocket = require("uws");
-} catch(err) { // eslint-disable no-empty
+} catch (err) { // eslint-disable no-empty
 }
 
 const MAX_FRAME_SIZE = 1276 * 3;
@@ -50,10 +50,10 @@ var converterCommand = {
 
 converterCommand.pickCommand = function pickCommand() {
     var tenative;
-    for(var command of ["./ffmpeg", "./avconv", "ffmpeg", "avconv"]) {
+    for (var command of ["./ffmpeg", "./avconv", "ffmpeg", "avconv"]) {
         var res = ChildProcess.spawnSync(command, ["-encoders"]);
-        if(!res.error) {
-            if(!res.stdout.toString().includes("libopus")) {
+        if (!res.error) {
+            if (!res.stdout.toString().includes("libopus")) {
                 tenative = command;
                 continue;
             }
@@ -62,7 +62,7 @@ converterCommand.pickCommand = function pickCommand() {
             return;
         }
     }
-    if(tenative) {
+    if (tenative) {
         converterCommand.cmd = tenative;
         return;
     }
@@ -91,11 +91,11 @@ class VoiceConnection extends EventEmitter {
         super();
         options = options || {};
 
-        if(typeof window !== "undefined") {
+        if (typeof window !== "undefined") {
             throw new Error("Voice is not supported in browsers at this time");
         }
 
-        if(!Sodium && !NaCl) {
+        if (!Sodium && !NaCl) {
             throw new Error("Error loading tweetnacl/libsodium, voice not available");
         }
 
@@ -110,15 +110,15 @@ class VoiceConnection extends EventEmitter {
         this.shard = options.shard || {};
         this.opusOnly = !!options.opusOnly;
 
-        if(!this.opusOnly && !this.shared) {
-            if(NodeOpus) {
+        if (!this.opusOnly && !this.shared) {
+            if (NodeOpus) {
                 this.opus = new NodeOpus.OpusEncoder(this.samplingRate, this.channels);
-            } else if(OpusScript) {
+            } else if (OpusScript) {
                 this.emit("debug", "node-opus not found, falling back to opusscript");
                 this.opus = new OpusScript(this.samplingRate, this.channels, OpusScript.Application.AUDIO);
-                if(this.opus.setBitrate) {
+                if (this.opus.setBitrate) {
                     this.opus.setBitrate(this.bitrate);
-                } else if(this.opus.encoderCTL) {
+                } else if (this.opus.encoderCTL) {
                     this.opus.encoderCTL(4002, this.bitrate);
                 }
             } else {
@@ -141,8 +141,8 @@ class VoiceConnection extends EventEmitter {
         this.packetBuffer[0] = 0x80;
         this.packetBuffer[1] = 0x78;
 
-        if(!options.shared) {
-            if(!converterCommand.cmd) {
+        if (!options.shared) {
+            if (!converterCommand.cmd) {
                 converterCommand.pickCommand();
             }
 
@@ -154,7 +154,7 @@ class VoiceConnection extends EventEmitter {
             * @prop {Error} err The error object
             */
             this.piper.on("error", (e) => this.emit("error", e));
-            if(!converterCommand.libopus) {
+            if (!converterCommand.libopus) {
                 this.piper.libopus = false;
             }
         }
@@ -163,31 +163,41 @@ class VoiceConnection extends EventEmitter {
     }
 
     _destroy() {
-        if(this.opus && this.opus.delete) {
+        if (this.opus && this.opus.delete) {
             this.opus.delete();
             delete this.opus;
         }
         delete this.piper;
-        if(this.receiveStreamOpus) {
+        if (this.receiveStreamOpus) {
             this.receiveStreamOpus.destroy();
         }
-        if(this.receiveStreamPCM) {
+        if (this.receiveStreamPCM) {
             this.receiveStreamPCM.destroy();
         }
     }
 
     connect(data) {
-        if(this.ws && this.ws.readyState !== WebSocket.CLOSED) {
+        if (this.connecting) {
+            return;
+        }
+        this.connecting = true;
+        if (this.ws && this.ws.readyState !== WebSocket.CLOSED) {
             this.disconnect(undefined, true);
             return setTimeout(() => this.connect(data), 500);
         }
-        if(!data.endpoint || !data.token || !data.session_id || !data.user_id) {
-            this.disconnect(new Error("Malformed voice server update: " + JSON.stringify(data)), false);
+        if (!data.endpoint || !data.token || !data.session_id || !data.user_id) {
+            this.disconnect(new Error("Malformed voice server update: " + JSON.stringify(data)));
             return;
         }
         this.channelID = data.channel_id;
         this.endpoint = data.endpoint.split(":")[0];
         this.ws = new WebSocket("wss://" + this.endpoint);
+        var connectionTimeout = setTimeout(() => {
+            if (this.connecting) {
+                this.disconnect(new Error("Voice connection timeout"));
+            }
+            connectionTimeout = null;
+        }, this.shard.client ? this.shard.client.options.connectionTimeout : 30000);
         /**
         * Fired when stuff happens and gives more info
         * @event debug
@@ -202,6 +212,10 @@ class VoiceConnection extends EventEmitter {
             * @memberof VoiceConnection
             */
             this.emit("connect");
+            if (connectionTimeout) {
+                clearTimeout(connectionTimeout);
+                connectionTimeout = null;
+            }
             this.sendWS(OPCodes.IDENTIFY, {
                 server_id: this.id === "call" ? data.channel_id : this.id,
                 user_id: data.user_id,
@@ -211,13 +225,13 @@ class VoiceConnection extends EventEmitter {
         });
         this.ws.on("message", (m) => {
             var packet = JSON.parse(m);
-            if(this.listeners("debug").length > 0) {
+            if (this.listeners("debug").length > 0) {
                 this.emit("debug", "Rec: " + JSON.stringify(packet));
             }
-            switch(packet.op) {
+            switch (packet.op) {
                 case OPCodes.HELLO: {
-                    if(packet.d.heartbeat_interval > 0) {
-                        if(this.heartbeatInterval) {
+                    if (packet.d.heartbeat_interval > 0) {
+                        if (this.heartbeatInterval) {
                             clearInterval(this.heartbeatInterval);
                         }
                         this.heartbeatInterval = setInterval(() => {
@@ -228,14 +242,14 @@ class VoiceConnection extends EventEmitter {
 
                     this.ssrc = packet.d.ssrc;
                     this.packetBuffer.writeUIntBE(this.ssrc, 8, 4);
-                    if(!~packet.d.modes.indexOf(ENCRYPTION_MODE)) {
+                    if (!~packet.d.modes.indexOf(ENCRYPTION_MODE)) {
                         throw new Error("No supported voice mode found");
                     }
                     this.modes = packet.d.modes;
                     this.udpPort = packet.d.port;
 
                     DNS.lookup(this.endpoint, (err, address) => { // RIP DNS
-                        if(err) {
+                        if (err) {
                             this.emit("error", err);
                             return;
                         }
@@ -249,7 +263,7 @@ class VoiceConnection extends EventEmitter {
                             this.emit("debug", packet.toString());
                             var localIP = "";
                             var i = 3;
-                            while(++i < packet.indexOf(0, i)) {
+                            while (++i < packet.indexOf(0, i)) {
                                 localIP += String.fromCharCode(packet[i]);
                             }
                             var localPort = parseInt(packet.readUIntLE(packet.length - 2, 2).toString(10));
@@ -265,18 +279,18 @@ class VoiceConnection extends EventEmitter {
                         });
                         this.udpSocket.on("error", (err, msg) => {
                             this.emit("error", err);
-                            if(msg) {
+                            if (msg) {
                                 this.emit("debug", "Voice UDP error: " + msg);
                             }
-                            if(this.ready) {
+                            if (this.ready || this.connecting) {
                                 this.disconnect(err);
                             }
                         });
                         this.udpSocket.on("close", (err) => {
-                            if(err) {
+                            if (err) {
                                 this.emit("warn", "Voice UDP close: " + err);
                             }
-                            if(this.ready) {
+                            if (this.ready || this.connecting) {
                                 this.disconnect(err);
                             }
                         });
@@ -293,6 +307,7 @@ class VoiceConnection extends EventEmitter {
                     for (var i = 0; i < packet.d.secret_key.length; ++i) {
                         this.secret[i] = packet.d.secret_key[i];
                     }
+                    this.connecting = false;
                     this.ready = true;
                     /**
                     * Fired when the voice connection turns ready
@@ -341,52 +356,53 @@ class VoiceConnection extends EventEmitter {
         });
         this.ws.on("close", (code, err) => {
             this.emit("warn", `Voice WS close ${code}` + (err && " | " + err));
-            if(this.ready) {
-                this.disconnect(err);
+            if (this.connecting || this.ready) {
+                if (code !== 1000) {
+                    this.disconnect(err, true);
+                    setTimeout(() => this.connect(data), 250);
+                } else {
+                    this.disconnect(err);
+                }
             }
         });
-        setTimeout(() => {
-            if(this.connecting) {
-                this.disconnect(new Error("Voice connection timeout"));
-            }
-        }, this.shard.client ? this.shard.client.options.connectionTimeout : 30000);
     }
 
     disconnect(error, reconnecting) {
+        this.connecting = false;
         this.ready = false;
         this.speaking = false;
         this.timestamp = 0;
         this.sequence = 0;
 
-        if(reconnecting) {
+        if (reconnecting) {
             this.pause();
         } else {
             this.stopPlaying();
         }
-        if(this.heartbeatInterval) {
+        if (this.heartbeatInterval) {
             clearInterval(this.heartbeatInterval);
             this.heartbeatInterval = null;
         }
-        if(this.udpSocket) {
+        if (this.udpSocket) {
             try {
                 this.udpSocket.close();
-            } catch(err) {
-                if(err.message !== "Not running") {
+            } catch (err) {
+                if (err.message !== "Not running") {
                     this.emit("error", err);
                 }
             }
             this.udpSocket = null;
         }
-        if(this.ws) {
+        if (this.ws) {
             try {
                 this.ws.close();
-            } catch(err) {
+            } catch (err) {
                 this.emit("error", err);
             }
             this.ws = null;
         }
-        if(reconnecting) {
-            if(error) {
+        if (reconnecting) {
+            if (error) {
                 this.emit("error", error);
             }
         } else {
@@ -420,10 +436,10 @@ class VoiceConnection extends EventEmitter {
     * @arg {Number} [options.sampleRate=48000] The resource audio sampling rate
     */
     play(source, options) {
-        if(this.shared) {
+        if (this.shared) {
             throw new Error("Cannot play stream on shared voice connection");
         }
-        if(!this.ready) {
+        if (!this.ready) {
             throw new Error("Not ready yet");
         }
 
@@ -439,7 +455,7 @@ class VoiceConnection extends EventEmitter {
         options.frameSize = options.frameSize || options.samplingRate * options.frameDuration / 1000;
         options.pcmSize = options.pcmSize || options.frameSize * 2 * this.channels;
 
-        if(!this.piper.encode(source, options)) {
+        if (!this.piper.encode(source, options)) {
             this.emit("error", new Error("Unable to encode source"));
             return;
         }
@@ -468,34 +484,34 @@ class VoiceConnection extends EventEmitter {
     }
 
     _send() {
-        if(!this.piper.encoding && this.piper.dataPacketCount === 0) {
+        if (!this.piper.encoding && this.piper.dataPacketCount === 0) {
             return this.stopPlaying();
         }
 
         this.timestamp += this.current.options.frameSize;
-        if(this.timestamp >= 4294967295) {
+        if (this.timestamp >= 4294967295) {
             this.timestamp -= 4294967295;
         }
 
-        if(++this.sequence >= 65536) {
+        if (++this.sequence >= 65536) {
             this.sequence -= 65536;
         }
 
-        if((this.current.buffer = this.piper.getDataPacket())) {
-            if(this.current.startTime === 0) {
+        if ((this.current.buffer = this.piper.getDataPacket())) {
+            if (this.current.startTime === 0) {
                 this.current.startTime = Date.now();
             }
-            if(this.current.bufferingTicks > 0) {
+            if (this.current.bufferingTicks > 0) {
                 this.current.bufferingTicks = 0;
                 this.setSpeaking(true);
             }
-        } else if(this.current.options.voiceDataTimeout === -1 || this.current.bufferingTicks < this.current.options.voiceDataTimeout / this.current.options.frameDuration) { // wait for data
-            if(++this.current.bufferingTicks <= 0) {
+        } else if (this.current.options.voiceDataTimeout === -1 || this.current.bufferingTicks < this.current.options.voiceDataTimeout / this.current.options.frameDuration) { // wait for data
+            if (++this.current.bufferingTicks <= 0) {
                 this.setSpeaking(false);
             }
             this.current.pausedTime += 4 * this.current.options.frameDuration;
             this.timestamp += 3 * this.current.options.frameSize;
-            if(this.timestamp >= 4294967295) {
+            if (this.timestamp >= 4294967295) {
                 this.timestamp -= 4294967295;
             }
             this.current.timeout = setTimeout(this._send, 4 * this.current.options.frameDuration);
@@ -513,28 +529,28 @@ class VoiceConnection extends EventEmitter {
     * Stop the bot from sending audio
     */
     stopPlaying() {
-        if(this.ended) {
+        if (this.ended) {
             return;
         }
         this.ended = true;
-        if(this.current && this.current.timeout) {
+        if (this.current && this.current.timeout) {
             clearTimeout(this.current.timeout);
             this.current.timeout = null;
         }
         this.current = null;
-        if(this.piper) {
+        if (this.piper) {
             this.piper.stop();
             this.piper.resetPackets();
         }
 
-        if(this.secret) {
-            for(var i = 0; i < 5; i++) {
+        if (this.secret) {
+            for (var i = 0; i < 5; i++) {
                 this.timestamp += this.frameSize;
-                if(this.timestamp >= 4294967295) {
+                if (this.timestamp >= 4294967295) {
                     this.timestamp -= 4294967295;
                 }
 
-                if(++this.sequence >= 65536) {
+                if (++this.sequence >= 65536) {
                     this.sequence -= 65536;
                 }
 
@@ -558,7 +574,7 @@ class VoiceConnection extends EventEmitter {
         this.packetBuffer.copy(this.nonce, 0, 0, 12);
 
         var len = _buffer.length;
-        if(!NaCl) {
+        if (!NaCl) {
             Sodium.crypto_secretbox_easy(this.packetBuffer.slice(12), _buffer, this.nonce, this.secret);
             len += Sodium.crypto_secretbox_MACBYTES;
         } else {
@@ -576,8 +592,8 @@ class VoiceConnection extends EventEmitter {
     _sendPacket(packet) {
         try {
             this.udpSocket.send(packet, 0, packet.length, this.udpPort, this.udpIP);
-        } catch(e) {
-            if(this.udpSocket) {
+        } catch (e) {
+            if (this.udpSocket) {
                 this.emit("error", e);
             }
         }
@@ -589,17 +605,17 @@ class VoiceConnection extends EventEmitter {
     * @returns {VoiceDataStream}
     */
     receive(type) {
-        if(type === "pcm") {
-            if(!this.receiveStreamPCM) {
+        if (type === "pcm") {
+            if (!this.receiveStreamPCM) {
                 this.receiveStreamPCM = new VoiceDataStream(type);
-                if(!this.receiveStreamOpus) {
+                if (!this.receiveStreamOpus) {
                     this.registerReceiveEventHandler();
                 }
             }
-        } else if(type === "opus") {
-            if(!this.receiveStreamOpus) {
+        } else if (type === "opus") {
+            if (!this.receiveStreamOpus) {
                 this.receiveStreamOpus = new VoiceDataStream(type);
-                if(!this.receiveStreamPCM) {
+                if (!this.receiveStreamPCM) {
                     this.registerReceiveEventHandler();
                 }
             }
@@ -615,11 +631,11 @@ class VoiceConnection extends EventEmitter {
             nonce.fill(0);
             msg.copy(nonce, 0, 0, 12);
             var data;
-            if(!NaCl) {
+            if (!NaCl) {
                 data = new Buffer(msg.length - 12 - Sodium.crypto_secretbox_MACBYTES);
                 Sodium.crypto_secretbox_open_easy(data, msg.slice(12), this.nonce, this.secret);
             } else {
-                if(!(data = NaCl.secretbox.open(msg.slice(12), nonce, this.secret))) {
+                if (!(data = NaCl.secretbox.open(msg.slice(12), nonce, this.secret))) {
                     /**
                     * Fired to warn of something weird but non-breaking happening
                     * @event warn
@@ -630,27 +646,27 @@ class VoiceConnection extends EventEmitter {
                     return;
                 }
             }
-            if(data[0] === 0xBE && data[1] === 0xDE) { // RFC5285 Section 4.2: One-Byte Header
+            if (data[0] === 0xBE && data[1] === 0xDE) { // RFC5285 Section 4.2: One-Byte Header
                 var rtpHeaderExtensionLength = data[2] << 8 | data[3];
                 var index = 4;
                 var byte;
-                for(let i = 0; i < rtpHeaderExtensionLength; ++i) {
+                for (let i = 0; i < rtpHeaderExtensionLength; ++i) {
                     byte = data[index];
                     ++index;
-                    if(byte == 0) {
+                    if (byte == 0) {
                         continue;
                     }
                     // let id = (byte >> 4) & 0b1111;
                     let l = (byte & 0b1111) + 1;
                     index += l;
                 }
-                while(data[index] == 0) {
+                while (data[index] == 0) {
                     ++index;
                 }
                 data = data.slice(index);
             }
             // Have not received a RFC5285 Section 4.3: Two-Byte Header yet, so that is unimplemented for now
-            if(this.receiveStreamOpus) {
+            if (this.receiveStreamOpus) {
                 /**
                 * Fired when a voice data packet is received
                 * @event VoiceDataStream#data
@@ -661,9 +677,9 @@ class VoiceConnection extends EventEmitter {
                 */
                 this.receiveStreamOpus.emit("data", data, this.ssrcUserMap[nonce.readUIntBE(8, 4)], nonce.readUIntBE(4, 4), nonce.readUIntBE(2, 2));
             }
-            if(this.receiveStreamPCM) {
+            if (this.receiveStreamPCM) {
                 data = this.opus.decode(data, this.frameSize);
-                if(!data) {
+                if (!data) {
                     return this.emit("warn", "Failed to decode received packet");
                 }
                 this.receiveStreamPCM.emit("data", data, this.ssrcUserMap[nonce.readUIntBE(8, 4)], nonce.readUIntBE(4, 4), nonce.readUIntBE(2, 2));
@@ -672,7 +688,7 @@ class VoiceConnection extends EventEmitter {
     }
 
     setSpeaking(value) {
-        if((value = !!value) != this.speaking) {
+        if ((value = !!value) != this.speaking) {
             this.speaking = value;
             this.sendWS(OPCodes.SPEAKING, {
                 speaking: value,
@@ -686,12 +702,12 @@ class VoiceConnection extends EventEmitter {
     * @arg {String} channelID The ID of the voice channel
     */
     switchChannel(channelID, reactive) {
-        if(this.channelID === channelID) {
+        if (this.channelID === channelID) {
             return;
         }
 
         this.channelID = channelID;
-        if(!reactive) {
+        if (!reactive) {
             this.updateVoiceState();
         }
     }
@@ -702,7 +718,7 @@ class VoiceConnection extends EventEmitter {
     * @arg {Boolean} selfDeaf Whether the bot deafened itself or not (audio receiving is unaffected)
     */
     updateVoiceState(selfMute, selfDeaf) {
-        if(this.shard.sendWS) {
+        if (this.shard.sendWS) {
             this.shard.sendWS(Constants.GatewayOPCodes.VOICE_STATE_UPDATE, {
                 guild_id: this.id === "call" ? null : this.id,
                 channel_id: this.channelID || null,
@@ -713,8 +729,8 @@ class VoiceConnection extends EventEmitter {
     }
 
     sendWS(op, data) {
-        if(this.ws && this.ws.readyState === WebSocket.OPEN) {
-            data = JSON.stringify({op: op, d: data});
+        if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+            data = JSON.stringify({ op: op, d: data });
             this.ws.send(data);
             this.emit("debug", data);
         }
@@ -738,11 +754,11 @@ class VoiceConnection extends EventEmitter {
     pause() {
         this.paused = true;
         this.setSpeaking(false);
-        if(this.current) {
-            if(!this.current.pausedTimestamp) {
+        if (this.current) {
+            if (!this.current.pausedTimestamp) {
                 this.current.pausedTimestamp = Date.now();
             }
-            if(this.current.timeout) {
+            if (this.current.timeout) {
                 clearTimeout(this.current.timeout);
                 this.current.timeout = null;
             }
@@ -755,8 +771,8 @@ class VoiceConnection extends EventEmitter {
     resume() {
         this.paused = false;
         this.setSpeaking(true);
-        if(this.current) {
-            if(this.current.pausedTimestamp) {
+        if (this.current) {
+            if (this.current.pausedTimestamp) {
                 this.current.pausedTime += Date.now() - this.current.pausedTimestamp;
                 this.current.pausedTimestamp = 0;
             }

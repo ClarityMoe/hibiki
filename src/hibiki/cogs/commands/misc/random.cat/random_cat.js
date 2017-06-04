@@ -5,7 +5,6 @@
  * 
  */
 
-const {Command} = require('../../../../../');
 const got = require('got');
 
 /** 
@@ -15,13 +14,18 @@ const got = require('got');
 class RandomCat extends Command {
     constructor(client) {
         super(client);
+        this.aliases = [
+            "cat",
+            "nya",
+            "nyaa"
+        ]
     }
 
     run(ctx) {
         return new Promise((resolve, reject) => {
             got('http://random.cat/meow').then(res => {
                 let kitty= JSON.parse(res.body);
-                return ctx.createMessage(kitty);
+                return ctx.createMessage(kitty.file);
             }).catch(reject);
         });
     }

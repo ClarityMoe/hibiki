@@ -18,6 +18,9 @@ class Command extends EventEmitter {
         this.client = client;
         this.bot = client;
         this.db = client.db;
+        this.lm = client.lm;
+        this.ch = client.ch;
+        this.cm = client.cm;
         this.logger = client.logger;
 
         this.cooldown = 5000;
@@ -26,6 +29,8 @@ class Command extends EventEmitter {
         this.flags = {};
         this.arguments = {};
         this.buttons = {};
+        this.permissions = [];
+        this.botPermissions = [];
 
     }
 }

@@ -5,8 +5,6 @@ const Constants = require("../Constants");
 const Endpoints = require("../rest/Endpoints");
 const PrivateChannel = require("./PrivateChannel");
 const User = require("./User");
-const Logger = require("./Logger.js");
-const logger = new Logger({ debug: false });
 
 /**
 * Represents a group channel. See PrivateChannel docs for additional properties.
@@ -44,7 +42,7 @@ class GroupChannel extends PrivateChannel { // (╯°□°）╯︵ ┻━┻
     * @returns {Promise<GroupChannel>}
     */
     edit(options) {
-        return this._client.editChannel.call(this._client, this.id, options).catch(logger.error);
+        return this._client.editChannel.call(this._client, this.id, options).catch(this._client.logger.error);
     }
 
     /**
@@ -53,7 +51,7 @@ class GroupChannel extends PrivateChannel { // (╯°□°）╯︵ ┻━┻
     * @returns {Promise}
     */
     addRecipient(userID) {
-        return this._client.addGroupRecipient.call(this._client, this.id, userID).catch(logger.error);
+        return this._client.addGroupRecipient.call(this._client, this.id, userID).catch(this._client.logger.error);
     }
 
     /**
@@ -62,7 +60,7 @@ class GroupChannel extends PrivateChannel { // (╯°□°）╯︵ ┻━┻
     * @returns {Promise}
     */
     removeRecipient(userID) {
-        return this._client.removeGroupRecipient.call(this._client, this.id, userID).catch(logger.error);
+        return this._client.removeGroupRecipient.call(this._client, this.id, userID).catch(this._client.logger.error);
     }
 
     get iconURL() {

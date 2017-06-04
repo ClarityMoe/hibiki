@@ -4,12 +4,8 @@ const moment = require('moment');
 
 class Logger {
     constructor(opt) {
-        this.opt = opt;
-        this.s = {
-            warn: clk.black.bgYellow(' WARN '),
-            error: clk.bgRed(' ERROR '),
-            info: clk.bgMagenta(' INFO ')
-        }
+        this.opt = opt || {};
+        this.debug = this.opt.debug || false
     }
 
     get time() {
@@ -17,23 +13,34 @@ class Logger {
     }
 
     info() {
-        return console.info(this.time, this.s.info, Array.from(arguments).join(' '));
+        const time = clk.cyan.bold(`[${moment().format('l')} @ ${moment().format('HH:mm:ss')}]`);
+        return console.info(time, clk.bgMagenta(' INFO '), Array.from(arguments).join(' '));
     }
 
     warn() {
-        return console.warn(this.time, this.s.warn, Array.from(arguments).join(' '));
+        const time = clk.cyan.bold(`[${moment().format('l')} @ ${moment().format('HH:mm:ss')}]`);
+        return console.warn(time, clk.black.bgYellow(' WARN '), Array.from(arguments).join(' '));
     }
 
     error() {
-        return console.error(this.time, this.s.error, Array.from(arguments).join(' '));
+        const time = clk.cyan.bold(`[${moment().format('l')} @ ${moment().format('HH:mm:ss')}]`);
+        return console.error(time, clk.bgRed(' ERROR '), Array.from(arguments).join(' '));
     }
 
     log() {
-        return console.log(this.time, Array.from(arguments).join(' '));
+        const time = clk.cyan.bold(`[${moment().format('l')} @ ${moment().format('HH:mm:ss')}]`);
+        return console.log(time, Array.from(arguments).join(' '));
+    }
+
+    debug() {
+        if (!this.debug) return;
+        const time = clk.cyan.bold(`[${moment().format('l')} @ ${moment().format('HH:mm:ss')}]`);
+        return console.log(time, clk.black.bgWhite(' DEBUG '), Array.from(arguments).join(' '));
     }
 
     message(msg) {
-        return console.log(this.time, clk.green(msg.channel.guild.name), clk.blue(msg.author.username), clk.cyan(msg.cleanContent), Array.from(arguments).slice(1).join(' '));
+        const time = clk.cyan.bold(`[${moment().format('l')} @ ${moment().format('HH:mm:ss')}]`);
+        return console.log(time, clk.black.bgCyan(' CMD '), clk.green(msg.channel.guild.name), clk.blue(msg.author.username), clk.cyan(msg.cleanContent), Array.from(arguments).slice(1).join(' '));
     }
 
     custom(opt) {
