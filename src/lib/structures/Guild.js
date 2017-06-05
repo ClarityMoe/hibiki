@@ -7,7 +7,6 @@ const Collection = require("../util/Collection");
 const GuildChannel = require("./GuildChannel");
 const Member = require("./Member");
 const Role = require("./Role");
-const ytdl = require('bluebird').promisifyAll(require('youtube-dl'));
 
 /**
 * Represents a guild

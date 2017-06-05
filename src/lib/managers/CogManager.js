@@ -398,7 +398,7 @@ class CogManager extends Manager {
                     cog.path = file.replace('package.json', '');
                     cog.main = pkg.main || null;
                     cog.scripts = pkg.scripts
-                    cog.category = pkg.categories && pkg.categories[0] || pkg.category || 'unknown';
+                    cog.category = pkg.categories && pkg.categories[0] || pkg.category || 'Other';
                     cog.version = pkg.version || '0.0.1';
                     cog.author = pkg.author && pkg.author.name || pkg.author || 'unknown';
                     cog.contributors = pkg.contributors || [];

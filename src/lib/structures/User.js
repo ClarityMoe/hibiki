@@ -125,6 +125,21 @@ class User extends Base {
     deleteNote() {
         return this._client.deleteUserNote.call(this._client, this.id);
     }
+
+    /**
+     * Sends a message to the user.
+     * 
+     * @param {String|Object} content 
+     * @param {Object} file 
+     * @returns {Promise<Message>}
+     * 
+     * @memberof User
+     */
+
+    createMessage(content, file) {
+        return new Promise((resolve, reject) => this.getDMChannel().then(c => c.createMessage(content, file).then(resolve).catch(reject)).catch(reject));
+    }
+
 }
 
 module.exports = User;

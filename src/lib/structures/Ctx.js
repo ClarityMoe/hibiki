@@ -5,6 +5,7 @@ class Ctx extends Message {
         super(msg.data, client);
         this.client = client;
         this.options = options;
+        this.cog = options.cog;
         this.user = options.user;
         this.guild = options.guild;
         this.prefix = options.prefix;
@@ -17,8 +18,8 @@ class Ctx extends Message {
 
     createMessage(content, options, mOptions) {
         mOptions = mOptions || {};
-        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(content, options).catch(e => this.createError(e)) : Promise.reject(new Error("Channel not found"));
-        else return this.channel.createMessage(content, options).catch(e => this.createError(e));
+        if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(content, options).catch(e => this.createError(e)).then(m => this.client.ch.emit('commandMessage', m, this)) : Promise.reject(new Error("Channel not found"));
+        else return this.channel.createMessage(content, options).catch(e => this.createError(e)).then(m => this.client.ch.emit('commandMessage', m, this));
     }
 
     createCode(lang, content, options, mOptions) {

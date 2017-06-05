@@ -22,6 +22,42 @@ class CommandHandler extends Handler {
     constructor(client, opt) {
         super(client, opt);
         this.cooldowns = {};
+
+        /** @todo buttons */
+        /*this.on('commandMessage', (msg, ctx) => {
+            console.log(msg, ctx)
+            if (Object.keys(ctx.cog.command.buttons).length > 0) {
+                for (const name of Object.keys(ctx.cog.command.buttons)) {
+                    const button = ctx.cog.command.buttons[name];
+
+                    const ob = (m, e, u) => {
+                        if (m.id !== msg.id || u !== ctx.author.id || (e.id && `${e.name}:${e.id}` !== button.emoji || e.name !== button.emoji)) return;
+                        button.action(m);
+                        if (!button.toggle && m.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+                            m.removeReaction(e.id && `${e.name}:${e.id}` || e.name, u);
+                        }
+                        if (button.cancel || name === 'cancel') {
+                            this.client.removeListener('messageReactionAdd', ob);
+                            clearTimeout(to2);
+                        }
+                    }
+
+                    const obr = (m, e, u) => {
+                        if (m.id !== msg.id || u !== ctx.author.id || (e.id && `${e.name}:${e.id}` !== button.emoji || e.name !== button.emoji)) return;
+                        button.remove(m);
+                    }
+
+                    const to2 = setTimeout(() => {
+                        this.client.removeListener('messageReactionAdd', ob);
+                        if (button.toggle) this.client.removeListener('messageReactionRemove', obr);
+                    }, 10000);
+
+                    this.client.on('messageReactionAdd', ob);
+                    if (button.toggle) this.client.on('messageReactionRemove', obr);
+
+                }
+            }
+        });*/
     }
 
     /**
@@ -150,6 +186,55 @@ class CommandHandler extends Handler {
         }
 
         this.logger.message(msg);
+
+        /* Prob not gonna use this anymore */
+        /*if (Object.keys(cmd.buttons).length > 0) {
+
+            const om = (m) => {
+                if (m.author.id !== this.client.user.id || m.channel.id !== msg.channel.id) return;
+                next(m)
+                clearTimeout(to);
+                this.client.removeListener('messageCreate', om);
+            }
+
+            this.client.on('messageCreate', om);
+
+            const to = setTimeout(() => {
+                this.client.removeListener('messageCreate', om);
+            }, 5000)
+            const next = (ms) => {
+                for (const name of Object.keys(cmd.buttons)) {
+                    const button = cmd.buttons[name];
+                    if (ms) {
+                        const ob = (m, e, u) => {
+                            if (m.id !== ms.id || u !== msg.author.id || (e.id && `${e.name}:${e.id}` !== button.emoji || e.name !== button.emoji)) return;
+                            button.action(m);
+                            if (!button.toggle && m.channel.permissionsOf(this.client.user.id).has('manageMessages')) {
+                                m.removeReaction(e.id && `${e.name}:${e.id}` || e.name, u);
+                            }
+                            if (button.cancel || name === 'cancel') {
+                                this.client.removeListener('messageReactionAdd', ob);
+                                clearTimeout(to2);
+                            }
+                        }
+
+                        const obr = (m, e, u) => {
+                            if (m.id !== ms.id || u !== msg.author.id || (e.id && `${e.name}:${e.id}` !== button.emoji || e.name !== button.emoji)) return;
+                            button.remove(m);
+                        }
+
+                        const to2 = setTimeout(() => {
+                            this.client.removeListener('messageReactionAdd', ob);
+                            if (button.toggle) this.client.removeListener('messageReactionRemove', obr);
+                        }, 10000);
+
+                        this.client.on('messageReactionAdd', ob);
+                        if (button.toggle) this.client.on('messageReactionRemove', obr);
+
+                    }
+                }
+            }
+        }*/
 
         if (!cmd.ignoreFlags) if (argv.h || argv.help) return this.help(msg, prefix, cog);
 
