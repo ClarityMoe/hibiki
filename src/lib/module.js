@@ -54,5 +54,7 @@ Hibiki.CommandHandler = require('./handlers/CommandHandler.js');
 Hibiki.Handler = require('./handlers/Handler.js');
 Hibiki.DatabaseConnection = require('./structures/DatabaseConnection.js');
 Hibiki.YoutubeDL = require('./util/YoutubeDL.js');
+Hibiki.PlayerManager = require('./managers/PlayerManager.js');
+Hibiki.MusicPlayer = require('./structures/MusicPlayer.js');
 
 module.exports = Hibiki;

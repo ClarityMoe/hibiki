@@ -28,7 +28,7 @@ qt.on('localeLoaded', (locale) => {
     logger.custom({ color: 'black', bgColor: 'green', name: 'SUCCESS' }, 'Locale loaded:', locale);
 });
 
-qt.on('error', e => logger.error(e));
-qt.on('warn', w => logger.warn(w));
+qt.on('error', e => logger.error(e.stack));
+qt.on('warn', logger.warn);
 
 qt.connect();

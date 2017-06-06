@@ -66,8 +66,8 @@ class DatabaseConnection extends EventEmitter {
     }
 
     editGuild(id, opt) {
-        this.r.table('Guild').update(opt).run().error(this.client.logger.error);
-        return this.r.table('Guild').get(id).run().error(this.client.logger.error);
+        this.r.table('Guilds').update(opt).run().error(this.client.logger.error);
+        return this.r.table('Guilds').get(id).run().error(this.client.logger.error);
     }
 
     /*logMessage(msg, event, opt) {

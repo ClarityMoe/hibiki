@@ -1,9 +1,5 @@
 {
     "token": "",
-    "beta": false,
-    "admins": [
-        "your_id"
-    ],
     "eris": {
         "_note": "See https://abal.moe/Eris/docs/Client",
         "autoreconnect": true,
@@ -34,30 +30,27 @@
         "defaultImageSize": 2048
     },
     "hibiki": {
-        "commandDir": "./commands",
-        "languageDir": "./languages",
+        "beta": true,
+        "patreon": false,
+        "admins": [
+            ""
+        ],
+        "prefixes": [
+            "nya "
+        ],
+        "_note": "These depend on your cwd (current working directory), ex: `cd ~/Documents/Hibiki && node src/hibiki/index.js => cwd = ~/Documents/Hibiki/`",
+        "cogDir": "src/hibiki/cogs",
+        "localeDir": "src/hibiki/locales",
+        "api": {
+            "google": ""
+        },
         "db": {
+            "_note": "See https://www.npmjs.com/package/rethinkdbdash#importing-the-driver",
             "rethinkdb": {
-                "_note": "See https://www.npmjs.com/package/rethinkdbdash#importing-the-driver",
                 "host": "localhost",
-                "port": 29015,
-                "password": null,
-                "db": "hibiki",
-                "_note2": "You probably won't have to change much under this note.",
-                "ssl": false,
-                "user": "admin",
-                "discovery": false,
-                "pool": false,
-                "buffer": 50,
-                "max": 1000,
-                "timeout": 20,
-                "pingInterval": -1,
-                "timeoutError": 1000,
-                "timeoutGb": 3600000,
-                "maxExponent": 6,
-                "silent": true,
-                "servers": {},
-                "optionalRun": false
+                "port": 28015,
+                "password": "",
+                "db": "hibiki"
             },
             "tables": [
                 "Users",

@@ -10,6 +10,7 @@ const Cache = require('./structures/Cache.js');
 const CommandHandler = require('./handlers/CommandHandler.js');
 const CogManager = require('./managers/CogManager.js');
 const YoutubeDL = require('./util/YoutubeDL.js');
+const PlayerManager = require('./managers/PlayerManager.js');
 
 const GuildChannel = require("./structures/GuildChannel");
 const Collection = require("./util/Collection");
@@ -43,10 +44,11 @@ try {
     Erlpack = require("erlpack");
 } catch (err) { // eslint-disable no-empty
 }
+
+// `got` doesn't like bluebird promises :<
 /*try {
     global.Promise = require('bluebird');
 } catch(e) {
-    
 }*/
 
 /**
@@ -152,10 +154,12 @@ class Hibiki extends EventEmitter {
         this.logger = new Logger(this.config.logger);
         this.cache = new Cache();
         this.lm = new LocaleManager(this, this.config);
-        //this.cm = new CommandManager(this, this.config);
         this.cm = new CogManager(this, this.config);
         this.ch = new CommandHandler(this, this.config);
-        this.ytdl = new YoutubeDL();
+        this.ytdl = new YoutubeDL({
+            googleKey: opt.api.google
+        });
+        this.players = new PlayerManager(this);
 
         this.Constants = Constants;
 

@@ -1,0 +1,16 @@
+{
+    "name": "play",
+    "description": "Have the bot play music",
+    "version": "0.0.1",
+    "category": "music",
+    "main": "play.js",
+    "contributors": [
+        "noud02"
+    ],
+    "author": {
+        "name": "noud02"
+    },
+    "dependencies": {
+        
+    }
+}

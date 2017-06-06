@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "main": "reload.js",
     "description": "Reload cogs",
+    "category": "dev",
     "author": {
         "name": "noud02"
     },

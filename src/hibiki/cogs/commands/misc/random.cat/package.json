@@ -1,8 +1,10 @@
 {
     "name": "random.cat",
+    "displayName": "cat",
     "description": "spews out a random picture of a cat",
     "version": "0.0.1-clara1",
     "main": "random_cat.js",
+    "category": "misc",
     "author": {
         "name": "sr229"
     },

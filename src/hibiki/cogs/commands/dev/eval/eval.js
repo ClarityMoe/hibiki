@@ -45,7 +45,7 @@ class Eval extends Command {
                     console.log(ev);
                 } else ctx.createCode('js', ev)
             } catch(e) {
-                ctx.createCode('diff', `- ${e}`);
+                ctx.createCode('diff', `- ${e.stack}`);
             }
         });
     }

@@ -20,12 +20,10 @@ class Help extends Command {
         }
     }
 
-    /** @todo do this once reaction buttons work kthx */
-    /* eslint-disable no-unused-vars */
     run(ctx) { 
         return new Promise((resolve, reject) => {
 
-            /*ctx.createMessage(this.lm.l(ctx.user.lang, ['commands', 'help_message'], {
+            ctx.send(this.lm.l(ctx.user.lang, ['commands', 'help_message'], {
                 username: ctx.author.username
             }))
 
@@ -33,6 +31,7 @@ class Help extends Command {
 
             for (const name of Object.keys(this.cm.commandCogs)) {
                 const cog = this.cm.cogs[name];
+                if (cog.hidden) continue;
                 if (!categories.hasOwnProperty(cog.category)) categories[cog.category] = {};
                 categories[cog.category][name] = cog;
             }
@@ -47,15 +46,41 @@ class Help extends Command {
                 }
             }
 
-            this.on('change', (row) => {
-                if (row === Object.keys(categories).length + 1) this.row = 0;
-                if (row === -1) this.row = Object.keys(categories).length;
+            const pages = [];
 
-                ctx.createMessage(row);
+            for (const category of Object.keys(msgs)) {
+                const cmds = msgs[category];
+                pages.push({
+                    embed: {
+                        title: category.charAt(0).toLocaleUpperCase() + category.toLocaleLowerCase().slice(1),
+                        description: `\`\`\`fix\n${cmds.join('\n')}\`\`\``,
+                        footer: {
+                            text: `[${Object.keys(msgs).indexOf(category) + 1}/${Object.keys(msgs).length}]`
+                        }
+                    }
+                });
+            }
 
-                //this.emit('change');
-            });*/
+            let page = 0;
 
+            ctx.create(pages[page], null, pages.length > 1 && {
+                buttons: {
+                    left: {
+                        action: (msg) => {
+                            if (page !== 0) msg.edit(pages[--page])
+                        }
+                    },
+                    right: {
+                        action: (msg) => {
+                            if (page !== pages.length - 1) msg.edit(pages[++page])
+                        }
+                    }
+                },
+                buttonTimeout: 60000,
+                msg: {
+                    channel: ctx.author.id
+                }
+            } || null).catch(reject);
         });
     }
 }

@@ -3,6 +3,7 @@
     "description": "Pong!",
     "version": "0.0.1",
     "main": "ping.js",
+    "category": "misc",
     "author": {
         "name": "noud02"
     },

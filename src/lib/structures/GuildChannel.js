@@ -62,7 +62,7 @@ class GuildChannel extends Channel {
     * @arg {String} memberID The ID of the member
     * @returns {Permission}
     */
-    /*permissionsOf(memberID) {
+    permissionsOf(memberID) {
         var member = this.guild.members.get(memberID);
         var permission = member.permission.allow;
         if (permission & Permissions.administrator) {
@@ -84,10 +84,10 @@ class GuildChannel extends Channel {
             permission = (permission & ~overwrite.deny) | overwrite.allow;
         }
         return new Permission(permission);
-    }*/
+    }
     
     
-    permissionsOf(memberID) {
+    /*permissionsOf(memberID) {
         var member = this.guild.members.get(memberID);
         var permission = member.permission.allow;
         if (permission & Permissions.administrator) {
@@ -107,7 +107,7 @@ class GuildChannel extends Channel {
             permission = (permission & ~memberOverwrite.deny) | memberOverwrite.allow;
         }
         return new Permission(permission);
-    }
+    }*/
     
 
     get mention() {

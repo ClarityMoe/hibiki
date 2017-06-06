@@ -9,14 +9,16 @@ class YoutubeDL extends EventEmitter {
     constructor(opt) {
         super();
         this.opt = opt || {};
-        this._ytbase = `^(https?:\/\/)?(m\.|www\.)?youtube\..+\/`;
-        this._ytbase2 = `^(https?:\/\/)?(m\.|www\.)?youtu\.be\/`;
-        this._scbase = `^(https?:\/\/)?(m\.)?soundcloud\.com\/`;
+        this.googleKey = opt.googleKey;
 
-        this._ytv = str => new RegExp(this._ytbase + `watch\?v=[^&]+`).test(str) || new RegExp(this._ytbase2 + `.+`).test(str);
+        this._ytv = str => /^(https?:\/\/)?(m\.|www\.)?youtube\.com\/watch\?v=[^&]+/.test(str) || /^(https?:\/\/)?(m\.|www\.)?youtu\.be\/.+/.test(str);
         this._tws = str => /^(https?:\/\/)?(m\.|www\.)?twitch\.tv\/[^/|?]+/.test(str);
-        this._ytp = str => new RegExp(this._ytbase + `playlist?list=[^&]+`).test(str);
+        this._ytp = str => /^(https?:\/\/)?(m\.|www\.)?youtube\.com\/playlist?list=[^&]+/.test(str);
     } 
+
+    _request(url, options) {
+        return new Promise((resolve, reject) => request(url, options, (err, res, body) => err && reject(err) || resolve({ res: res, body: body })));
+    }
 
     _getDownload(url, info) {
         return new Promise((resolve, reject) => {
@@ -49,9 +51,16 @@ class YoutubeDL extends EventEmitter {
         });
     }
 
+    search(query) {
+        return new Promise((resolve, reject) => {
+            this._request(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${query}&key=${this.googleKey}`)
+            .then(({ res, body }) => resolve(JSON.parse(body))).catch(reject);
+        })
+    }
+
     getInfo(url) {
         return new Promise((resolve, reject) => {
-            ytdl.getInfo(url, (err, info) => {
+            ytdl.getInfo(url, [], { maxBuffer: Infinity }, (err, info) => {
                 if (err) return reject(err);
                 resolve(info);
             });

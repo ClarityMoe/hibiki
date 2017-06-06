@@ -127,6 +127,10 @@ class Member extends Base {
         return `<@!${this.id}>`;
     }
 
+    get tag() {
+        return `${this.username}#${this.discriminator}`;
+    }
+
     /**
     * Edit the guild member
     * @arg {Object} options The properties to edit
@@ -188,6 +192,20 @@ class Member extends Base {
     */
     unban(reason) {
         return this.guild.shard.client.unbanGuildMember.call(this.guild.shard.client, this.guild.id, this.id, reason);
+    }
+
+    /**
+     * Sends a message to the member.
+     * 
+     * @param {String|Object} content 
+     * @param {Object} file 
+     * @returns {Promise<Message>}
+     * 
+     * @memberof Member
+     */
+
+    createMessage(content, file) {
+        return new Promise((resolve, reject) => this._client.getDMChannel(this.id).then(c => c.createMessage(content, file).then(resolve).catch(reject)).catch(reject));
     }
 }
 

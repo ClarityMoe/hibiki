@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "main": "exec.js",
     "description": "Execute shell commands.",
+    "category": "dev",
     "author": {
         "name": "noud02"
     },

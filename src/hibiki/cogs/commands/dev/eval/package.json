@@ -3,6 +3,7 @@
     "version": "0.0.1",
     "main": "eval.js",
     "description": "Evaluate code",
+    "category": "dev",
     "author": {
         "name": "noud02"
     },
