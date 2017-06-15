@@ -22,7 +22,7 @@ class MusicPlayer extends EventEmitter {
     }
 
     get playing() {
-        return this.connection.playing;
+        return this.connection && this.connection.playing || false;
     }
 
     get timeLeft() {
@@ -61,6 +61,7 @@ class MusicPlayer extends EventEmitter {
                 conn.once('ready', () => {
                     this.emit('ready');
                 });
+                resolve(conn);
             });
         })
     }
@@ -74,19 +75,15 @@ class MusicPlayer extends EventEmitter {
             this._client.db.getGuild(this.id).then(g => {
                 const queue = g.queue;
 
-                if (queue.length === 0) return reject(new Error("Queue is empty!"));
+                if (!this.repeat && queue.length === 0) return reject(new Error("Queue is empty!"));
 
-                const song = queue.shift();
+                const song = this.repeat && this.current || queue.shift();
 
-                this.current = {
-                    title: song.title,
-                    url: song.url,
-                    duration: song.duration,
-                    user: song.user,
-                    thumbnail: song.thumbnail
-                }
+                this.current = song;
 
                 this.emit('next', this.current);
+
+                resolve(this.current);
 
                 this.connection.play(song.dl, {
                     inlineVolume: true,
@@ -103,10 +100,29 @@ class MusicPlayer extends EventEmitter {
                     })
                     this.connection.removeAllListeners();
                     setTimeout(() => this.next(), 100);
+                });
+
+                this.connection.once('error', (e) => {
+                    this.emit('error', e);
+                    this.disconnect();
+                    this.connection.removeAllListeners();
                 })
 
-            })
-        })
+                this.on('stop', () =>{
+                    this.connection.removeAllListeners();
+                    this.connection.stopPlaying();
+                });
+            });
+        });
+    }
+
+    next() {
+        return new Promise((resolve, reject) => {
+            this._client.db.getGuild(this.id).then(guild => {
+                if (!guild.queue[1]) return reject(new Error("Queue is empty!"));
+                resolve(this.play());
+            });
+        });
     }
 
     /**
@@ -202,10 +218,6 @@ class MusicPlayer extends EventEmitter {
                 }).catch(reject);
             }).catch(reject);
         })
-    }
-
-    next() {
-
     }
 
     stop() {

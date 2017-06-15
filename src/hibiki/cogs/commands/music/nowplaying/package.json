@@ -1,0 +1,16 @@
+{
+    "name": "nowplaying",
+    "displayName": "np",
+    "description": "Get info about the current song",
+    "version": "0.0.1",
+    "main": "nowplaying.js",
+    "author": {
+        "name": "noud02"
+    },
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        "numeral": "^2.0.6"
+    }
+}

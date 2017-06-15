@@ -44,12 +44,12 @@
     "eslint": "^3.19.0"
   },
   "optionalDependencies": {
-    "uws": "^0.14.5",
-    "sodium-native": "^1.9.0",
-    "node-opus": "^0.2.6",
-    "tweetnacl": "^1.0.0-rc.1",
-    "opusscript": "0.0.3",
+    "bufferutil": "^3.0.1",
     "erlpack": "github:hammerandchisel/erlpack",
-    "bufferutil": "^3.0.0"
+    "node-opus": "^0.2.6",
+    "opusscript": "0.0.3",
+    "sodium-native": "^1.9.0",
+    "tweetnacl": "^1.0.0-rc.1",
+    "uws": "^0.14.5"
   }
 }

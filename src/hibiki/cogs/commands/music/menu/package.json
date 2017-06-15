@@ -1,0 +1,16 @@
+{
+    "name": "musicmenu",
+    "displayName": "menu",
+    "description": "Menu for music controls",
+    "main": "menu.js",
+    "version": "0.0.1",
+    "author": {
+        "name": "noud02"
+    },
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        
+    }
+}

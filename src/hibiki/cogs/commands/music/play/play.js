@@ -75,9 +75,13 @@ class Play extends Command {
                 
                 if (!this.bot.players.has(ctx.guild.id)) this.bot.players.spawn(ctx);
 
-                this.bot.players.get(ctx.guild.id).enqueue(info, ctx.author.id).catch(reject);
+                this.bot.players.get(ctx.guild.id).join(ctx.member.voiceState.channelID).then(() => {
+                    this.bot.players.get(ctx.guild.id).enqueue(info, ctx.author.id).catch(reject).then(() => {
+                        if (!this.bot.players.get(ctx.guild.id).playing) this.bot.players.get(ctx.guild.id).play();
+                    });
+                });
 
-                if (!this.bot.players.get(ctx.guild.id).playing) this.bot.players.get(ctx.guild.id).play();
+                
 
             }).catch(reject);
         });

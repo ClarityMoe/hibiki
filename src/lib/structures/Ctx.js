@@ -62,6 +62,17 @@ class Ctx extends Message {
             case 'star': {
                 return '⭐';
             }
+            case 'loop':
+            case 'repeat': {
+                return '🔁';
+            }
+            case 'repeat_one':
+            case 'repeat_once':
+            case 'repeatOne':
+            case 'repeatOnce':
+            case 'repeat1': {
+                return '🔂';
+            }
             default: {
                 return '❓';
             }
