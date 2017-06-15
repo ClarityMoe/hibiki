@@ -79,6 +79,7 @@ class Ctx extends Message {
         }
     }
 
+    /** @todo Fix this pls, will timeout on confirm or cancel */
     create(content, file, opt) {
         opt = opt || {};
         opt.buttons = opt.buttons || {};

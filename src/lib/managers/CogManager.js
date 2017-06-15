@@ -250,7 +250,7 @@ class CogManager extends Manager {
                             if (cmd.aliases.length > 0) {
                                 for (const alias of cmd.aliases) {
                                     if (!this.aliases.hasOwnProperty(alias)) {
-                                        this.aliases[alias] = cog.name;
+                                        this.aliases[alias] = pkg.name;
                                     }
                                 }
                             }
@@ -340,7 +340,7 @@ class CogManager extends Manager {
      */
 
     reload(name) {
-        return new Promise((resolve, reject) => this.unload(name).catch(reject).then(str => this.load(name).catch(reject).then(resolve)));
+        return new Promise((resolve, reject) => this.unload(name).catch(reject).then(() => this.load(name).catch(reject).then(resolve)));
     }
 
     /**

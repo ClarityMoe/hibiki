@@ -6,15 +6,15 @@ class Play extends Command {
     run(ctx) {
         return new Promise((resolve, reject) => {
             new Promise((resolv, rejec) => {
-                if (this.client.ytdl._ytv(ctx.suffix)) return this.client.ytdl.getInfo(ctx.suffix).then(resolv).catch(rejec);
+                const yt = this.client.ytdl;
+                if (yt._ytv(ctx.suffix) || yt._sct(ctx.suffix)) return this.client.ytdl.getInfo(ctx.suffix).then(resolv).catch(rejec);
                 this.client.ytdl.search(ctx.suffix).then(res => {
                     const items = res.items.filter(item => item.id.kind === 'youtube#video');
 
                     new Promise((resol, reje) => {
                         if (items.length === 0) return reje(`No results`);
-                        if (items.length === 1) return resolve(`https://youtube.com/watch?v=${items[0].id.videoId}`)
+                        if (items.length === 1) return resol(`https://youtube.com/watch?v=${items[0].id.videoId}`);
                         if (items.length > 1) {
-
                             const pages = [];
 
                             for (const item of items) {
@@ -54,7 +54,7 @@ class Play extends Command {
                                         action: (msg) => msg.removeReactions().then(() => msg.delete())
                                     },
                                     confirm: {
-                                        action: (msg) => resol(`https://youtube.com/watch?v=${items[page].id.videoId}`)
+                                        action: () => resol(`https://youtube.com/watch?v=${items[page].id.videoId}`)
                                     },
                                     right: {
                                         action: (msg) => {
@@ -67,7 +67,7 @@ class Play extends Command {
 
                         }
                     }).catch(e => {
-                        // do smthing with the error
+                        reject(e);
                     }).then(url => this.client.ytdl.getInfo(url).then(resolv).catch(rejec)); // search promise
                 }).catch(reject) // search
             }).then(info => { // info promise

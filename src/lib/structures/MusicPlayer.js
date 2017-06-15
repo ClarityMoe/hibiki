@@ -1,7 +1,5 @@
 const EventEmitter = require('eventemitter3');
 const numeral = require('numeral');
-const request = require('request');
-const PassThrough = require('stream').PassThrough;
 
 class MusicPlayer extends EventEmitter {
     constructor(client, guild) {
@@ -69,13 +67,13 @@ class MusicPlayer extends EventEmitter {
     play() {
         return new Promise((resolve, reject) => {
             this.voteskip = [];
-            if (!this.connection) return reject(new Error("Not connected!"));
-            if (!this.connection.ready) return reject(new Error("Not ready!"));
-            if (this.connection.playing) return reject(new Error("Already playing!"));
+            if (!this.connection) return reject(new Error("not_connected"));
+            if (!this.connection.ready) return reject(new Error("not_ready"));
+            if (this.connection.playing) return reject(new Error("already_playing"));
             this._client.db.getGuild(this.id).then(g => {
                 const queue = g.queue;
 
-                if (!this.repeat && queue.length === 0) return reject(new Error("Queue is empty!"));
+                if (!this.repeat && queue.length === 0) return reject(new Error("queue_empty"));
 
                 const song = this.repeat && this.current || queue.shift();
 
@@ -88,12 +86,12 @@ class MusicPlayer extends EventEmitter {
                 this.connection.play(song.dl, {
                     inlineVolume: true,
                     inputArgs: [
-                        "-reconnect", "1", 
-                        "-reconnect_streamed", "1", 
+                        "-reconnect", "1",
+                        "-reconnect_streamed", "1",
                         "-reconnect_delay_max", "2"
                     ]
                 });
-                
+
                 this.connection.once('end', () => {
                     this._client.db.editGuild(this.id, {
                         queue: queue
@@ -108,7 +106,7 @@ class MusicPlayer extends EventEmitter {
                     this.connection.removeAllListeners();
                 })
 
-                this.on('stop', () =>{
+                this.on('stop', () => {
                     this.connection.removeAllListeners();
                     this.connection.stopPlaying();
                 });
@@ -118,9 +116,29 @@ class MusicPlayer extends EventEmitter {
 
     next() {
         return new Promise((resolve, reject) => {
-            this._client.db.getGuild(this.id).then(guild => {
-                if (!guild.queue[1]) return reject(new Error("Queue is empty!"));
-                resolve(this.play());
+            this.play().then(resolve).catch(e => {
+                switch (e) {
+                    case 'already_playing': {
+                        this.emit("alreadyPlaying");
+                        break;
+                    }
+                    case 'queue_empty': {
+                        this.emit('queueEmpty');
+                        break;
+                    }
+                    case 'not_ready': {
+                        this.emit('notReady');
+                        break;
+                    }
+                    case 'not_connected': {
+                        this.emit('notConnected');
+                        break;
+                    }
+                    default: {
+                        reject(e);
+                        break;
+                    }
+                }
             });
         });
     }

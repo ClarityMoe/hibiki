@@ -9,9 +9,9 @@ class NowPlaying extends Command {
     }
 
     run(ctx) {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             const p = this.bot.players.get(ctx.guild.id);
-            resolve({
+            resolve(p && p.current && {
                 embed: {
                     title: `${p.current.title} [${numeral(p.current.duration - p.timeLeft).format('00:00:00')}/${numeral(p.current.duration).format('00:00:00')}]`,
                     description: `**Next:** ${ctx.db.guild.queue[1] && ctx.db.guild.queue[1].title || 'None'}`,
@@ -22,7 +22,7 @@ class NowPlaying extends Command {
                         text: `Requested by: ${this.bot.users.get(p.current.user).tag}`
                     }
                 }
-            })
+            } || "Playing nothing!")
         })
     }
 

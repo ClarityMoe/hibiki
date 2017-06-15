@@ -1,7 +1,6 @@
 const Handler = require('./Handler.js');
 const Ctx = require('../structures/Ctx.js');
 const minimist = require('minimist');
-const fs = require('fs');
 
 /**
  * Command Handler
@@ -127,7 +126,6 @@ class CommandHandler extends Handler {
         const suffix = a.substring((b && b.length || ec.length) + 1);
         const argv = minimist(suffix.split(" "));
         const args = argv._;
-        const cargs = {};
 
         if (cmd.subcommands.hasOwnProperty(args[0])) {
             if (!cmd.subcommands[args[0]].hasOwnProperty('name')) cmd.subcommands[args[0]].name = args[0];

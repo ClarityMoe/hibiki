@@ -3,7 +3,7 @@ const EventEmitter = require('eventemitter3');
 const numeral = require('numeral');
 const PassThrough = require('stream').PassThrough;
 const request = require('request');
-const twitch = require("twitch-get-stream")("jzkbprff40iqj646a697cyrvl0zt2m6");
+const twitch = require("twitch-get-stream")("jzkbprff40iqj646a697cyrvl0zt2m6"); // NOTE: We're using the youtube-dl Twitch API key here, shouldn't matter if this gets leeked as its already on github.
 
 class YoutubeDL extends EventEmitter {
     constructor(opt) {
@@ -14,6 +14,8 @@ class YoutubeDL extends EventEmitter {
         this._ytv = str => /^(https?:\/\/)?(m\.|www\.)?youtube\.com\/watch\?v=[^&]+/.test(str) || /^(https?:\/\/)?(m\.|www\.)?youtu\.be\/.+/.test(str);
         this._tws = str => /^(https?:\/\/)?(m\.|www\.)?twitch\.tv\/[^/|?]+/.test(str);
         this._ytp = str => /^(https?:\/\/)?(m\.|www\.)?youtube\.com\/playlist?list=[^&]+/.test(str);
+        this._scs = str => /^(https?:\/\/)?(m\.|www\.)?soundcloud\.com\/[^/]+\/sets\/[^/]+/.test(str);
+        this._sct = str => /^(https?:\/\/)?(m\.|www\.)?soundcloud\.com\/[^/]+\/[^/]+/.test(str);
     } 
 
     _request(url, options) {
@@ -54,7 +56,7 @@ class YoutubeDL extends EventEmitter {
     search(query) {
         return new Promise((resolve, reject) => {
             this._request(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${query}&key=${this.googleKey}`)
-            .then(({ res, body }) => resolve(JSON.parse(body))).catch(reject);
+            .then(({ body }) => resolve(JSON.parse(body))).catch(reject);
         })
     }
 
@@ -71,7 +73,7 @@ class YoutubeDL extends EventEmitter {
         return new Promise((resolve, reject) => {
             if (this._tws(url)) return twitch.get(url.match(/\.tv\/([^/|?]+)/)[1]).then(s => resolve(s.filter(st => st.quality === "Audio Only")[0].url)).catch(reject);
             else return this.getData(url).then(data => resolve(request(data.download).pipe(new PassThrough()))).catch(reject);
-        })
+        });
     }
 
     getData(url) {
@@ -97,7 +99,7 @@ class YoutubeDL extends EventEmitter {
                     resolve(data);
                 }).catch(reject);
             }).catch(reject);
-        })
+        });
     }
 }
 

@@ -18,7 +18,7 @@ class PlayerManager extends Collection {
      * @memberof PlayerManager
      */
 
-    spawn(msg, vc) {
+    spawn(msg) {
         const guild = msg.guild;
         const player = this.add(new MusicPlayer(this._client, guild));
 
@@ -41,6 +41,12 @@ class PlayerManager extends Collection {
         player.on('pause', () => msg.channel.createMessage('Paused current song'));
 
         player.on('resume', () => msg.channel.createMessage(`Resumed current song.`));
+
+        player.on('notConnected', () => msg.channel.createMessage(`I'm not connected to a voice channel!`));
+
+        player.on('notReady', () => msg.channel.createMessage(`I'm not ready yet!`));
+
+        player.on('queueEmpty', () => msg.channel.createMessage(`The queue is empty!`));
 
         return player;
 
