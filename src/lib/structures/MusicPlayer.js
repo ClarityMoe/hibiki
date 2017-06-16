@@ -1,5 +1,6 @@
 const EventEmitter = require('eventemitter3');
 const numeral = require('numeral');
+const got = require('got');
 
 class MusicPlayer extends EventEmitter {
     constructor(client, guild) {
@@ -10,9 +11,28 @@ class MusicPlayer extends EventEmitter {
         if (client.voiceConnections.has(this.id) && client.voiceConnections.get(this.id).ready) this.emit('ready');
 
         this.repeat = false;
+        this.autoplay = false;
         this.current = null;
+        this.last = null;
         this.voteskip = [];
 
+    }
+
+    getNext() {
+        return new Promise((resolve, reject) => {
+            this._client.db.getGuild(this.id).then(guild => {
+                if (guild.queue.length > 1 && guild.queue[1]) resolve(guild.queue.length > 1 && guild.queue[1])
+                else if (this.current && this.autoplay) {
+                    got(this.current.url).then(res => {
+                        try {
+                            resolve(res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('title="([^"]+)"')[1]);
+                        } catch (e) {
+                            resolve(null);
+                        }
+                    });
+                } else resolve(null);
+            })
+        })
     }
 
     get connection() {
@@ -67,13 +87,13 @@ class MusicPlayer extends EventEmitter {
     play() {
         return new Promise((resolve, reject) => {
             this.voteskip = [];
-            if (!this.connection) return reject(new Error("not_connected"));
-            if (!this.connection.ready) return reject(new Error("not_ready"));
-            if (this.connection.playing) return reject(new Error("already_playing"));
+            if (!this.connection) return reject("not_connected");
+            if (!this.connection.ready) return reject("not_ready");
+            if (this.connection.playing) return reject("already_playing");
             this._client.db.getGuild(this.id).then(g => {
                 const queue = g.queue;
 
-                if (!this.repeat && queue.length === 0) return reject(new Error("queue_empty"));
+                if (!this.repeat && queue.length === 0) return reject("queue_empty");
 
                 const song = this.repeat && this.current || queue.shift();
 
@@ -116,29 +136,46 @@ class MusicPlayer extends EventEmitter {
 
     next() {
         return new Promise((resolve, reject) => {
-            this.play().then(resolve).catch(e => {
-                switch (e) {
-                    case 'already_playing': {
-                        this.emit("alreadyPlaying");
-                        break;
-                    }
-                    case 'queue_empty': {
-                        this.emit('queueEmpty');
-                        break;
-                    }
-                    case 'not_ready': {
-                        this.emit('notReady');
-                        break;
-                    }
-                    case 'not_connected': {
-                        this.emit('notConnected');
-                        break;
-                    }
-                    default: {
-                        reject(e);
-                        break;
-                    }
-                }
+            this._client.db.getGuild(this.id).then(guild => {
+                new Promise((resolv, rejec) => {
+                    if (guild.queue.length === 0 && this.autoplay) {
+                        got(this.current.url).then(res => {
+                            let id;
+                            try {
+                                id = res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('href="/watch\\?v=([^"]+)"')[1];
+                            } catch (e) {
+                                resolv();
+                            }
+                            if (!id) return resolv();
+                            this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id)).catch(rejec).then(resolv);
+                        });
+                    } else resolv();
+                }).then(() => {
+                    this.play().then(resolve).catch(e => {
+                        switch (e) {
+                            case 'already_playing': {
+                                this.emit("alreadyPlaying");
+                                break;
+                            }
+                            case 'queue_empty': {
+                                this.emit('queueEmpty');
+                                break;
+                            }
+                            case 'not_ready': {
+                                this.emit('notReady');
+                                break;
+                            }
+                            case 'not_connected': {
+                                this.emit('notConnected');
+                                break;
+                            }
+                            default: {
+                                reject(e);
+                                break;
+                            }
+                        }
+                    });
+                }).catch(reject);
             });
         });
     }
