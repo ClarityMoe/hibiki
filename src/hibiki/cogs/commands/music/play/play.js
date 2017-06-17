@@ -5,6 +5,15 @@ class Play extends Command {
 
     run(ctx) {
         return new Promise((resolve, reject) => {
+
+            if (!ctx.suffix) {
+                if (!this.bot.players.has(ctx.guild.id)) this.bot.players.spawn(ctx);
+
+                return this.bot.players.get(ctx.guild.id).join(ctx.member.voiceState.channelID).then(() => {
+                    if (!this.bot.players.get(ctx.guild.id).playing) return this.bot.players.get(ctx.guild.id).play();
+                });
+            }
+
             new Promise((resolv, rejec) => {
                 const yt = this.client.ytdl;
                 if (yt._ytv(ctx.suffix) || yt._sct(ctx.suffix)) return this.client.ytdl.getInfo(ctx.suffix).then(resolv).catch(rejec);

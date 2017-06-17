@@ -18,10 +18,55 @@ class MusicPlayer extends EventEmitter {
 
     }
 
+    /**
+     * Checks the queue for expired download links
+     * 
+     * @returns nothing lol
+     * 
+     * @memberof MusicPlayer
+     */
+
+    checkQueue() {
+        return new Promise(async (resolve, reject) => {
+            const guild = await this._client.db.getGuild(this.id)
+            for (const item of guild.queue) {
+                try {
+                    await got(item.dl);
+                    continue;
+                } catch (e) {
+                    let data;
+                    try {
+                        data = await this._client.ytdl.getData(item.url)
+
+                        guild.queue[guild.queue.indexOf(item)].dl = data.download;
+
+                    } catch (err) {
+                        reject(err);
+                    }
+                }
+            }
+
+            this._client.db.editGuild(this.id, {
+                queue: guild.queue
+            });
+
+            resolve();
+
+        });
+    }
+
+    /**
+     * Gets the next song in the queue (or autoplay song if autoplay is enabled)
+     * 
+     * @returns {Promise<String>}
+     * 
+     * @memberof MusicPlayer
+     */
+
     getNext() {
         return new Promise((resolve, reject) => {
             this._client.db.getGuild(this.id).then(guild => {
-                if (guild.queue.length > 1 && guild.queue[1]) resolve(guild.queue.length > 1 && guild.queue[1])
+                if (guild.queue.length > 1 && guild.queue[1]) resolve(guild.queue.length > 1 && guild.queue[1].title)
                 else if (this.current && this.autoplay) {
                     got(this.current.url).then(res => {
                         try {
@@ -35,20 +80,64 @@ class MusicPlayer extends EventEmitter {
         })
     }
 
+    /**
+     * Get the voiceconnection of the bot in this guild
+     * 
+     * @readonly
+     * 
+     * @memberof MusicPlayer
+     */
+
     get connection() {
         return this._client.voiceConnections.get(this.id);
     }
+
+    /**
+     * Get the playing status of the bot in this guild
+     * 
+     * @readonly
+     * 
+     * @memberof MusicPlayer
+     */
 
     get playing() {
         return this.connection && this.connection.playing || false;
     }
 
+    /**
+     * Get how much time is left on the current song
+     * 
+     * @readonly
+     * 
+     * @memberof MusicPlayer
+     */
+
     get timeLeft() {
         return this.connection && (this.current.duration - this.connection.current.playTime / 1000) || 0;
     }
 
+    /**
+     * Whether the connection is ready or not
+     * 
+     * @readonly
+     * 
+     * @memberof MusicPlayer
+     */
+
     get ready() {
         return this.connection.ready;
+    }
+
+    /**
+     * Disconnects the connection
+     * 
+     * @returns 
+     * 
+     * @memberof MusicPlayer
+     */
+
+    disconnect() {
+        return this.connection.disconnect();
     }
 
     /**
@@ -83,6 +172,14 @@ class MusicPlayer extends EventEmitter {
             });
         })
     }
+
+    /**
+     * Plays the next song (or autoplay song if enabled)
+     * 
+     * @returns {Promise}
+     * 
+     * @memberof MusicPlayer
+     */
 
     play() {
         return new Promise((resolve, reject) => {
@@ -133,6 +230,14 @@ class MusicPlayer extends EventEmitter {
             });
         });
     }
+
+    /**
+     * Go to the next song, or autoplay if enabled
+     * 
+     * @returns 
+     * 
+     * @memberof MusicPlayer
+     */
 
     next() {
         return new Promise((resolve, reject) => {
@@ -274,6 +379,13 @@ class MusicPlayer extends EventEmitter {
             }).catch(reject);
         })
     }
+
+    /**
+     * Stop the music
+     * 
+     * 
+     * @memberof MusicPlayer
+     */
 
     stop() {
 

@@ -16,6 +16,7 @@ class Ctx extends Message {
         this.args = options.args;
         this.msg = msg;
         this.suffix = options.suffix;
+        this.player = client.players.get(this.guild.id);
     }
 
     emoji(name) {
