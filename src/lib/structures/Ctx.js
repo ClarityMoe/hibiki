@@ -80,7 +80,7 @@ class Ctx extends Message {
         }
     }
 
-    /** @todo Fix this pls, will timeout on confirm or cancel */
+    /** @todo Fix this pls, will still timeout on confirm or cancel */
     create(content, file, opt) {
         opt = opt || {};
         opt.buttons = opt.buttons || {};
@@ -88,6 +88,12 @@ class Ctx extends Message {
             this.createMessage(content, file, opt.msg).then(m => {
                 if (Object.keys(opt.buttons).length > 0) {
                     let i = 0;
+
+                    const to = setTimeout(() => {
+                        if (opt.buttonTimeoutAction) opt.buttonTimeoutAction(m);
+                        m.removeReactions().catch(reject);
+                    }, Number(opt.buttonTimeout) !== NaN && Number(opt.buttonTimeout) || 10000)
+
                     const next = (name) => {
 
                         const button = opt.buttons[name];
@@ -99,17 +105,21 @@ class Ctx extends Message {
 
                         const add = (msg, emote, id) => {
                             if (id !== this.author.id || msg.id !== m.id || emote.id ? `${emote.name}:${emote.id}` !== emoji : emote.name !== emoji) return;
-                            
+
                             if (button.cancel || button.confirm || button.end || name === 'cancel' || name === 'confirm') {
                                 clearTimeout(to);
-                                can();
+                                this.client.emit('buttonStop', msg);
                             } else if (!button.toggle) {
                                 if (msg.channel.guild && msg.channel.permissionsOf(this.client.user.id).has('manageMessages')) m.removeReaction(emote.id ? `${emote.name}:${emote.id}` : emote.name, id).catch(reject);
                                 this.client.emit('buttonClick', msg, emote, id);
                             } else this.client.emit('buttonToggle', msg, emote, id, true);
-                            
+
                             if (button.action) button.action(msg);
                         }
+
+                        this.client.on('buttonStop', msg => {
+                            if (msg.id === m.id) can();
+                        })
 
                         const rem = (msg, emote, id) => {
                             if (!button.toggle || id !== this.author.id || msg.id !== m.id || emote.id ? `${emote.name}:${emote.id}` !== emoji : emote.name !== emoji) return;
@@ -121,11 +131,6 @@ class Ctx extends Message {
                             this.client.removeListener('messageReactionAdd', add);
                             if (button.toggle) this.client.removeListener('messageReactionRemove', rem);
                         }
-
-                        const to = setTimeout(() => {
-                            can();
-                            if (opt.buttonTimeoutAction) opt.buttonTimeoutAction(m);
-                        }, Number(opt.buttonTimeout) !== NaN && Number(opt.buttonTimeout) || 10000)
 
                         this.client.on('messageReactionAdd', add);
                         if (button.toggle) this.client.on('messageReactionRemove', rem);

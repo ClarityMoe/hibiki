@@ -191,9 +191,10 @@ class MusicPlayer extends EventEmitter {
             if (!this.connection.ready) return reject("not_ready");
             if (this.connection.playing) return reject("already_playing");
             this._client.db.getGuild(this.id).then(g => {
+
                 const queue = g.queue;
 
-                if (!this.repeat && queue.length === 0) return reject("queue_empty");
+                if (!this.autoplay && !this.repeat && queue.length === 0) return reject("queue_empty");
 
                 const song = this.repeat && this.current || queue.shift();
 
@@ -229,6 +230,8 @@ class MusicPlayer extends EventEmitter {
                     this.connection.removeAllListeners();
                 })
 
+                this.connection.once('warn', (w) => this.emit('warn', w));
+
                 this.on('stop', () => {
                     this.connection.removeAllListeners();
                     this.connection.stopPlaying();
@@ -248,8 +251,7 @@ class MusicPlayer extends EventEmitter {
     next() {
         return new Promise((resolve, reject) => {
             this._client.db.getGuild(this.id).then(guild => {
-                new Promise((resolv, rejec) => {
-                    console.log(guild.queue.length === 0 && this.autoplay);
+                new Promise((resolv) => {
                     if (guild.queue.length === 0 && this.autoplay) {
                         got(this.current.url).then(res => {
                             let id;
@@ -259,10 +261,11 @@ class MusicPlayer extends EventEmitter {
                                 resolv();
                             }
                             if (!id) resolv();
-                            else this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id).then(resolv).catch(reject)).catch(reject);
+                            else resolv(this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id).catch(reject)).catch(reject));
                         });
                     } else resolv();
                 }).then(() => {
+                    console.log('a')
                     this.play().then(resolve).catch(e => {
                         switch (e) {
                             case 'already_playing': {

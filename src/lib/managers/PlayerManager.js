@@ -40,6 +40,8 @@ class PlayerManager extends Collection {
 
             player.on('error', (err) => msg.channel.createMessage(`\`\`\`diff\n- ${err.stack}\`\`\``))
 
+            player.on('warn', this.logger.warn);
+
             player.on('pause', () => msg.channel.createMessage('Paused current song'));
 
             player.on('resume', () => msg.channel.createMessage(`Resumed current song.`));
