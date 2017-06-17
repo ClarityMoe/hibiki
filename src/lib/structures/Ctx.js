@@ -80,7 +80,17 @@ class Ctx extends Message {
         }
     }
 
-    /** @todo Fix this pls, will still timeout on confirm or cancel */
+    /**
+     * Creates a message, special attributes (like buttons) can be passed to the options
+     * 
+     * @param {String|Object} content 
+     * @param {Object} [file]
+     * @param {Object} [opt]
+     * @returns {Promise<Message>}
+     * 
+     * @memberof Ctx
+     */
+
     create(content, file, opt) {
         opt = opt || {};
         opt.buttons = opt.buttons || {};
@@ -145,9 +155,31 @@ class Ctx extends Message {
         });
     }
 
+    /**
+     * @alias Ctx#createMessage
+     * 
+     * @param {String|Object} content Content to send
+     * @param {Object} [file] File to send
+     * @param {Object} [mOptions] Options to pass to the function
+     * @returns {Promise<Message>}
+     * 
+     * @memberof Ctx
+     */
+
     send(content, options, mOptions) {
         return this.createMessage(content, options, mOptions);
     }
+
+    /**
+     * Sends a message to the channel the command was executed in (or to the channel specified in options)
+     * 
+     * @param {String|Object} content Content to send
+     * @param {Object} [file] File to send
+     * @param {Object} [mOptions] Options to pass to the function
+     * @returns {Promise<Message>}
+     * 
+     * @memberof Ctx
+     */
 
     createMessage(content, file, mOptions) {
         mOptions = mOptions || {};
@@ -162,11 +194,32 @@ class Ctx extends Message {
         } else return this.channel.createMessage(content, file).catch(e => this.createError(e));
     }
 
+    /**
+     * Sends a codeblock to the channel the command was executed in (or to the channel specified in options)
+     * 
+     * @param {String} [lang] Code language for the block
+     * @param {String} content Code to send
+     * @param {Object} [file] File to send
+     * @param {Object} [mOptions] Options to pass to the function
+     * @returns {Promise<Message>}
+     * 
+     * @memberof Ctx
+     */
+
     createCode(lang, content, options, mOptions) {
         mOptions = mOptions || {};
         if (mOptions.channel) return this._client.getChannel(mOptions.channel) ? this._client.getChannel(mOptions.channel).createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(e => this.createError(e)) : Promise.reject(new Error("Channel not found"));
         else return this.channel.createMessage(`\`\`\`${lang}\n${content}\`\`\``, options).catch(e => this.createError(e));
     }
+
+    /**
+     * Sends an error message to the channel the command was executed in
+     * 
+     * @param {String|Error?} err
+     * @returns {Promise<Message>}
+     * 
+     * @memberof Ctx
+     */
 
     createError(err) {
         return this.channel.createMessage(this.client.lm.l(this.db.user.lang || 'en', ['error', 'error'], {
