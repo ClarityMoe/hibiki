@@ -9,12 +9,12 @@ class NowPlaying extends Command {
     }
 
     run(ctx) {
-        return new Promise((resolve) => {
+        return new Promise(async (resolve) => {
             const p = this.bot.players.get(ctx.guild.id);
             resolve(p && p.current && {
                 embed: {
                     title: `${p.current.title} [${numeral(p.current.duration - p.timeLeft).format('00:00:00')}/${numeral(p.current.duration).format('00:00:00')}]`,
-                    description: `**Next:** ${ctx.db.guild.queue[1] && ctx.db.guild.queue[1].title || 'None'}`,
+                    description: `**Next:** ${await ctx.player.getNext() || 'None'}`,
                     image: {
                         url: p.current.thumbnail
                     },

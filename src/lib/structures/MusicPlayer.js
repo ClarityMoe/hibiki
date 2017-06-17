@@ -70,7 +70,10 @@ class MusicPlayer extends EventEmitter {
                 else if (this.current && this.autoplay) {
                     got(this.current.url).then(res => {
                         try {
-                            resolve(res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('title="([^"]+)"')[1]);
+                            const title = res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('title="([^"]+)"')[1];
+
+                            resolve(`${title} (autoplay)`);
+
                         } catch (e) {
                             resolve(null);
                         }
@@ -210,11 +213,14 @@ class MusicPlayer extends EventEmitter {
                 });
 
                 this.connection.once('end', () => {
-                    this._client.db.editGuild(this.id, {
-                        queue: queue
-                    })
-                    this.connection.removeAllListeners();
-                    setTimeout(() => this.next(), 100);
+                    this._client.db.getGuild(this.id).then(guild => {
+                        this._client.db.editGuild(this.id, {
+                            queue: guild.queue.slice(1)
+                        }).then(() => {
+                            this.connection.removeAllListeners();
+                            setTimeout(() => this.next(), 100);
+                        })
+                    });
                 });
 
                 this.connection.once('error', (e) => {
@@ -243,6 +249,7 @@ class MusicPlayer extends EventEmitter {
         return new Promise((resolve, reject) => {
             this._client.db.getGuild(this.id).then(guild => {
                 new Promise((resolv, rejec) => {
+                    console.log(guild.queue.length === 0 && this.autoplay);
                     if (guild.queue.length === 0 && this.autoplay) {
                         got(this.current.url).then(res => {
                             let id;
@@ -251,8 +258,8 @@ class MusicPlayer extends EventEmitter {
                             } catch (e) {
                                 resolv();
                             }
-                            if (!id) return resolv();
-                            this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id)).catch(rejec).then(resolv);
+                            if (!id) resolv();
+                            else this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id).then(resolv).catch(reject)).catch(reject);
                         });
                     } else resolv();
                 }).then(() => {
