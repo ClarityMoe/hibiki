@@ -1,0 +1,15 @@
+{
+    "name": "queue",
+    "displayName": "queue",
+    "version": "0.0.1",
+    "author": {
+        "name": "noud02"
+    },
+    "main": "queue.js",
+    "contributors": [
+        "noud02"
+    ],
+    "dependencies": {
+        
+    }
+}

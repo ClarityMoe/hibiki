@@ -12,6 +12,7 @@ class MusicPlayer extends EventEmitter {
 
         this.repeat = false;
         this.autoplay = false;
+        this.menuOpen = false;
         this.current = null;
         this.last = null;
         this.voteskip = [];
@@ -200,18 +201,22 @@ class MusicPlayer extends EventEmitter {
 
                 this.current = song;
 
-                this.emit('next', this.current);
+                this.emit('nextSong', this.current);
+                this.emit('next');
 
                 resolve(this.current);
 
-                this.connection.play(song.dl, {
-                    inlineVolume: true,
-                    inputArgs: [
-                        "-reconnect", "1",
-                        "-reconnect_streamed", "1",
-                        "-reconnect_delay_max", "2"
-                    ]
-                });
+                console.log(song.dl);
+                setTimeout(() => {
+                    this.connection.play(song.dl, {
+                        inlineVolume: true,
+                        inputArgs: [
+                            "-reconnect", "1",
+                            "-reconnect_streamed", "1",
+                            "-reconnect_delay_max", "2"
+                        ]
+                    });
+                }, 100);
 
                 this.connection.once('end', () => {
                     this._client.db.getGuild(this.id).then(guild => {
@@ -230,7 +235,9 @@ class MusicPlayer extends EventEmitter {
                     this.connection.removeAllListeners();
                 })
 
-                this.connection.once('warn', (w) => this.emit('warn', w));
+                this.connection.on('warn', (w) => this.emit('warn', w));
+
+                this.connection.on('debug', this._client.logger.debug);
 
                 this.on('stop', () => {
                     this.connection.removeAllListeners();
@@ -265,6 +272,7 @@ class MusicPlayer extends EventEmitter {
                         });
                     } else resolv();
                 }).then(() => {
+                    this.connection.stopPlaying();
                     console.log('a')
                     this.play().then(resolve).catch(e => {
                         switch (e) {

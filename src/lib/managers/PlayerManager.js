@@ -26,17 +26,19 @@ class PlayerManager extends Collection {
 
             player.on('ready', () => this.logger.info(`Player with id ${guild.id} is ready!`));
 
-            player.on('next', (song) => msg.channel.createMessage({
-                embed: {
-                    title: song.title,
-                    image: {
-                        thumbnail: song.thumbnail
-                    },
-                    footer: {
-                        text: `Requested by: ${this._client.users.get(song.user).tag}`
+            player.on('nextSong', (song) => {
+                if (!this._client.players.get(player.id).menuOpen) msg.channel.createMessage({
+                    embed: {
+                        title: song.title,
+                        image: {
+                            thumbnail: song.thumbnail
+                        },
+                        footer: {
+                            text: `Requested by: ${this._client.users.get(song.user).tag}`
+                        }
                     }
-                }
-            }))
+                })
+            })
 
             player.on('error', (err) => msg.channel.createMessage(`\`\`\`diff\n- ${err.stack}\`\`\``))
 

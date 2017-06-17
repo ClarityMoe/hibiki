@@ -134,6 +134,7 @@ class Ctx extends Message {
                         const rem = (msg, emote, id) => {
                             if (!button.toggle || id !== this.author.id || msg.id !== m.id || emote.id ? `${emote.name}:${emote.id}` !== emoji : emote.name !== emoji) return;
                             this.client.emit('buttonToggle', msg, emote, id, false);
+                            if (button.action) button.action(msg);
                         }
 
                         const can = () => {

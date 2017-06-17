@@ -4,36 +4,58 @@ class Menu extends Command {
     }
 
     run(ctx) {
-        return new Promise((resolve, reject) => {
-            const player = this.bot.players.get(ctx.guild.id);
-            if (!player) return resolve('Not playing music here!');
+        return new Promise(async (resolve, reject) => {
+            if (!ctx.player) return resolve('Not playing music here!');
+
+            const updateMessage = async (msg) => {
+                msg.edit({
+                    embed: {
+                        title: ctx.player.current.title,
+                        description: `**Autoplay**: ${ctx.player.autoplay && 'on' || 'off'}\n**Repeat**: ${ctx.player.repeat && 'on' || 'off'}\n**Next**: ${await ctx.player.getNext() || 'None'}`,
+                        footer: {
+                            text: `Requested by: ${this.bot.users.get(ctx.player.current.user).tag}`
+                        }
+                    }
+                });
+            }
 
             ctx.create({
                 embed: {
-                    title: player.current.title,
-                    description: `**Repeat**: ${player.repeat && 'on' || 'off'}\n**Next**: ${ctx.db.guild.queue[1] || 'None'}`,
+                    title: ctx.player.current.title,
+                    description: `**Autoplay**: ${ctx.player.autoplay && 'on' || 'off'}\n**Repeat**: ${ctx.player.repeat && 'on' || 'off'}\n**Next**: ${await ctx.player.getNext() || 'None'}`,
                     footer: {
-                        text: `Requested by: ${this.bot.users.get(player.current.user).tag}`
+                        text: `Requested by: ${this.bot.users.get(ctx.player.current.user).tag}`
                     }
                 }
             }, null, {
                 buttonTimeout: 120000,
                 buttons: {
-                    repeat: {
+                    cancel: {
                         action: (msg) => {
-                            player.repeat = true;
-                            msg.edit({
-                                embed: {
-                                    title: player.current.title,
-                                    description: `**Repeat**: ${player.repeat && 'on' || 'off'}\n**Next**: ${ctx.db.guild.queue[1]}`,
-                                    footer: {
-                                        text: `Requested by: ${this.bot.users.get(player.current.user).tag}`
-                                    }
-                                }
-                            })
+                            ctx.player.removeAllListeners('next')
+                            ctx.player.menuOpen = false;
+                        }
+                    },
+                    autoplay: {
+                        emoji: '📺',
+                        toggle: true,
+                        action: (msg) => {
+                            ctx.player.autoplay = !ctx.player.autoplay;
+                            updateMessage(msg);
+                        }
+                    },
+                    repeat: {
+                        toggle: true,
+                        action: (msg) => {
+                            ctx.player.repeat = !ctx.player.repeat;
+                            updateMessage(msg);
                         }
                     }
                 }
+            }).then(m => {
+                this.bot.emit('musicMenuOpen', ctx);
+                ctx.player.menuOpen = true;
+                ctx.player.on('next', () => updateMessage(m));
             })
         })
     }
