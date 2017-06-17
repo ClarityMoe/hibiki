@@ -39,7 +39,7 @@ class Eval extends Command {
     run(ctx) {
         return new Promise(async (resolve, reject) => {
             try {
-                const ev = await eval(ctx.suffix);
+                const ev = util.inspect(await eval(ctx.suffix));
                 if (ev && ev.toString().length > 1990) {
                     ctx.createMessage('Output is longer than 2000 characters, please check console for output.');
                     console.log(ev);
