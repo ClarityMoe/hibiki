@@ -16,7 +16,7 @@ class Play extends Command {
 
             new Promise((resolv, rejec) => {
                 const yt = this.client.ytdl;
-                if (yt._ytv(ctx.suffix) || yt._sct(ctx.suffix)) return this.client.ytdl.getInfo(ctx.suffix).then(resolv).catch(rejec);
+                if (yt._ytv(ctx.suffix) || yt._ytp(ctx.suffix) || yt._sct(ctx.suffix)) return this.client.ytdl.getInfo(ctx.suffix).then(resolv).catch(rejec);
                 this.client.ytdl.search(ctx.suffix).then(res => {
                     const items = res.items.filter(item => item.id.kind === 'youtube#video');
 
@@ -84,7 +84,7 @@ class Play extends Command {
                 
                 if (!this.bot.players.has(ctx.guild.id)) this.bot.players.spawn(ctx);
 
-                if (!this.bot.players.get(ctx.guild.id).ready) {
+                if (this.bot.players.get(ctx.guild.id) && !this.bot.players.get(ctx.guild.id).connected) {
                     this.bot.players.get(ctx.guild.id).join(ctx.member.voiceState.channelID).then(() => {
                         this.bot.players.get(ctx.guild.id).enqueue(info, ctx.author.id).catch(reject).then(() => {
                             if (!this.bot.players.get(ctx.guild.id).playing) this.bot.players.get(ctx.guild.id).play();

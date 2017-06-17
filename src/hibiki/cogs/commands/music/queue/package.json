@@ -1,6 +1,7 @@
 {
     "name": "queue",
     "displayName": "queue",
+    "description": "Get the current queue",
     "version": "0.0.1",
     "author": {
         "name": "noud02"

@@ -206,17 +206,14 @@ class MusicPlayer extends EventEmitter {
 
                 resolve(this.current);
 
-                console.log(song.dl);
-                setTimeout(() => {
-                    this.connection.play(song.dl, {
-                        inlineVolume: true,
-                        inputArgs: [
-                            "-reconnect", "1",
-                            "-reconnect_streamed", "1",
-                            "-reconnect_delay_max", "2"
-                        ]
-                    });
-                }, 100);
+                this.connection.play(song.dl, {
+                    inlineVolume: true,
+                    inputArgs: [
+                        "-reconnect", "1",
+                        "-reconnect_streamed", "1",
+                        "-reconnect_delay_max", "2"
+                    ]
+                });
 
                 this.connection.once('end', () => {
                     this._client.db.getGuild(this.id).then(guild => {
@@ -235,9 +232,7 @@ class MusicPlayer extends EventEmitter {
                     this.connection.removeAllListeners();
                 })
 
-                this.connection.on('warn', (w) => this.emit('warn', w));
-
-                this.connection.on('debug', this._client.logger.debug);
+                this.connection.once('warn', (w) => this.emit('warn', w));
 
                 this.on('stop', () => {
                     this.connection.removeAllListeners();
@@ -258,22 +253,23 @@ class MusicPlayer extends EventEmitter {
     next() {
         return new Promise((resolve, reject) => {
             this._client.db.getGuild(this.id).then(guild => {
-                new Promise((resolv) => {
+                new Promise((resolve) => {
                     if (guild.queue.length === 0 && this.autoplay) {
                         got(this.current.url).then(res => {
-                            let id;
                             try {
-                                id = res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('href="/watch\\?v=([^"]+)"')[1];
+                                const yt = this._client.ytdl;
+                                if (yt._ytv(this.current.url)) {
+                                    const id = res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('href="/watch\\?v=([^"]+)"')[1];
+                                    this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id).then(resolve));
+                                } else if (yt._sct(this.current_url)) {
+                                    const id = res.body.match('"soundBadgeList compact lazyLoadingList".+"sc-list-nostyle sc-clearfix".+"soundBadgeList__item".+"soundBadge__avatarLink sc-media-image"[^>]+');
+                                    console.log(id);
+                                }
                             } catch (e) {
-                                resolv();
                             }
-                            if (!id) resolv();
-                            else resolv(this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id).catch(reject)).catch(reject));
                         });
-                    } else resolv();
+                    } else resolve();
                 }).then(() => {
-                    this.connection.stopPlaying();
-                    console.log('a')
                     this.play().then(resolve).catch(e => {
                         switch (e) {
                             case 'already_playing': {
@@ -298,7 +294,7 @@ class MusicPlayer extends EventEmitter {
                             }
                         }
                     });
-                }).catch(reject);
+                });
             });
         });
     }
