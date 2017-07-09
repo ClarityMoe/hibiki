@@ -6,7 +6,7 @@ class Ctx extends Message {
         this.client = client;
         this.options = options;
         this.cog = options.cog;
-        this.database = {
+        this.db = {
             user: options.user,
             guild: options.guild
         }
