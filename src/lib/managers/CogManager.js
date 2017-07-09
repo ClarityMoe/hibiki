@@ -196,6 +196,11 @@ class CogManager extends Manager {
                     continue;
                 }
 
+                if (pkg.disabled) {
+                    this.logger.warn(`${file}:`, 'package is disabled!');
+                    continue;
+                }
+
                 if (this.cogs.hasOwnProperty(pkg.name)) { // dupes >.>
                     this.logger.custom({
                         bgColor: 'yellow',

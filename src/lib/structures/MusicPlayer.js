@@ -68,22 +68,23 @@ class MusicPlayer extends EventEmitter {
 
     getNext() {
         return new Promise((resolve, reject) => {
-                this._client.db.getGuild(this.id).then(guild => {
-                        if (guild.queue.length > 1 && guild.queue[1]) resolve(guild.queue.length > 1 && guild.queue[1].title)
-                        else if (this.current && this.autoplay) {
-                            const yt = this._client.ytdl;
-                            if (yt._ytv(this.current.url)) {
-                                yt.related(this.current.url.split("?v=")[1]).then(json => {
-                                    const item = json.items[0];
-                                    resolve(item.snippet.title + ' (autoplay)');
-                                });
-                            } else if (yt._sct(this.current.url)) {
-                                const tab = browser.visist(this.current.url);
-                                const el = tab.document.querySelector(".soundTitle__title.sc-link-dark");
-                                yt.getInfo(`https://soundcloud.com${el.src}`).then(info => resolve(`${info.title} (autoplay)`));
-                            } else resolve(null);
-                        })
-                })
+            this._client.db.getGuild(this.id).then(guild => {
+                    if (guild.queue.length > 1 && guild.queue[1]) resolve(guild.queue.length > 1 && guild.queue[1].title)
+                    else if (this.current && this.autoplay) {
+                        const yt = this._client.ytdl;
+                        if (yt._ytv(this.current.url)) {
+                            yt.related(this.current.url.split("?v=")[1]).then(json => {
+                                const item = json.items[0];
+                                resolve(item.snippet.title + ' (autoplay)');
+                            });
+                        } else if (yt._sct(this.current.url)) {
+                            const tab = browser.visist(this.current.url);
+                            const el = tab.document.querySelector(".soundTitle__title.sc-link-dark");
+                            yt.getInfo(`https://soundcloud.com${el.src}`).then(info => resolve(`${info.title} (autoplay)`));
+                        } else resolve(null);
+                    }
+                });
+            });
         }
 
         /**
