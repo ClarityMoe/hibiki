@@ -1,6 +1,8 @@
 const EventEmitter = require('eventemitter3');
 const numeral = require('numeral');
 const got = require('got');
+const Zombie = require("zombie");
+const browser = new Zombie();
 
 class MusicPlayer extends EventEmitter {
     constructor(client, guild) {
@@ -28,7 +30,7 @@ class MusicPlayer extends EventEmitter {
      */
 
     checkQueue() {
-        return new Promise(async (resolve, reject) => {
+        return new Promise(async(resolve, reject) => {
             const guild = await this._client.db.getGuild(this.id)
             for (const item of guild.queue) {
                 try {
@@ -66,344 +68,343 @@ class MusicPlayer extends EventEmitter {
 
     getNext() {
         return new Promise((resolve, reject) => {
-            this._client.db.getGuild(this.id).then(guild => {
-                if (guild.queue.length > 1 && guild.queue[1]) resolve(guild.queue.length > 1 && guild.queue[1].title)
-                else if (this.current && this.autoplay) {
-                    got(this.current.url).then(res => {
-                        try {
-                            const title = res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('title="([^"]+)"')[1];
-
-                            resolve(`${title} (autoplay)`);
-
-                        } catch (e) {
-                            resolve(null);
-                        }
-                    });
-                } else resolve(null);
-            })
-        })
-    }
-
-    /**
-     * Get the voiceconnection of the bot in this guild
-     * 
-     * @readonly
-     * 
-     * @memberof MusicPlayer
-     */
-
-    get connection() {
-        return this._client.voiceConnections.get(this.id);
-    }
-
-    /**
-     * Get the playing status of the bot in this guild
-     * 
-     * @readonly
-     * 
-     * @memberof MusicPlayer
-     */
-
-    get playing() {
-        return this.connection && this.connection.playing || false;
-    }
-
-    /**
-     * Get how much time is left on the current song
-     * 
-     * @readonly
-     * 
-     * @memberof MusicPlayer
-     */
-
-    get timeLeft() {
-        return this.connection && (this.current.duration - this.connection.current.playTime / 1000) || 0;
-    }
-
-    /**
-     * Whether the connection is ready or not
-     * 
-     * @readonly
-     * 
-     * @memberof MusicPlayer
-     */
-
-    get ready() {
-        return this.connection.ready;
-    }
-
-    /**
-     * Disconnects the connection
-     * 
-     * @returns 
-     * 
-     * @memberof MusicPlayer
-     */
-
-    disconnect() {
-        return this.connection.disconnect();
-    }
-
-    /**
-     * Get the queue of the music player
-     * 
-     * @returns {Promise<Object[]>}
-     * 
-     * @memberof MusicPlayer
-     */
-
-    queue() {
-        return new Promise((resolve, reject) => this._client.db.getGuild(this.id).then(g => resolve(g.queue)).catch(reject));
-    }
-
-    /**
-     * Have the player join a channel.
-     * 
-     * @param {String} id 
-     * 
-     * @memberof MusicPlayer
-     */
-
-    join(id) {
-        return new Promise((resolve, reject) => {
-            if (!this._client.getChannel(id)) return reject(new Error("Voicechannel not found"));
-            if (this._client.getChannel(id).type !== 2) return reject(new Error("Channel is not a voice channel"));
-            this._client.joinVoiceChannel(id).catch(reject).then(conn => {
-                conn.once('ready', () => {
-                    this.emit('ready');
-                });
-                resolve(conn);
-            });
-        })
-    }
-
-    /**
-     * Plays the next song (or autoplay song if enabled)
-     * 
-     * @returns {Promise}
-     * 
-     * @memberof MusicPlayer
-     */
-
-    play() {
-        return new Promise((resolve, reject) => {
-            this.voteskip = [];
-            if (!this.connection) return reject("not_connected");
-            if (!this.connection.ready) return reject("not_ready");
-            if (this.connection.playing) return reject("already_playing");
-            this._client.db.getGuild(this.id).then(g => {
-
-                const queue = g.queue;
-
-                if (!this.autoplay && !this.repeat && queue.length === 0) return reject("queue_empty");
-
-                const song = this.repeat && this.current || queue.shift();
-
-                this.current = song;
-
-                this.emit('nextSong', this.current);
-                this.emit('next');
-
-                resolve(this.current);
-
-                this.connection.play(song.dl, {
-                    inlineVolume: true,
-                    inputArgs: [
-                        "-reconnect", "1",
-                        "-reconnect_streamed", "1",
-                        "-reconnect_delay_max", "2"
-                    ]
-                });
-
-                this.connection.once('end', () => {
-                    this._client.db.getGuild(this.id).then(guild => {
-                        this._client.db.editGuild(this.id, {
-                            queue: guild.queue.slice(1)
-                        }).then(() => {
-                            this.connection.removeAllListeners();
-                            setTimeout(() => this.next(), 100);
+                this._client.db.getGuild(this.id).then(guild => {
+                        if (guild.queue.length > 1 && guild.queue[1]) resolve(guild.queue.length > 1 && guild.queue[1].title)
+                        else if (this.current && this.autoplay) {
+                            const yt = this._client.ytdl;
+                            if (yt._ytv(this.current.url)) {
+                                yt.related(this.current.url.split("?v=")[1]).then(json => {
+                                    const item = json.items[0];
+                                    resolve(item.snippet.title + ' (autoplay)');
+                                });
+                            } else if (yt._sct(this.current.url)) {
+                                const tab = browser.visist(this.current.url);
+                                const el = tab.document.querySelector(".soundTitle__title.sc-link-dark");
+                                yt.getInfo(`https://soundcloud.com${el.src}`).then(info => resolve(`${info.title} (autoplay)`));
+                            } else resolve(null);
                         })
+                })
+        }
+
+        /**
+         * Get the voiceconnection of the bot in this guild
+         * 
+         * @readonly
+         * 
+         * @memberof MusicPlayer
+         */
+
+        get connection() {
+            return this._client.voiceConnections.get(this.id);
+        }
+
+        /**
+         * Get the playing status of the bot in this guild
+         * 
+         * @readonly
+         * 
+         * @memberof MusicPlayer
+         */
+
+        get playing() {
+            return this.connection && this.connection.playing || false;
+        }
+
+        /**
+         * Get how much time is left on the current song
+         * 
+         * @readonly
+         * 
+         * @memberof MusicPlayer
+         */
+
+        get timeLeft() {
+            return this.connection && (this.current.duration - this.connection.current.playTime / 1000) || 0;
+        }
+
+        /**
+         * Whether the connection is ready or not
+         * 
+         * @readonly
+         * 
+         * @memberof MusicPlayer
+         */
+
+        get ready() {
+            return this.connection.ready;
+        }
+
+        /**
+         * Disconnects the connection
+         * 
+         * @returns 
+         * 
+         * @memberof MusicPlayer
+         */
+
+        disconnect() {
+            return this.connection.disconnect();
+        }
+
+        /**
+         * Get the queue of the music player
+         * 
+         * @returns {Promise<Object[]>}
+         * 
+         * @memberof MusicPlayer
+         */
+
+        queue() {
+            return new Promise((resolve, reject) => this._client.db.getGuild(this.id).then(g => resolve(g.queue)).catch(reject));
+        }
+
+        /**
+         * Have the player join a channel.
+         * 
+         * @param {String} id 
+         * 
+         * @memberof MusicPlayer
+         */
+
+        join(id) {
+            return new Promise((resolve, reject) => {
+                if (!this._client.getChannel(id)) return reject(new Error("Voicechannel not found"));
+                if (this._client.getChannel(id).type !== 2) return reject(new Error("Channel is not a voice channel"));
+                this._client.joinVoiceChannel(id).catch(reject).then(conn => {
+                    conn.once('ready', () => {
+                        this.emit('ready');
+                    });
+                    resolve(conn);
+                });
+            })
+        }
+
+        /**
+         * Plays the next song (or autoplay song if enabled)
+         * 
+         * @returns {Promise}
+         * 
+         * @memberof MusicPlayer
+         */
+
+        play() {
+            return new Promise((resolve, reject) => {
+                this.voteskip = [];
+                if (!this.connection) return reject("not_connected");
+                if (!this.connection.ready) return reject("not_ready");
+                if (this.connection.playing) return reject("already_playing");
+                this._client.db.getGuild(this.id).then(g => {
+
+                    const queue = g.queue;
+
+                    if (!this.autoplay && !this.repeat && queue.length === 0) return reject("queue_empty");
+
+                    const song = this.repeat && this.current || queue.shift();
+
+                    this.current = song;
+
+                    this.emit('nextSong', this.current);
+                    this.emit('next');
+
+                    resolve(this.current);
+
+                    this.connection.play(song.dl, {
+                        inlineVolume: true,
+                        inputArgs: [
+                            "-reconnect", "1",
+                            "-reconnect_streamed", "1",
+                            "-reconnect_delay_max", "2"
+                        ]
+                    });
+
+                    this.connection.once('end', () => {
+                        this._client.db.getGuild(this.id).then(guild => {
+                            this._client.db.editGuild(this.id, {
+                                queue: guild.queue.slice(1)
+                            }).then(() => {
+                                this.connection.removeAllListeners();
+                                setTimeout(() => this.next(), 100);
+                            })
+                        });
+                    });
+
+                    this.connection.once('error', (e) => {
+                        this.emit('error', e);
+                        this.disconnect();
+                        this.connection.removeAllListeners();
+                    })
+
+                    this.connection.once('warn', (w) => this.emit('warn', w));
+
+                    this.on('stop', () => {
+                        this.connection.removeAllListeners();
+                        this.connection.stopPlaying();
                     });
                 });
-
-                this.connection.once('error', (e) => {
-                    this.emit('error', e);
-                    this.disconnect();
-                    this.connection.removeAllListeners();
-                })
-
-                this.connection.once('warn', (w) => this.emit('warn', w));
-
-                this.on('stop', () => {
-                    this.connection.removeAllListeners();
-                    this.connection.stopPlaying();
-                });
             });
-        });
-    }
+        }
 
-    /**
-     * Go to the next song, or autoplay if enabled
-     * 
-     * @returns 
-     * 
-     * @memberof MusicPlayer
-     */
+        /**
+         * Go to the next song, or autoplay if enabled
+         * 
+         * @returns 
+         * 
+         * @memberof MusicPlayer
+         */
 
-    next() {
-        return new Promise((resolve, reject) => {
-            this._client.db.getGuild(this.id).then(guild => {
-                new Promise((resolve) => {
-                    if (guild.queue.length === 0 && this.autoplay) {
-                        got(this.current.url).then(res => {
-                            try {
-                                const yt = this._client.ytdl;
-                                if (yt._ytv(this.current.url)) {
-                                    const id = res.body.match('<a.+content-link spf-link  yt-uix-sessionlink      spf-link[^>]+')[0].match('href="/watch\\?v=([^"]+)"')[1];
-                                    this._client.ytdl.getInfo(`https://youtube.com/watch?v=${id}`).then(info => this.enqueue(info, this._client.user.id).then(resolve));
-                                } else if (yt._sct(this.current_url)) {
-                                    const id = res.body.match('"soundBadgeList compact lazyLoadingList".+"sc-list-nostyle sc-clearfix".+"soundBadgeList__item".+"soundBadge__avatarLink sc-media-image"[^>]+');
-                                    console.log(id);
-                                }
-                            } catch (e) {
+        next() {
+            return new Promise((resolve, reject) => {
+                this._client.db.getGuild(this.id).then(guild => {
+                    new Promise((resolve) => {
+                        if (guild.queue.length === 0 && this.autoplay) {
+                            const yt = this._client.ytdl;
+                            if (yt._ytv(this.current.url)) {
+                                yt.related(this.current.url.split("?v=")[1]).then(json => {
+                                    const item = json.items[0];
+                                    yt.getInfo(`https://youtube.com/watch?v=${item.id.videoId}`).then(info => this.enqueue(info, this.current.user).then(resolve));
+                                });
+                            }
+                        } else resolve();
+                    }).then(() => {
+                        this.play().then(resolve).catch(e => {
+                            switch (e) {
+                                case 'already_playing':
+                                    {
+                                        this.emit("alreadyPlaying");
+                                        break;
+                                    }
+                                case 'queue_empty':
+                                    {
+                                        this.emit('queueEmpty');
+                                        break;
+                                    }
+                                case 'not_ready':
+                                    {
+                                        this.emit('notReady');
+                                        break;
+                                    }
+                                case 'not_connected':
+                                    {
+                                        this.emit('notConnected');
+                                        break;
+                                    }
+                                default:
+                                    {
+                                        reject(e);
+                                        break;
+                                    }
                             }
                         });
-                    } else resolve();
-                }).then(() => {
-                    this.play().then(resolve).catch(e => {
-                        switch (e) {
-                            case 'already_playing': {
-                                this.emit("alreadyPlaying");
-                                break;
-                            }
-                            case 'queue_empty': {
-                                this.emit('queueEmpty');
-                                break;
-                            }
-                            case 'not_ready': {
-                                this.emit('notReady');
-                                break;
-                            }
-                            case 'not_connected': {
-                                this.emit('notConnected');
-                                break;
-                            }
-                            default: {
-                                reject(e);
-                                break;
-                            }
-                        }
                     });
                 });
             });
-        });
-    }
-
-    /**
-     * Pauses the connection 
-     * 
-     * @memberof MusicPlayer
-     */
-
-    pause() {
-        if (!this.connection) return this.emit('error', new Error("Not connected!"));
-        if (!this.connection.ready) return this.emit('error', new Error("Not ready yet!"));
-        try {
-            this.connection.pause();
-            this.emit('pause');
-        } catch (e) {
-            this.emit('error', e);
         }
-    }
 
-    /**
-     * Resumes the connection
-     * @memberof MusicPlayer
-     */
+        /**
+         * Pauses the connection 
+         * 
+         * @memberof MusicPlayer
+         */
 
-    resume() {
-        if (!this.connection) return this.emit('error', new Error("Not connected!"));
-        if (!this.connection.ready) return this.emit('error', new Error("Not ready yet!"));
-        if (!this.connection.paused) return this.emit('error', new Error("Not paused!"));
-        try {
-            this.connection.resume();
-            this.emit('resume')
-        } catch (e) {
-            this.emit('error', e);
+        pause() {
+            if (!this.connection) return this.emit('error', new Error("Not connected!"));
+            if (!this.connection.ready) return this.emit('error', new Error("Not ready yet!"));
+            try {
+                this.connection.pause();
+                this.emit('pause');
+            } catch (e) {
+                this.emit('error', e);
+            }
         }
-    }
 
-    /**
-     * Enqueue songs
-     * 
-     * @param {Object|String} info 
-     * @param {String} user ID of the user that added the song(s)
-     * @returns {Promise<Object?>}
-     * 
-     * @memberof MusicPlayer
-     */
+        /**
+         * Resumes the connection
+         * @memberof MusicPlayer
+         */
 
-    enqueue(info, user) {
-        return new Promise((resolve, reject) => {
-            new Promise((resolv, rejec) => {
-                if (typeof info === 'string') return this._client.ytdl.getData(info).then(resolv).catch(rejec);
-                resolv(info);
-            }).then(inf => {
-                this._client.db.getGuild(this.id).then(g => {
-                    if (Array.isArray(inf)) {
-                        const items = [];
+        resume() {
+            if (!this.connection) return this.emit('error', new Error("Not connected!"));
+            if (!this.connection.ready) return this.emit('error', new Error("Not ready yet!"));
+            if (!this.connection.paused) return this.emit('error', new Error("Not paused!"));
+            try {
+                this.connection.resume();
+                this.emit('resume')
+            } catch (e) {
+                this.emit('error', e);
+            }
+        }
 
-                        for (const item of inf) {
-                            items.push({
-                                title: item.title,
-                                url: item.webpage_url,
-                                dl: item.url,
+        /**
+         * Enqueue songs
+         * 
+         * @param {Object|String} info 
+         * @param {String} user ID of the user that added the song(s)
+         * @returns {Promise<Object?>}
+         * 
+         * @memberof MusicPlayer
+         */
+
+        enqueue(info, user) {
+            return new Promise((resolve, reject) => {
+                new Promise((resolv, rejec) => {
+                    if (typeof info === 'string') return this._client.ytdl.getData(info).then(resolv).catch(rejec);
+                    resolv(info);
+                }).then(inf => {
+                    this._client.db.getGuild(this.id).then(g => {
+                        if (Array.isArray(inf)) {
+                            const items = [];
+
+                            for (const item of inf) {
+                                items.push({
+                                    title: item.title,
+                                    url: item.webpage_url,
+                                    dl: item.url,
+                                    user: user,
+                                    duration: numeral(item.duration).format(),
+                                    date: Date.now(),
+                                    thumbnail: item.thumbnails[0].url
+                                });
+                            }
+
+                            this._client.db.editGuild(this.id, {
+                                queue: g.queue.concat(items)
+                            }).catch(reject).then(res => {
+                                resolve(res);
+                                this.emit('queueUpdated', res.queue, 'add')
+                            });
+
+                        } else {
+                            g.queue.push({
+                                title: inf.title,
+                                url: inf.webpage_url,
+                                dl: inf.url,
                                 user: user,
-                                duration: numeral(item.duration).format(),
+                                duration: numeral(inf.duration).format(),
                                 date: Date.now(),
-                                thumbnail: item.thumbnails[0].url
+                                thumbnail: inf.thumbnails[0].url
+                            })
+                            this._client.db.editGuild(this.id, {
+                                queue: g.queue
+                            }).catch(reject).then(res => {
+                                resolve(res);
+                                this.emit('queueUpdated', res.queue, 'add');
                             });
                         }
-
-                        this._client.db.editGuild(this.id, {
-                            queue: g.queue.concat(items)
-                        }).catch(reject).then(res => {
-                            resolve(res);
-                            this.emit('queueUpdated', res.queue, 'add')
-                        });
-
-                    } else {
-                        g.queue.push({
-                            title: inf.title,
-                            url: inf.webpage_url,
-                            dl: inf.url,
-                            user: user,
-                            duration: numeral(inf.duration).format(),
-                            date: Date.now(),
-                            thumbnail: inf.thumbnails[0].url
-                        })
-                        this._client.db.editGuild(this.id, {
-                            queue: g.queue
-                        }).catch(reject).then(res => {
-                            resolve(res);
-                            this.emit('queueUpdated', res.queue, 'add');
-                        });
-                    }
+                    }).catch(reject);
                 }).catch(reject);
-            }).catch(reject);
-        })
+            })
+        }
+
+        /**
+         * Stop the music
+         * 
+         * 
+         * @memberof MusicPlayer
+         */
+
+        stop() {
+
+        }
     }
 
-    /**
-     * Stop the music
-     * 
-     * 
-     * @memberof MusicPlayer
-     */
-
-    stop() {
-
-    }
-}
-
-module.exports = MusicPlayer;
+    module.exports = MusicPlayer;

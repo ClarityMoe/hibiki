@@ -16,7 +16,7 @@ class YoutubeDL extends EventEmitter {
         this._ytp = str => /^(https?:\/\/)?(m\.|www\.)?youtube\.com\/playlist?list=[^&]+/.test(str);
         this._scs = str => /^(https?:\/\/)?(m\.|www\.)?soundcloud\.com\/[^/]+\/sets\/[^/]+/.test(str);
         this._sct = str => /^(https?:\/\/)?(m\.|www\.)?soundcloud\.com\/[^/]+\/[^/]+/.test(str);
-    } 
+    }
 
     _request(url, options) {
         return new Promise((resolve, reject) => request(url, options, (err, res, body) => err && reject(err) || resolve({ res: res, body: body })));
@@ -28,22 +28,26 @@ class YoutubeDL extends EventEmitter {
             const form = info.formats;
             const extr = info.extractor;
 
-            switch(extr) {
-                case 'twitch:stream': {
-                    return twitch.get(url.match(/\.tv\/([^/|?]+)/)[1]).then(s => resolve(s.filter(st => st.quality === "Audio Only")[0].url)).catch(reject);
-                }
-                case 'Bandcamp': {
-                    url = form.filter(f => f.format === 'mp3-128 - audio only')[0].url;
-                    break;
-                }
-                case 'soundcloud': {
-                    url = form.filter(f => f.format === 'http_mp3_128_url - audio only')[0].url;
-                    break;
-                }
-                default: {
-                    url = info.url;
-                    break;
-                }
+            switch (extr) {
+                case 'twitch:stream':
+                    {
+                        return twitch.get(url.match(/\.tv\/([^/|?]+)/)[1]).then(s => resolve(s.filter(st => st.quality === "Audio Only")[0].url)).catch(reject);
+                    }
+                case 'Bandcamp':
+                    {
+                        url = form.filter(f => f.format === 'mp3-128 - audio only')[0].url;
+                        break;
+                    }
+                case 'soundcloud':
+                    {
+                        url = form.filter(f => f.format === 'http_mp3_128_url - audio only')[0].url;
+                        break;
+                    }
+                default:
+                    {
+                        url = info.url;
+                        break;
+                    }
             }
 
             if (!url) return reject(new Error("Could not find download URL"));
@@ -56,8 +60,17 @@ class YoutubeDL extends EventEmitter {
     search(query) {
         return new Promise((resolve, reject) => {
             this._request(`https://www.googleapis.com/youtube/v3/search?part=snippet&maxResults=25&q=${query}&key=${this.googleKey}`)
-            .then(({ body }) => resolve(JSON.parse(body))).catch(reject);
-        })
+                .then(({ body }) => resolve(JSON.parse(body)))
+                .catch(reject);
+        });
+    }
+
+    related(id) {
+        return new Promise((resolve, reject) => {
+            this._request(`https://www.googleapis.com/youtube/v3/search?part=snippet&type=video&relatedToVideoId=${id}&key=${this.googleKey}`)
+                .then(({ body }) => resolve(JSON.parse(body)))
+                .catch(reject);
+        });
     }
 
     getInfo(url) {
