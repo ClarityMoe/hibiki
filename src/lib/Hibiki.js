@@ -3,6 +3,8 @@
 global.Command = require('./structures/Command.js');
 global.Script = require('./structures/Script.js');
 
+const blocked = require('blocked');
+
 const LocaleManager = require('./managers/LocaleManager.js');
 const DatabaseConnection = require('./structures/DatabaseConnection.js');
 const Logger = require('./structures/Logger.js');
@@ -160,6 +162,11 @@ class Hibiki extends EventEmitter {
             googleKey: opt.api.google
         });
         this.players = new PlayerManager(this);
+
+        blocked((ms) => {
+            this.logger.warn(`Shard blocked for ${ms | 0}ms`);
+            this.emit('blocked', ms);
+        });
 
         this.Constants = Constants;
 

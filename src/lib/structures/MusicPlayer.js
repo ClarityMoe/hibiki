@@ -82,7 +82,7 @@ class MusicPlayer extends EventEmitter {
                             const el = tab.document.querySelector(".soundTitle__title.sc-link-dark");
                             yt.getInfo(`https://soundcloud.com${el.src}`).then(info => resolve(`${info.title} (autoplay)`));
                         } else resolve(null);
-                    }
+                    } else resolve('none');
                 });
             });
         }

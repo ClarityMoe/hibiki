@@ -44,15 +44,20 @@ class PlayerManager extends Collection {
 
             player.on('warn', this.logger.warn);
 
-            player.on('pause', () => msg.channel.createMessage('Paused current song'));
+            player.on('pause', () => msg.channel.createMessage('Paused current song.'));
 
             player.on('resume', () => msg.channel.createMessage(`Resumed current song.`));
+
+            player.on('stop', () => msg.channel.createMessage(`Stopped current song.`))
 
             player.on('notConnected', () => msg.channel.createMessage(`I'm not connected to a voice channel!`));
 
             player.on('notReady', () => msg.channel.createMessage(`I'm not ready yet!`));
 
-            player.on('queueEmpty', () => msg.channel.createMessage(`The queue is empty!`));
+            player.on('queueEmpty', () => {
+                msg.channel.createMessage(`The queue is empty!`);
+                player.connection.disconnect();
+            });
 
         });
 
