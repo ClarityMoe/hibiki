@@ -2,7 +2,6 @@ import { Shard } from "./Shard";
 /**
  * Options for the logger
  *
- * @export
  * @interface ILoggerOptions
  */
 export interface ILoggerOptions {
@@ -12,46 +11,35 @@ export interface ILoggerOptions {
 /**
  * Logger - where all the logging magic happens
  *
- * @export
- * @class Logger
  */
 export declare class Logger {
     /**
      * Logger options
      *
      * @private
-     * @type {ILoggerOptions}
-     * @memberof Logger
      */
     private options;
     /**
      * Shard that initialized the logger (could be null)
      *
      * @private
-     * @type {Shard}
-     * @memberof Logger
      */
     private shard;
     /**
      * Logger prefix
      *
      * @private
-     * @type {string}
-     * @memberof Logger
      */
     private prefix;
     /**
      * Chalk instance
      *
      * @private
-     * @type {chalk.Chalk}
-     * @memberof Logger
      */
     private readonly clk;
     /**
      * Creates an instance of Logger.
      * @param {(Shard | ILoggerOptions)} obj
-     * @memberof Logger
      */
     constructor(obj: Shard | ILoggerOptions);
     /**
@@ -59,7 +47,6 @@ export declare class Logger {
      *
      * @private
      * @returns {string}
-     * @memberof Logger
      */
     private getPrefix();
     /**
@@ -68,7 +55,6 @@ export declare class Logger {
      * @private
      * @param {number} num
      * @returns {string}
-     * @memberof Logger
      */
     private getTime(num);
     /**
@@ -77,7 +63,6 @@ export declare class Logger {
      * @private
      * @param {string} type
      * @returns {string}
-     * @memberof Logger
      */
     private getLabel(type);
     /**
@@ -89,7 +74,6 @@ export declare class Logger {
      * @param {any[]} args
      * @param {boolean} [error]
      * @returns {*}
-     * @memberof Logger
      */
     private logBase(date, type, args, error?);
     /**
@@ -98,7 +82,6 @@ export declare class Logger {
      * @private
      * @param {any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     private checkArgs(args);
     /**
@@ -106,7 +89,6 @@ export declare class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     log(...args: any[]): Promise<void>;
     /**
@@ -114,7 +96,6 @@ export declare class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     info(...args: any[]): Promise<void>;
     /**
@@ -122,7 +103,6 @@ export declare class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     ok(...args: any[]): Promise<void>;
     /**
@@ -130,7 +110,6 @@ export declare class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     fail(...args: any[]): Promise<void>;
     /**
@@ -138,7 +117,14 @@ export declare class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     err(...args: any[]): Promise<void>;
+    /**
+     * Logs something as debug
+     *
+     * @param args
+     * @returns
+     */
+    debug(...args: any[]): Promise<void>;
+    msg(...args: any[]): Promise<void>;
 }

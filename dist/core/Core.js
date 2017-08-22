@@ -9,15 +9,11 @@ const ExtManager_1 = require("./ExtManager");
 /**
  * Core of the bot
  *
- * @export
- * @class Core
- * @extends {EventEmitter}
  */
 class Core extends events_1.EventEmitter {
     /**
      * Creates an instance of Core.
      * @param {Shard} shard
-     * @memberof Core
      */
     constructor(shard) {
         super();
@@ -25,22 +21,16 @@ class Core extends events_1.EventEmitter {
         /**
          * Extension manager class
          *
-         * @type {ExtManager}
-         * @memberof Core
          */
         this.ext = new ExtManager_1.ExtManager(this.shard);
         /**
          * Postgres wrapper class
          *
-         * @type {Postgres}
-         * @memberof Core
          */
         this.pg = new Postgres_1.Postgres(this.shard, this.shard.options.db.postgres);
         /**
          * Redis wrapper class
          *
-         * @type {Redis}
-         * @memberof Core
          */
         this.r = new Redis_1.Redis(this.shard.options.db.redis);
     }
@@ -49,7 +39,6 @@ class Core extends events_1.EventEmitter {
      *
      * @param {number} timeout
      * @returns {Promise<void>}
-     * @memberof Core
      */
     connect(timeout) {
         return new Promise((resolve, reject) => {
@@ -72,7 +61,6 @@ class Core extends events_1.EventEmitter {
      * Disconnect all modules
      *
      * @returns {Promise<void>}
-     * @memberof Core
      */
     disconnect() {
         return new Promise((resolve, reject) => {

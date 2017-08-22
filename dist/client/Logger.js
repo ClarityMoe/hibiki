@@ -7,22 +7,17 @@ const Shard_1 = require("./Shard");
 /**
  * Logger - where all the logging magic happens
  *
- * @export
- * @class Logger
  */
 class Logger {
     /**
      * Creates an instance of Logger.
      * @param {(Shard | ILoggerOptions)} obj
-     * @memberof Logger
      */
     constructor(obj) {
         /**
          * Chalk instance
          *
          * @private
-         * @type {chalk.Chalk}
-         * @memberof Logger
          */
         this.clk = new chalk.constructor({ enabled: true });
         if (obj instanceof Shard_1.Shard) {
@@ -40,7 +35,6 @@ class Logger {
      *
      * @private
      * @returns {string}
-     * @memberof Logger
      */
     getPrefix() {
         switch (this.prefix.toLowerCase()) {
@@ -48,6 +42,8 @@ class Logger {
                 return this.clk.blue(this.prefix);
             case "core":
                 return this.clk.cyan(this.prefix);
+            case "server":
+                return this.clk.magenta(this.prefix);
             default:
                 return this.clk.yellow(this.prefix);
         }
@@ -58,7 +54,6 @@ class Logger {
      * @private
      * @param {number} num
      * @returns {string}
-     * @memberof Logger
      */
     getTime(num) {
         const date = this.clk.cyan(moment(num).format("l"));
@@ -72,12 +67,13 @@ class Logger {
      * @private
      * @param {string} type
      * @returns {string}
-     * @memberof Logger
      */
     getLabel(type) {
         switch (type) {
             case "info":
                 return this.clk.bgMagenta(" INFO ");
+            case "msg":
+                return this.clk.bgCyan(" MSG ");
             case "ok":
                 return this.clk.bgGreen(" OK ");
             case "fail":
@@ -85,6 +81,7 @@ class Logger {
             case "err":
                 return this.clk.bgRed(" ERR ");
             case "log":
+            case "debug":
             default:
                 return this.clk.black.bgWhite(" LOG ");
         }
@@ -98,7 +95,6 @@ class Logger {
      * @param {any[]} args
      * @param {boolean} [error]
      * @returns {*}
-     * @memberof Logger
      */
     logBase(date, type, args, error) {
         const prefix = this.getPrefix();
@@ -112,7 +108,6 @@ class Logger {
      * @private
      * @param {any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     checkArgs(args) {
         for (const arg of args) {
@@ -127,7 +122,6 @@ class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     log(...args) {
         const date = Date.now();
@@ -142,7 +136,6 @@ class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     info(...args) {
         const date = Date.now();
@@ -157,7 +150,6 @@ class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     ok(...args) {
         const date = Date.now();
@@ -172,7 +164,6 @@ class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     fail(...args) {
         const date = Date.now();
@@ -186,13 +177,36 @@ class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     err(...args) {
         const date = Date.now();
         return new Promise((resolve) => {
             // const args: any[] = Array.from(arguments);
             return resolve(this.logBase(date, "err", args, true));
+        });
+    }
+    /**
+     * Logs something as debug
+     *
+     * @param args
+     * @returns
+     */
+    debug(...args) {
+        const date = Date.now();
+        return new Promise((resolve) => {
+            // const args: any[] = Array.from(arguments);
+            if (!this.options.debug) {
+                return resolve();
+            }
+            return resolve(this.logBase(date, "debug", args, true));
+        });
+    }
+    msg(...args) {
+        const date = Date.now();
+        return new Promise((resolve, reject) => {
+            // const args: any[] = Array.from(arguments);
+            this.checkArgs(args).catch(reject);
+            return resolve(this.logBase(date, "msg", args, false));
         });
     }
 }

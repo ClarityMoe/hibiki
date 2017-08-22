@@ -8,15 +8,11 @@ const Command_1 = require("./Command");
 /**
  * Extension manager
  *
- * @export
- * @class ExtManager
- * @extends {EventEmitter}
  */
 class ExtManager extends events_1.EventEmitter {
     /**
      * Creates an instance of ExtManager.
      * @param {Shard} shard
-     * @memberof ExtManager
      */
     constructor(shard) {
         super();
@@ -24,15 +20,11 @@ class ExtManager extends events_1.EventEmitter {
         /**
          * Loaded commands
          *
-         * @type {Map<string, Command>}
-         * @memberof ExtManager
          */
         this.commands = new Map();
         /**
          * Loaded subcommands
          *
-         * @type {Map<string, Command>}
-         * @memberof ExtManager
          */
         this.subcommands = new Map();
     }
@@ -40,7 +32,6 @@ class ExtManager extends events_1.EventEmitter {
      * Initializes the extension manager
      *
      * @returns {Promise<void>}
-     * @memberof ExtManager
      */
     init() {
         return new Promise((resolve, reject) => {
@@ -56,7 +47,6 @@ class ExtManager extends events_1.EventEmitter {
      * Breaks/Stops the extension manager
      *
      * @returns {Promise<void>}
-     * @memberof ExtManager
      */
     break() {
         this.commands.clear();
@@ -69,7 +59,6 @@ class ExtManager extends events_1.EventEmitter {
      * @decorator
      * @param {ICommandConfig} config
      * @returns {(target: any, key: string, descriptor: PropertyDescriptor) => void}
-     * @memberof ExtManager
      */
     command(config) {
         return (_target, key, descriptor) => {
@@ -84,7 +73,6 @@ class ExtManager extends events_1.EventEmitter {
      * @param {string} command
      * @param {ISubcommandConfig} config
      * @returns {(target: any, key: string, descriptor: PropertyDescriptor) => void}
-     * @memberof ExtManager
      */
     subcommand(command, config) {
         return (_target, key, descriptor) => {
@@ -98,7 +86,6 @@ class ExtManager extends events_1.EventEmitter {
      * @decorator
      * @param {string} event
      * @returns {(target: any, key: string, descriptor: PropertyDescriptor) => void}
-     * @memberof ExtManager
      */
     event(event) {
         return (_target, _key, descriptor) => {

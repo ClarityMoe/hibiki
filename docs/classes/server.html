@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>SockConnection | Hibiki</title>
+	<title>Server | Hibiki</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,28 +56,16 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="sockconnection.html">SockConnection</a>
+					<a href="server.html">Server</a>
 				</li>
 			</ul>
-			<h1>Class SockConnection</h1>
+			<h1>Class Server</h1>
 		</div>
 	</div>
 </header>
 <div class="container container-main">
 	<div class="row">
 		<div class="col-8 col-content">
-			<section class="tsd-panel tsd-comment">
-				<div class="tsd-comment tsd-typography">
-					<div class="lead">
-						<p>WebSocket connection between shards.</p>
-					</div>
-					<dl class="tsd-comment-tags">
-						<dt>todo</dt>
-						<dd><p>fix this cuz noud is a meme</p>
-						</dd>
-					</dl>
-				</div>
-			</section>
 			<section class="tsd-panel tsd-hierarchy">
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
@@ -85,7 +73,7 @@
 						<span class="tsd-signature-type">EventEmitter</span>
 						<ul class="tsd-hierarchy">
 							<li>
-								<span class="target">SockConnection</span>
+								<span class="target">Server</span>
 							</li>
 						</ul>
 					</li>
@@ -98,37 +86,35 @@
 						<section class="tsd-index-section ">
 							<h3>Constructors</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="sockconnection.html#constructor" class="tsd-kind-icon">constructor</a></li>
+								<li class="tsd-kind-constructor tsd-parent-kind-class"><a href="server.html#constructor" class="tsd-kind-icon">constructor</a></li>
 							</ul>
 						</section>
-						<section class="tsd-index-section tsd-is-inherited">
+						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="sockconnection.html#defaultmaxlisteners" class="tsd-kind-icon">default<wbr>Max<wbr>Listeners</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="server.html#logger" class="tsd-kind-icon">logger</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="server.html#wss" class="tsd-kind-icon">wss</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="server.html#defaultmaxlisteners" class="tsd-kind-icon">default<wbr>Max<wbr>Listeners</a></li>
 							</ul>
 						</section>
 						<section class="tsd-index-section ">
 							<h3>Methods</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#emit" class="tsd-kind-icon">emit</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#eventnames" class="tsd-kind-icon">event<wbr>Names</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="sockconnection.html#getguild" class="tsd-kind-icon">get<wbr>Guild</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#getmaxlisteners" class="tsd-kind-icon">get<wbr>Max<wbr>Listeners</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="sockconnection.html#getuser" class="tsd-kind-icon">get<wbr>User</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="sockconnection.html#init" class="tsd-kind-icon">init</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#listenercount" class="tsd-kind-icon">listener<wbr>Count</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#listeners" class="tsd-kind-icon">listeners</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#on" class="tsd-kind-icon">on</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#once" class="tsd-kind-icon">once</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#prependlistener" class="tsd-kind-icon">prepend<wbr>Listener</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#prependoncelistener" class="tsd-kind-icon">prepend<wbr>Once<wbr>Listener</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#removealllisteners" class="tsd-kind-icon">remove<wbr>All<wbr>Listeners</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#removelistener" class="tsd-kind-icon">remove<wbr>Listener</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="sockconnection.html#request" class="tsd-kind-icon">request</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class"><a href="sockconnection.html#send" class="tsd-kind-icon">send</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="sockconnection.html#setmaxlisteners" class="tsd-kind-icon">set<wbr>Max<wbr>Listeners</a></li>
-								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="sockconnection.html#listenercount-1" class="tsd-kind-icon">listener<wbr>Count</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#emit" class="tsd-kind-icon">emit</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#eventnames" class="tsd-kind-icon">event<wbr>Names</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#getmaxlisteners" class="tsd-kind-icon">get<wbr>Max<wbr>Listeners</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class"><a href="server.html#init" class="tsd-kind-icon">init</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#listenercount" class="tsd-kind-icon">listener<wbr>Count</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#listeners" class="tsd-kind-icon">listeners</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#on" class="tsd-kind-icon">on</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#once" class="tsd-kind-icon">once</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#prependlistener" class="tsd-kind-icon">prepend<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#prependoncelistener" class="tsd-kind-icon">prepend<wbr>Once<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#removealllisteners" class="tsd-kind-icon">remove<wbr>All<wbr>Listeners</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#removelistener" class="tsd-kind-icon">remove<wbr>Listener</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited"><a href="server.html#setmaxlisteners" class="tsd-kind-icon">set<wbr>Max<wbr>Listeners</a></li>
+								<li class="tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="server.html#listenercount-1" class="tsd-kind-icon">listener<wbr>Count</a></li>
 							</ul>
 						</section>
 					</div>
@@ -140,28 +126,48 @@
 					<a name="constructor" class="tsd-anchor"></a>
 					<h3>constructor</h3>
 					<ul class="tsd-signatures tsd-kind-constructor tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">new <wbr>Sock<wbr>Connection<span class="tsd-signature-symbol">(</span>shard<span class="tsd-signature-symbol">: </span><a href="shard.html" class="tsd-signature-type">Shard</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="sockconnection.html" class="tsd-signature-type">SockConnection</a></li>
+						<li class="tsd-signature tsd-kind-icon">new <wbr>Server<span class="tsd-signature-symbol">(</span>config<span class="tsd-signature-symbol">: </span><a href="../interfaces/ihibikiconfig.html" class="tsd-signature-type">IHibikiConfig</a><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><a href="server.html" class="tsd-signature-type">Server</a></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Connection.ts#L28">client/Connection.ts:28</a></li>
+									<li>Defined in server/Server.ts:9</li>
 								</ul>
 							</aside>
 							<h4 class="tsd-parameters-title">Parameters</h4>
 							<ul class="tsd-parameters">
 								<li>
-									<h5>shard: <a href="shard.html" class="tsd-signature-type">Shard</a></h5>
+									<h5>config: <a href="../interfaces/ihibikiconfig.html" class="tsd-signature-type">IHibikiConfig</a></h5>
 								</li>
 							</ul>
-							<h4 class="tsd-returns-title">Returns <a href="sockconnection.html" class="tsd-signature-type">SockConnection</a></h4>
+							<h4 class="tsd-returns-title">Returns <a href="server.html" class="tsd-signature-type">Server</a></h4>
 						</li>
 					</ul>
 				</section>
 			</section>
-			<section class="tsd-panel-group tsd-member-group tsd-is-inherited">
+			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="logger" class="tsd-anchor"></a>
+					<h3>logger</h3>
+					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <a href="logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol"> =&nbsp;new Logger({ prefix: &quot;server&quot;, debug: false })</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in server/Server.ts:16</li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="wss" class="tsd-anchor"></a>
+					<h3>wss</h3>
+					<div class="tsd-signature tsd-kind-icon">wss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Server</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in server/Server.ts:15</li>
+						</ul>
+					</aside>
+				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="defaultmaxlisteners" class="tsd-anchor"></a>
 					<h3><span class="tsd-flag ts-flagStatic">Static</span> default<wbr>Max<wbr>Listeners</h3>
@@ -269,37 +275,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getguild" class="tsd-anchor"></a>
-					<h3>get<wbr>Guild</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>Guild<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Connection.ts#L166">client/Connection.ts:166</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get a guild from another shard.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>id: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<blockquote>
-								<p>}</p>
-							</blockquote>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="getmaxlisteners" class="tsd-anchor"></a>
 					<h3>get<wbr>Max<wbr>Listeners</h3>
@@ -320,50 +295,19 @@
 					</ul>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="getuser" class="tsd-anchor"></a>
-					<h3>get<wbr>User</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">get<wbr>User<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Connection.ts#L176">client/Connection.ts:176</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Get a user from another shard.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>id: <span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<blockquote>
-								<p>}</p>
-							</blockquote>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
 					<a name="init" class="tsd-anchor"></a>
 					<h3>init</h3>
 					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">void</span></li>
+						<li class="tsd-signature tsd-kind-icon">init<span class="tsd-signature-symbol">(</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
 					</ul>
 					<ul class="tsd-descriptions">
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Connection.ts#L81">client/Connection.ts:81</a></li>
+									<li>Defined in server/Server.ts:18</li>
 								</ul>
 							</aside>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">void</span></h4>
+							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
 				</section>
@@ -672,75 +616,6 @@
 						</li>
 					</ul>
 				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="request" class="tsd-anchor"></a>
-					<h3>request</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">request<span class="tsd-signature-symbol">(</span>type<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">string</span>, data<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, shard<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Connection.ts#L127">client/Connection.ts:127</a></li>
-								</ul>
-							</aside>
-							<div class="tsd-comment tsd-typography">
-								<div class="lead">
-									<p>Request something from another shard.</p>
-								</div>
-							</div>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>type: <span class="tsd-signature-type">string</span></h5>
-								</li>
-								<li>
-									<h5>data: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> shard: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">number</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></h4>
-							<blockquote>
-								<p>}</p>
-							</blockquote>
-						</li>
-					</ul>
-				</section>
-				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class">
-					<a name="send" class="tsd-anchor"></a>
-					<h3>send</h3>
-					<ul class="tsd-signatures tsd-kind-method tsd-parent-kind-class">
-						<li class="tsd-signature tsd-kind-icon">send<span class="tsd-signature-symbol">(</span>id<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, op<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">number</span>, d<span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">any</span>, e<span class="tsd-signature-symbol">?: </span><span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">)</span><span class="tsd-signature-symbol">: </span><span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></li>
-					</ul>
-					<ul class="tsd-descriptions">
-						<li class="tsd-description">
-							<aside class="tsd-sources">
-								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Connection.ts#L95">client/Connection.ts:95</a></li>
-								</ul>
-							</aside>
-							<h4 class="tsd-parameters-title">Parameters</h4>
-							<ul class="tsd-parameters">
-								<li>
-									<h5>id: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>op: <span class="tsd-signature-type">number</span></h5>
-								</li>
-								<li>
-									<h5>d: <span class="tsd-signature-type">any</span></h5>
-								</li>
-								<li>
-									<h5><span class="tsd-flag ts-flagOptional">Optional</span> e: <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></h5>
-								</li>
-							</ul>
-							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
-						</li>
-					</ul>
-				</section>
 				<section class="tsd-panel tsd-member tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
 					<a name="setmaxlisteners" class="tsd-anchor"></a>
 					<h3>set<wbr>Max<wbr>Listeners</h3>
@@ -809,6 +684,9 @@
 						<a href="command.html" class="tsd-kind-icon">Command</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="connection.html" class="tsd-kind-icon">Connection</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="context.html" class="tsd-kind-icon">Context</a>
 					</li>
 					<li class=" tsd-kind-class">
@@ -829,81 +707,75 @@
 					<li class=" tsd-kind-class">
 						<a href="redis.html" class="tsd-kind-icon">Redis</a>
 					</li>
-					<li class=" tsd-kind-class">
-						<a href="shard.html" class="tsd-kind-icon">Shard</a>
-					</li>
 				</ul>
 				<ul class="current">
 					<li class="current tsd-kind-class">
-						<a href="sockconnection.html" class="tsd-kind-icon">Sock<wbr>Connection</a>
+						<a href="server.html" class="tsd-kind-icon">Server</a>
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
-								<a href="sockconnection.html#constructor" class="tsd-kind-icon">constructor</a>
+								<a href="server.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="server.html#logger" class="tsd-kind-icon">logger</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="server.html#wss" class="tsd-kind-icon">wss</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-								<a href="sockconnection.html#defaultmaxlisteners" class="tsd-kind-icon">default<wbr>Max<wbr>Listeners</a>
+								<a href="server.html#defaultmaxlisteners" class="tsd-kind-icon">default<wbr>Max<wbr>Listeners</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a>
+								<a href="server.html#addlistener" class="tsd-kind-icon">add<wbr>Listener</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#emit" class="tsd-kind-icon">emit</a>
+								<a href="server.html#emit" class="tsd-kind-icon">emit</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#eventnames" class="tsd-kind-icon">event<wbr>Names</a>
+								<a href="server.html#eventnames" class="tsd-kind-icon">event<wbr>Names</a>
+							</li>
+							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
+								<a href="server.html#getmaxlisteners" class="tsd-kind-icon">get<wbr>Max<wbr>Listeners</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="sockconnection.html#getguild" class="tsd-kind-icon">get<wbr>Guild</a>
+								<a href="server.html#init" class="tsd-kind-icon">init</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#getmaxlisteners" class="tsd-kind-icon">get<wbr>Max<wbr>Listeners</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="sockconnection.html#getuser" class="tsd-kind-icon">get<wbr>User</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="sockconnection.html#init" class="tsd-kind-icon">init</a>
+								<a href="server.html#listenercount" class="tsd-kind-icon">listener<wbr>Count</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#listenercount" class="tsd-kind-icon">listener<wbr>Count</a>
+								<a href="server.html#listeners" class="tsd-kind-icon">listeners</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#listeners" class="tsd-kind-icon">listeners</a>
+								<a href="server.html#on" class="tsd-kind-icon">on</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#on" class="tsd-kind-icon">on</a>
+								<a href="server.html#once" class="tsd-kind-icon">once</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#once" class="tsd-kind-icon">once</a>
+								<a href="server.html#prependlistener" class="tsd-kind-icon">prepend<wbr>Listener</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#prependlistener" class="tsd-kind-icon">prepend<wbr>Listener</a>
+								<a href="server.html#prependoncelistener" class="tsd-kind-icon">prepend<wbr>Once<wbr>Listener</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#prependoncelistener" class="tsd-kind-icon">prepend<wbr>Once<wbr>Listener</a>
+								<a href="server.html#removealllisteners" class="tsd-kind-icon">remove<wbr>All<wbr>Listeners</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#removealllisteners" class="tsd-kind-icon">remove<wbr>All<wbr>Listeners</a>
+								<a href="server.html#removelistener" class="tsd-kind-icon">remove<wbr>Listener</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#removelistener" class="tsd-kind-icon">remove<wbr>Listener</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="sockconnection.html#request" class="tsd-kind-icon">request</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class">
-								<a href="sockconnection.html#send" class="tsd-kind-icon">send</a>
-							</li>
-							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-overwrite tsd-is-inherited">
-								<a href="sockconnection.html#setmaxlisteners" class="tsd-kind-icon">set<wbr>Max<wbr>Listeners</a>
+								<a href="server.html#setmaxlisteners" class="tsd-kind-icon">set<wbr>Max<wbr>Listeners</a>
 							</li>
 							<li class=" tsd-kind-method tsd-parent-kind-class tsd-is-inherited tsd-is-static">
-								<a href="sockconnection.html#listenercount-1" class="tsd-kind-icon">listener<wbr>Count</a>
+								<a href="server.html#listenercount-1" class="tsd-kind-icon">listener<wbr>Count</a>
 							</li>
 						</ul>
 					</li>
 				</ul>
 				<ul class="after-current">
+					<li class=" tsd-kind-class">
+						<a href="shard.html" class="tsd-kind-icon">Shard</a>
+					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/icommandargument.html" class="tsd-kind-icon">ICommand<wbr>Argument</a>
 					</li>
@@ -923,6 +795,9 @@
 						<a href="../interfaces/idbuser.html" class="tsd-kind-icon">IDBUser</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ihibikiconfig.html" class="tsd-kind-icon">IHibiki<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ihibikimessage.html" class="tsd-kind-icon">IHibiki<wbr>Message</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -932,13 +807,22 @@
 						<a href="../interfaces/iopcodes.html" class="tsd-kind-icon">IOPCodes</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/ishardoptions.html" class="tsd-kind-icon">IShard<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
 						<a href="../interfaces/isubcommandconfig.html" class="tsd-kind-icon">ISubcommand<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/iwsevent.html" class="tsd-kind-icon">IWSEvent</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#args" class="tsd-kind-icon">args</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#config" class="tsd-kind-icon">config</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#logger" class="tsd-kind-icon">logger</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#shard" class="tsd-kind-icon">shard</a>
 					</li>
 					<li class=" tsd-kind-object-literal">
 						<a href="../globals.html#opcodes" class="tsd-kind-icon">OPCodes</a>

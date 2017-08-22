@@ -8,16 +8,12 @@ const sanic = require("sanic");
 /**
  * PostgreSQL wrapper
  *
- * @export
- * @class Postgres
- * @extends {EventEmitter}
  */
 class Postgres extends events_1.EventEmitter {
     /**
      * Creates an instance of Postgres.
      * @param {Shard} shard
      * @param {ClientConfig} options
-     * @memberof Postgres
      */
     constructor(shard, options) {
         super();
@@ -27,8 +23,6 @@ class Postgres extends events_1.EventEmitter {
          * "pg" client
          *
          * @private
-         * @type {Client}
-         * @memberof Postgres
          */
         this.con = new pg_1.Client(this.options);
     }
@@ -36,7 +30,6 @@ class Postgres extends events_1.EventEmitter {
      * Connect to the database
      *
      * @returns {Promise<void>}
-     * @memberof Postgres
      */
     connect() {
         return new Promise((resolve, reject) => {
@@ -57,7 +50,6 @@ class Postgres extends events_1.EventEmitter {
      * Disconnect from the database
      *
      * @returns {Promise<void>}
-     * @memberof Postgres
      */
     disconnect() {
         return new Promise((resolve, reject) => {
@@ -74,7 +66,6 @@ class Postgres extends events_1.EventEmitter {
      *
      * @param {Error} err
      * @returns {void}
-     * @memberof Postgres
      */
     release(err) {
         return this.con.release(err);
@@ -85,7 +76,6 @@ class Postgres extends events_1.EventEmitter {
      * @param {(string} query
      * @param {any[]} [values]
      * @returns {(Promise<QueryResult>)}
-     * @memberof Postgres
      */
     query(query, values) {
         if (values) {
@@ -100,7 +90,6 @@ class Postgres extends events_1.EventEmitter {
      *
      * @param {string} queryText
      * @returns {Writable}
-     * @memberof Postgres
      */
     copyFrom(queryText) {
         return this.con.copyFrom(queryText);
@@ -110,7 +99,6 @@ class Postgres extends events_1.EventEmitter {
      *
      * @param {string} queryText
      * @returns {Readable}
-     * @memberof Postgres
      */
     copyTo(queryText) {
         return this.con.copyTo(queryText);
@@ -119,7 +107,6 @@ class Postgres extends events_1.EventEmitter {
      * Pause the drain
      *
      * @returns {void}
-     * @memberof Postgres
      */
     pauseDrain() {
         return this.con.pauseDrain();
@@ -128,7 +115,6 @@ class Postgres extends events_1.EventEmitter {
      * Resume the drain
      *
      * @returns {void}
-     * @memberof Postgres
      */
     resumeDrain() {
         return this.con.resumeDrain();
@@ -142,7 +128,6 @@ class Postgres extends events_1.EventEmitter {
      * @param {string} table
      * @param {*} data
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     insert(table, data) {
         return new Promise((resolve, reject) => {
@@ -166,7 +151,6 @@ class Postgres extends events_1.EventEmitter {
      * @param {string} table
      * @param {string} expr
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     get(table, expr) {
         return new Promise((resolve, reject) => {
@@ -186,7 +170,6 @@ class Postgres extends events_1.EventEmitter {
      * @param {string} expr
      * @param {*} data
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     update(table, expr, data) {
         return new Promise((resolve, reject) => {
@@ -211,7 +194,6 @@ class Postgres extends events_1.EventEmitter {
      *
      * @param {(Guild | string)} guild
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     addGuild(guild) {
         return new Promise((resolve, reject) => {

@@ -5,15 +5,12 @@ const redis = require("redis");
 /**
  * Redis wrapper
  *
- * @export
- * @class Redis
  */
 class Redis {
     /**
      * Creates an instance of Redis.
      * @param {Shard} shard
      * @param {redis.ClientOpts} options
-     * @memberof Redis
      */
     constructor(options) {
         this.options = options;
@@ -22,7 +19,6 @@ class Redis {
      * Connect to redis
      *
      * @returns {Promise<void>}
-     * @memberof Redis
      */
     connect() {
         this.client = redis.createClient(this.options);
@@ -32,7 +28,6 @@ class Redis {
      * Disconnect from redis
      *
      * @returns {Promise<void>}
-     * @memberof Redis
      */
     disconnect() {
         this.client.end(true);
@@ -44,7 +39,6 @@ class Redis {
      * @param {string} key
      * @param {object} value
      * @returns {Promise<any>}
-     * @memberof Redis
      */
     set(key, value) {
         return new Promise((resolve, reject) => {
@@ -61,7 +55,6 @@ class Redis {
      *
      * @param {string} key
      * @returns {Promise<object>}
-     * @memberof Redis
      */
     get(key) {
         return new Promise((resolve, reject) => {

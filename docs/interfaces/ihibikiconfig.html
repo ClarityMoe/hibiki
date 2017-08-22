@@ -3,7 +3,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>IShardOptions | Hibiki</title>
+	<title>IHibikiConfig | Hibiki</title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="../assets/css/main.css">
@@ -56,10 +56,10 @@
 					<a href="../globals.html">Globals</a>
 				</li>
 				<li>
-					<a href="ishardoptions.html">IShardOptions</a>
+					<a href="ihibikiconfig.html">IHibikiConfig</a>
 				</li>
 			</ul>
-			<h1>Interface IShardOptions</h1>
+			<h1>Interface IHibikiConfig</h1>
 		</div>
 	</div>
 </header>
@@ -69,11 +69,11 @@
 			<section class="tsd-panel tsd-comment">
 				<div class="tsd-comment tsd-typography">
 					<div class="lead">
-						<p>Shard options</p>
+						<p>Config</p>
 					</div>
 					<dl class="tsd-comment-tags">
 						<dt>interface</dt>
-						<dd><p>IShardOptions</p>
+						<dd><p>IHibikiConfig</p>
 						</dd>
 					</dl>
 				</div>
@@ -82,7 +82,7 @@
 				<h3>Hierarchy</h3>
 				<ul class="tsd-hierarchy">
 					<li>
-						<span class="target">IShardOptions</span>
+						<span class="target">IHibikiConfig</span>
 					</li>
 				</ul>
 			</section>
@@ -93,11 +93,13 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ishardoptions.html#db" class="tsd-kind-icon">db</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ishardoptions.html#disabledevents" class="tsd-kind-icon">disabled<wbr>Events</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ishardoptions.html#logger" class="tsd-kind-icon">logger</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ishardoptions.html#shards" class="tsd-kind-icon">shards</a></li>
-								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ishardoptions.html#useenv" class="tsd-kind-icon">useENV</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihibikiconfig.html#db" class="tsd-kind-icon">db</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihibikiconfig.html#disabledevents" class="tsd-kind-icon">disabled<wbr>Events</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihibikiconfig.html#logger" class="tsd-kind-icon">logger</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihibikiconfig.html#shards" class="tsd-kind-icon">shards</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihibikiconfig.html#token" class="tsd-kind-icon">token</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihibikiconfig.html#useenv" class="tsd-kind-icon">useENV</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface"><a href="ihibikiconfig.html#wss" class="tsd-kind-icon">wss</a></li>
 							</ul>
 						</section>
 					</div>
@@ -111,7 +113,7 @@
 					<div class="tsd-signature tsd-kind-icon">db<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Shard.ts#L18">client/Shard.ts:18</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/Constants.ts#L38">Constants.ts:38</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -132,7 +134,7 @@
 					<div class="tsd-signature tsd-kind-icon">disabled<wbr>Events<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">[]</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Shard.ts#L24">client/Shard.ts:24</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/Constants.ts#L47">Constants.ts:47</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -142,7 +144,7 @@
 					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">object</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Shard.ts#L23">client/Shard.ts:23</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/Constants.ts#L46">Constants.ts:46</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-type-declaration">
@@ -160,7 +162,17 @@
 					<div class="tsd-signature tsd-kind-icon">shards<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">Array</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">object</span><span class="tsd-signature-symbol">&gt;</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Shard.ts#L22">client/Shard.ts:22</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/Constants.ts#L42">Constants.ts:42</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="token" class="tsd-anchor"></a>
+					<h3>token</h3>
+					<div class="tsd-signature tsd-kind-icon">token<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/Constants.ts#L37">Constants.ts:37</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -170,7 +182,17 @@
 					<div class="tsd-signature tsd-kind-icon">useENV<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">boolean</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/client/Shard.ts#L25">client/Shard.ts:25</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/Constants.ts#L48">Constants.ts:48</a></li>
+						</ul>
+					</aside>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface">
+					<a name="wss" class="tsd-anchor"></a>
+					<h3>wss</h3>
+					<div class="tsd-signature tsd-kind-icon">wss<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">IServerOptions</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/Constants.ts#L49">Constants.ts:49</a></li>
 						</ul>
 					</aside>
 				</section>
@@ -188,6 +210,9 @@
 				<ul class="before-current">
 					<li class=" tsd-kind-class">
 						<a href="../classes/command.html" class="tsd-kind-icon">Command</a>
+					</li>
+					<li class=" tsd-kind-class">
+						<a href="../classes/connection.html" class="tsd-kind-icon">Connection</a>
 					</li>
 					<li class=" tsd-kind-class">
 						<a href="../classes/context.html" class="tsd-kind-icon">Context</a>
@@ -211,10 +236,10 @@
 						<a href="../classes/redis.html" class="tsd-kind-icon">Redis</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="../classes/shard.html" class="tsd-kind-icon">Shard</a>
+						<a href="../classes/server.html" class="tsd-kind-icon">Server</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="../classes/sockconnection.html" class="tsd-kind-icon">Sock<wbr>Connection</a>
+						<a href="../classes/shard.html" class="tsd-kind-icon">Shard</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="icommandargument.html" class="tsd-kind-icon">ICommand<wbr>Argument</a>
@@ -234,6 +259,36 @@
 					<li class=" tsd-kind-interface">
 						<a href="idbuser.html" class="tsd-kind-icon">IDBUser</a>
 					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface">
+						<a href="ihibikiconfig.html" class="tsd-kind-icon">IHibiki<wbr>Config</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ihibikiconfig.html#db" class="tsd-kind-icon">db</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ihibikiconfig.html#disabledevents" class="tsd-kind-icon">disabled<wbr>Events</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ihibikiconfig.html#logger" class="tsd-kind-icon">logger</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ihibikiconfig.html#shards" class="tsd-kind-icon">shards</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ihibikiconfig.html#token" class="tsd-kind-icon">token</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ihibikiconfig.html#useenv" class="tsd-kind-icon">useENV</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface">
+								<a href="ihibikiconfig.html#wss" class="tsd-kind-icon">wss</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
 					<li class=" tsd-kind-interface">
 						<a href="ihibikimessage.html" class="tsd-kind-icon">IHibiki<wbr>Message</a>
 					</li>
@@ -243,35 +298,23 @@
 					<li class=" tsd-kind-interface">
 						<a href="iopcodes.html" class="tsd-kind-icon">IOPCodes</a>
 					</li>
-				</ul>
-				<ul class="current">
-					<li class="current tsd-kind-interface">
-						<a href="ishardoptions.html" class="tsd-kind-icon">IShard<wbr>Options</a>
-						<ul>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ishardoptions.html#db" class="tsd-kind-icon">db</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ishardoptions.html#disabledevents" class="tsd-kind-icon">disabled<wbr>Events</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ishardoptions.html#logger" class="tsd-kind-icon">logger</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ishardoptions.html#shards" class="tsd-kind-icon">shards</a>
-							</li>
-							<li class=" tsd-kind-property tsd-parent-kind-interface">
-								<a href="ishardoptions.html#useenv" class="tsd-kind-icon">useENV</a>
-							</li>
-						</ul>
-					</li>
-				</ul>
-				<ul class="after-current">
 					<li class=" tsd-kind-interface">
 						<a href="isubcommandconfig.html" class="tsd-kind-icon">ISubcommand<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="iwsevent.html" class="tsd-kind-icon">IWSEvent</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#args" class="tsd-kind-icon">args</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#config" class="tsd-kind-icon">config</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#logger" class="tsd-kind-icon">logger</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#shard" class="tsd-kind-icon">shard</a>
 					</li>
 					<li class=" tsd-kind-object-literal">
 						<a href="../globals.html#opcodes" class="tsd-kind-icon">OPCodes</a>

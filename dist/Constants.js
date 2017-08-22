@@ -1,6 +1,5 @@
 "use strict";
 // Constants.js - Constant variables (noud02)
-// test
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.OPCodes = {
     EVENT: 0,

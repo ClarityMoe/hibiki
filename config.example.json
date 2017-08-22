@@ -4,7 +4,6 @@
         "postgres": {
             "satabase": "hibiki",
             "host": "localhost",
-            "port": "default",
             "user": "user",
             "password": null
         }
@@ -12,22 +11,17 @@
     "logger": {
         "debug": false
     },
+    "wss": {
+        "port": 8080
+    },
     "shards": [
         {
             "id": 1,
-            "options": {
-            },
-            "server": {
-                "ip": ""
-            }
+            "options": {}
         },
         {
             "id": 2,
-            "options": {
-            },
-            "server": {
-                "ip": ""
-            }
+            "options": {}
         }
     ],
     "status": [

@@ -141,7 +141,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/core/Core.ts#L14">core/Core.ts:14</a></li>
+									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/core/Core.ts#L14">core/Core.ts:14</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -172,7 +172,7 @@
 					<div class="tsd-signature tsd-kind-icon">ext<span class="tsd-signature-symbol">:</span> <a href="extmanager.html" class="tsd-signature-type">ExtManager</a><span class="tsd-signature-symbol"> =&nbsp;new ExtManager(this.shard)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/core/Core.ts#L28">core/Core.ts:28</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/core/Core.ts#L28">core/Core.ts:28</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -187,7 +187,7 @@
 					<div class="tsd-signature tsd-kind-icon">pg<span class="tsd-signature-symbol">:</span> <a href="postgres.html" class="tsd-signature-type">Postgres</a><span class="tsd-signature-symbol"> =&nbsp;new Postgres(this.shard, this.shard.options.db.postgres)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/core/Core.ts#L34">core/Core.ts:34</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/core/Core.ts#L34">core/Core.ts:34</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -202,7 +202,7 @@
 					<div class="tsd-signature tsd-kind-icon">r<span class="tsd-signature-symbol">:</span> <a href="redis.html" class="tsd-signature-type">Redis</a><span class="tsd-signature-symbol"> =&nbsp;new Redis(this.shard.options.db.redis)</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/core/Core.ts#L40">core/Core.ts:40</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/core/Core.ts#L40">core/Core.ts:40</a></li>
 						</ul>
 					</aside>
 					<div class="tsd-comment tsd-typography">
@@ -281,7 +281,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/core/Core.ts#L48">core/Core.ts:48</a></li>
+									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/core/Core.ts#L48">core/Core.ts:48</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -309,7 +309,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/dd8ed7c/src/core/Core.ts#L71">core/Core.ts:71</a></li>
+									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/core/Core.ts#L71">core/Core.ts:71</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -760,6 +760,9 @@
 						<a href="command.html" class="tsd-kind-icon">Command</a>
 					</li>
 					<li class=" tsd-kind-class">
+						<a href="connection.html" class="tsd-kind-icon">Connection</a>
+					</li>
+					<li class=" tsd-kind-class">
 						<a href="context.html" class="tsd-kind-icon">Context</a>
 					</li>
 				</ul>
@@ -850,10 +853,10 @@
 						<a href="redis.html" class="tsd-kind-icon">Redis</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="shard.html" class="tsd-kind-icon">Shard</a>
+						<a href="server.html" class="tsd-kind-icon">Server</a>
 					</li>
 					<li class=" tsd-kind-class">
-						<a href="sockconnection.html" class="tsd-kind-icon">Sock<wbr>Connection</a>
+						<a href="shard.html" class="tsd-kind-icon">Shard</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/icommandargument.html" class="tsd-kind-icon">ICommand<wbr>Argument</a>
@@ -874,6 +877,9 @@
 						<a href="../interfaces/idbuser.html" class="tsd-kind-icon">IDBUser</a>
 					</li>
 					<li class=" tsd-kind-interface">
+						<a href="../interfaces/ihibikiconfig.html" class="tsd-kind-icon">IHibiki<wbr>Config</a>
+					</li>
+					<li class=" tsd-kind-interface">
 						<a href="../interfaces/ihibikimessage.html" class="tsd-kind-icon">IHibiki<wbr>Message</a>
 					</li>
 					<li class=" tsd-kind-interface">
@@ -883,13 +889,22 @@
 						<a href="../interfaces/iopcodes.html" class="tsd-kind-icon">IOPCodes</a>
 					</li>
 					<li class=" tsd-kind-interface">
-						<a href="../interfaces/ishardoptions.html" class="tsd-kind-icon">IShard<wbr>Options</a>
-					</li>
-					<li class=" tsd-kind-interface">
 						<a href="../interfaces/isubcommandconfig.html" class="tsd-kind-icon">ISubcommand<wbr>Config</a>
 					</li>
 					<li class=" tsd-kind-interface">
 						<a href="../interfaces/iwsevent.html" class="tsd-kind-icon">IWSEvent</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#args" class="tsd-kind-icon">args</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#config" class="tsd-kind-icon">config</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#logger" class="tsd-kind-icon">logger</a>
+					</li>
+					<li class=" tsd-kind-variable tsd-is-not-exported">
+						<a href="../globals.html#shard" class="tsd-kind-icon">shard</a>
 					</li>
 					<li class=" tsd-kind-object-literal">
 						<a href="../globals.html#opcodes" class="tsd-kind-icon">OPCodes</a>

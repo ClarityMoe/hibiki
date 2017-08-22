@@ -2,7 +2,7 @@
 
 import * as crypto from "crypto";
 import { EventEmitter } from "events";
-import * as WebSocket from "ws";
+import * as WebSocket from "uws";
 import { OPCodes } from "../Constants";
 import { Shard } from "./Shard";
 
@@ -17,11 +17,61 @@ export interface IWSEvent {
     type: string;
     target: WebSocket;
 }
+
 /**
- * WebSocket connection between shards.
+ * WebSocket connection between shards
  *
- * @todo fix this cuz noud is a meme
  */
+export class Connection extends EventEmitter {
+
+    public ws: WebSocket;
+
+    /**
+     * Creates an instance of Connection.
+     * @param shard
+     */
+    constructor (private shard: Shard) {
+        super();
+    }
+
+    public connect (): Promise<void> {
+        return new Promise((resolve, reject) => {
+            this.ws = new WebSocket(`ws://${this.shard.options.wss.host}:${this.shard.options.wss.port}`, {
+                headers: {
+                    token: this.shard.token,
+                    id: this.shard.id,
+                },
+            });
+        });
+    }
+
+    /**
+     * Send a message to the shards
+     *
+     * @param id
+     * @param op
+     * @param d
+     * @param [e]
+     * @returns
+     */
+    public send (op: number, d: any, e?: string): Promise<any> {
+
+        const data: IHibikiMessage = {
+            d,
+            e,
+            op,
+        };
+
+        if (this.ws) {
+            return Promise.resolve(this.ws.send(JSON.stringify(data)));
+        } else {
+            return Promise.reject(new Error("404 WebSocket not found"));
+        }
+    }
+
+}
+
+/*
 export class SockConnection extends EventEmitter {
 
     private ws: Map<number, WebSocket> = new Map<number, WebSocket>();
@@ -31,7 +81,6 @@ export class SockConnection extends EventEmitter {
         super();
     }
 
-    /*
     private onmessage (shard: number, msg: string): void {
         let data: IHibikiMessage;
         try {
@@ -68,7 +117,6 @@ export class SockConnection extends EventEmitter {
             }
         }
     }
-    */
 
     private onClientMessage (ws: WebSocket, data: WebSocket.Data): void {
         console.log(data);
@@ -116,14 +164,6 @@ export class SockConnection extends EventEmitter {
         }
     }
 
-    /**
-     * Request something from another shard.
-     *
-     * @param {string} type
-     * @param {*} data
-     * @param {number} [shard]
-     * @returns {Promise<{ data: any, id: number }>}
-     */
     public request (type: string, data: any, shard?: number): Promise<{ data: any, id: number }> {
         const uniqueID: string = crypto.randomBytes(10).toString();
         for (const id of (shard && [shard] || this.ws.keys())) {
@@ -157,23 +197,11 @@ export class SockConnection extends EventEmitter {
         });
     }
 
-    /**
-     * Get a guild from another shard.
-     *
-     * @param {string} id
-     * @returns {Promise<{ data: any, id: number }>}
-     */
     public getGuild (id: string): Promise<{ data: any, id: number }> {
         return this.request("GUILD", { id });
     }
 
-    /**
-     * Get a user from another shard.
-     *
-     * @param {string} id
-     * @returns {Promise<{ data: any, id: number }>}
-     */
     public getUser (id: string): Promise<{ data: any, id: number }> {
         return this.request("USER", { id });
     }
-}
+}*/

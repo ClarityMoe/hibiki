@@ -2,7 +2,6 @@ import { Context } from "./Context";
 /**
  * Command argument
  *
- * @export
  * @interface ICommandArgument
  */
 export interface ICommandArgument {
@@ -14,7 +13,6 @@ export interface ICommandArgument {
 /**
  * Command flag
  *
- * @export
  * @interface ICommandFlag
  */
 export interface ICommandFlag {
@@ -26,7 +24,6 @@ export interface ICommandFlag {
 /**
  * Command config
  *
- * @export
  * @interface ICommandConfig
  */
 export interface ICommandConfig {
@@ -47,7 +44,6 @@ export interface ICommandConfig {
  * Subcommand config
  *
  * @todo add subcommands on subcommands
- * @export
  * @interface ISubcommandConfig
  */
 export interface ISubcommandConfig {
@@ -66,7 +62,6 @@ export interface ISubcommandConfig {
 /**
  * Command package
  *
- * @export
  * @interface ICommandPackage
  */
 export interface ICommandPackage {
@@ -88,31 +83,24 @@ export interface ICommandPackage {
 /**
  * Command class
  *
- * @export
- * @class Command
  */
 export declare class Command {
     private config;
     run: ((ctx: Context) => Promise<any>) | undefined;
     /**
      * Creates an instance of Command.
-     * @param {ICommandConfig} config
-     * @param {(ctx: Context) => Promise<any>} [run]
-     * @memberof Command
+     * @param ICommandConfig config
+     * @param (ctx: Context) => Promise<any> [run]
      */
     constructor(config: ICommandConfig, run?: ((ctx: Context) => Promise<any>) | undefined);
     /**
      * Aliases for the command
      *
-     * @type {string[]}
-     * @memberof Command
      */
     readonly aliases: string[];
     /**
      * Arguments on the command
      *
-     * @type {{ [key: string]: ICommandArgument }}
-     * @memberof Command
      */
     readonly arguments: {
         [key: string]: ICommandArgument;
@@ -120,8 +108,6 @@ export declare class Command {
     /**
      * Flags on the command
      *
-     * @type {{ [key: string]: ICommandFlag }}
-     * @memberof Command
      */
     readonly flags: {
         [key: string]: ICommandFlag;
@@ -129,29 +115,21 @@ export declare class Command {
     /**
      * Subcommands on the command
      *
-     * @type {string[]}
-     * @memberof Command
      */
     readonly subcommands: string[];
     /**
      * Description of the command
      *
-     * @type {string}
-     * @memberof Command
      */
     readonly description: string;
     /**
      * Category of the command
      *
-     * @type {string}
-     * @memberof Command
      */
     readonly category: string;
     /**
      * Package file of the package the command came with
      *
-     * @type {ICommandPackage}
-     * @memberof Command
      */
     readonly pkg: ICommandPackage;
 }

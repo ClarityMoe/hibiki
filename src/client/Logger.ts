@@ -75,6 +75,8 @@ export class Logger {
                 return this.clk.blue(this.prefix);
             case "core":
                 return this.clk.cyan(this.prefix);
+            case "server":
+                return this.clk.magenta(this.prefix);
             default:
                 return this.clk.yellow(this.prefix);
         }
@@ -106,6 +108,8 @@ export class Logger {
         switch (type) {
             case "info":
                 return this.clk.bgMagenta(" INFO ");
+            case "msg":
+                return this.clk. bgCyan(" MSG ");
             case "ok":
                 return this.clk.bgGreen(" OK ");
             case "fail":
@@ -113,6 +117,7 @@ export class Logger {
             case "err":
                 return this.clk.bgRed(" ERR ");
             case "log":
+            case "debug":
             default:
                 return this.clk.black.bgWhite(" LOG ");
         }
@@ -231,6 +236,37 @@ export class Logger {
         return new Promise((resolve) => {
             // const args: any[] = Array.from(arguments);
             return resolve(this.logBase(date, "err", args, true));
+        });
+    }
+
+    /**
+     * Logs something as debug
+     *
+     * @param args
+     * @returns
+     */
+    public debug (...args: any[]): Promise<void> {
+        const date: number = Date.now();
+
+        return new Promise((resolve) => {
+            // const args: any[] = Array.from(arguments);
+            if (!this.options.debug) {
+                return resolve();
+            }
+
+            return resolve(this.logBase(date, "debug", args, true));
+        });
+    }
+
+    public msg (...args: any[]): Promise<void> {
+        const date: number = Date.now();
+
+        return new Promise((resolve, reject) => {
+            // const args: any[] = Array.from(arguments);
+
+            this.checkArgs(args).catch(reject);
+
+            return resolve(this.logBase(date, "msg", args, false));
         });
     }
 
