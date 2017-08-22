@@ -1,8 +1,10 @@
+// Postgres.ts - PostgreSQL wrapper (noud02)
+
 import { Guild, Message, User } from "eris";
 import { EventEmitter } from "events";
 import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
 import sanic = require("sanic");
-import { Readable, Writeable } from "stream";
+import { Readable, Writable } from "stream";
 import { Shard } from "../client/Shard";
 
 export interface IDBGuild {
@@ -17,15 +19,41 @@ export interface IDBUser {
     discriminator: string;
 }
 
+/**
+ * PostgreSQL wrapper
+ *
+ * @export
+ * @class Postgres
+ * @extends {EventEmitter}
+ */
 export class Postgres extends EventEmitter {
 
-    constructor(private shard: Shard, private options: ClientConfig) {
+    /**
+     * Creates an instance of Postgres.
+     * @param {Shard} shard
+     * @param {ClientConfig} options
+     * @memberof Postgres
+     */
+    constructor (private shard: Shard, private options: ClientConfig) {
         super();
     }
 
+    /**
+     * "pg" client
+     *
+     * @private
+     * @type {Client}
+     * @memberof Postgres
+     */
     private con: Client = new Client(this.options);
 
-    public connect(): Promise<void> {
+    /**
+     * Connect to the database
+     *
+     * @returns {Promise<void>}
+     * @memberof Postgres
+     */
+    public connect (): Promise<void> {
         return new Promise((resolve, reject) => {
             this.con.connect((e: Error) => {
                 if (e) {
@@ -43,7 +71,13 @@ export class Postgres extends EventEmitter {
         });
     }
 
-    public disconnect(): Promise<void> {
+    /**
+     * Disconnect from the database
+     *
+     * @returns {Promise<void>}
+     * @memberof Postgres
+     */
+    public disconnect (): Promise<void> {
         return new Promise((resolve, reject) => {
             this.con.end((err: Error) => {
                 if (err) {
@@ -55,12 +89,26 @@ export class Postgres extends EventEmitter {
         });
     }
 
-    public release(err: Error): void {
+    /**
+     * Release an error
+     *
+     * @param {Error} err
+     * @returns {void}
+     * @memberof Postgres
+     */
+    public release (err: Error): void {
         return this.con.release(err);
     }
 
-    public query(query: string | QueryConfig & Readable | QueryConfig,
-                 values?: any[]): Promise<QueryResult> | Readable {
+    /**
+     * Query the database
+     *
+     * @param {(string | QueryConfig & Readable | QueryConfig)} query
+     * @param {any[]} [values]
+     * @returns {(Promise<QueryResult> | Readable)}
+     * @memberof Postgres
+     */
+    public query (query: string | QueryConfig & Readable | QueryConfig, values?: any[]): Promise<QueryResult> | Readable {
         if (values) {
             return this.con.query(query, values);
         } else {
@@ -68,19 +116,45 @@ export class Postgres extends EventEmitter {
         }
     }
 
-    public copyFrom(queryText: string): Readable {
+    /**
+     * Copy from something
+     *
+     * @param {string} queryText
+     * @returns {Writable}
+     * @memberof Postgres
+     */
+    public copyFrom (queryText: string): Writable {
         return this.con.copyFrom(queryText);
     }
 
-    public copyTo(queryText: string): Writeable {
+    /**
+     * Copy to something
+     *
+     * @param {string} queryText
+     * @returns {Readable}
+     * @memberof Postgres
+     */
+    public copyTo (queryText: string): Readable {
         return this.con.copyTo(queryText);
     }
 
-    public pauseDrain(): void {
+    /**
+     * Pause the drain
+     *
+     * @returns {void}
+     * @memberof Postgres
+     */
+    public pauseDrain (): void {
         return this.con.pauseDrain();
     }
 
-    public resumeDrain(): void {
+    /**
+     * Resume the drain
+     *
+     * @returns {void}
+     * @memberof Postgres
+     */
+    public resumeDrain (): void {
         return this.con.resumeDrain();
     }
 
@@ -88,38 +162,65 @@ export class Postgres extends EventEmitter {
      * Functions to make life easier
      */
 
-    public insert(table: string, data: Object): Promise<QueryResult> {
+    /**
+     * Insert data in the database
+     *
+     * @param {string} table
+     * @param {*} data
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
+    public insert (table: string, data: any): Promise<QueryResult> {
         return new Promise((resolve, reject) => {
-            const _this: this = this;
-            sanic(function*() {
+            const this_: this = this;
+            sanic(function* () {
                 const vals: any[] = [];
                 const keys: string[] = Object.keys(data);
                 for (const key of keys) {
                     vals.push(data[key]);
                 }
 
-                const q: QueryResult = yield _this.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((val, i) => `$${i + 1}`).join(", ")});`, vals);
+                const q: QueryResult = yield this_.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((_, i) => `$${i + 1}`).join(", ")});`, vals);
+
                 return resolve(q);
             })()
                 .catch(reject);
         });
     }
 
-    public get(table: string, expr: string): Promise<QueryResult> {
+    /**
+     * Get data from the database
+     *
+     * @param {string} table
+     * @param {string} expr
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
+    public get (table: string, expr: string): Promise<QueryResult> {
         return new Promise((resolve, reject) => {
-            const _this: this = this;
-            sanic(function*() {
-                const q: QueryResult = yield _this.query(`SELECT * FROM ${table} WHERE ${expr};`);
+            const this_: this = this;
+            sanic(function* () {
+                const q: QueryResult = yield this_.query(`SELECT * FROM ${table} WHERE ${expr};`);
+
                 return resolve(q);
             })()
                 .catch(reject);
         });
     }
 
-    public update(table: string, expr: string, data: any): Promise<QueryResult> {
+    /**
+     * Update a doc in the database
+     *
+     * @param {string} table
+     * @param {string} expr
+     * @param {*} data
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
+    public update (table: string, expr: string, data: any): Promise<QueryResult> {
         return new Promise((resolve, reject) => {
-            const _this: this = this;
-            sanic(function*() {
+            const this_: this = this;
+            sanic(function* () {
                 const vals: any[] = [];
                 const keys: string[] = Object.keys(data);
                 const changes: string[] = [];
@@ -128,24 +229,29 @@ export class Postgres extends EventEmitter {
                     changes.push(`${key} = $${keys.indexOf(key) + 1}`);
                 }
 
-                const q: QueryResult = yield _this.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expr};`, vals);
+                const q: QueryResult = yield this_.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expr};`, vals);
+
                 return resolve(q);
-            })();
+            })()
+                .catch(reject);
         });
     }
 
-    public addGuild(guild: Guild | string): Promise<QueryResult> {
+    /**
+     * Add a guild to the database
+     *
+     * @param {(Guild | string)} guild
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
+    public addGuild (guild: Guild | string): Promise<QueryResult> {
         return new Promise((resolve, reject) => {
-            const _this: this = this;
-            sanic(function*() {
-                let g: Guild = guild instanceof Guild && guild || _this.shard.client.guilds.get(guild);
+            const this_: this = this;
+            sanic(function* () {
+                let g: Guild = guild instanceof Guild && guild || this_.shard.client.guilds.get(guild);
 
                 if (!g) {
-                    try {
-                        g = yield _this.shard.sock.getGuild(g);
-                    } catch (e) {
-                        return reject(e);
-                    }
+                    g = yield this_.shard.ws.getGuild(g);
                 }
 
                 const obj: IDBGuild = {
@@ -153,13 +259,12 @@ export class Postgres extends EventEmitter {
                     name: g.name,
                     ownerID: g.ownerID,
                 };
-                try {
-                    const q: QueryResult = yield _this.insert("guilds", obj);
-                    return resolve(q);
-                } catch (e) {
-                    return reject(e);
-                }
-            })();
+
+                const q: QueryResult = yield this_.insert("guilds", obj);
+
+                return resolve(q);
+            })()
+                .catch(reject);
         });
     }
 }

@@ -31,6 +31,7 @@
     "@types/pg": "^6.1.43",
     "@types/redis": "^2.6.0",
     "@types/uws": "^0.13.0",
+    "@types/ws": "^3.0.2",
     "chalk": "^2.1.0",
     "eris": "abalabahaha/eris#dev",
     "erlpack": "noud02/erlpack",
@@ -40,6 +41,8 @@
     "redis": "^2.8.0",
     "sanic": "^0.1.0",
     "tslib": "^1.7.1",
-    "uws": "^8.14.1"
+    "typescript": "^2.4.2",
+    "uws": "^8.14.1",
+    "ws": "^3.1.0"
   }
 }

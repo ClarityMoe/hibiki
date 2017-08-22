@@ -1,7 +1,8 @@
+// Connection.js - WebSocket Connection between shards (noud02)
+
 import * as crypto from "crypto";
 import { EventEmitter } from "events";
-import * as WebSocket from "uws";
-import * as config from "../config";
+import * as WebSocket from "ws";
 import { OPCodes } from "../Constants";
 import { Shard } from "./Shard";
 
@@ -11,21 +12,35 @@ export interface IHibikiMessage {
     e?: string;
 }
 
+export interface IWSEvent {
+    data: WebSocket.Data;
+    type: string;
+    target: WebSocket;
+}
+/**
+ * WebSocket connection between shards.
+ *
+ * @todo fix this cuz noud is a meme
+ * @export
+ * @class SockConnection
+ * @extends {EventEmitter}
+ */
 export class SockConnection extends EventEmitter {
 
     private ws: Map<number, WebSocket> = new Map<number, WebSocket>();
     private wss: WebSocket.Server = new WebSocket.Server();
 
-    constructor(private shard: Shard) {
+    constructor (private shard: Shard) {
         super();
     }
 
-    private onmessage(shard: number, msg: string) {
+    /*
+    private onmessage (shard: number, msg: string): void {
         let data: IHibikiMessage;
         try {
             data = JSON.parse(msg);
         } catch (e) {
-            return Promise.reject(e);
+            return e;
         }
 
         switch (data.op) {
@@ -53,24 +68,31 @@ export class SockConnection extends EventEmitter {
 
             default: {
                 this.emit("UNKNOWN_MESSAGE", data.d, shard);
-                break;
             }
         }
     }
+    */
 
-    public init() {
-        for (const shard of config.shards) {
+    private onClientMessage (ws: WebSocket, data: WebSocket.Data): void {
+        console.log(data);
+    }
+
+    private onServerMessage (ws: WebSocket): void {
+        ws.on("message", (data: WebSocket.Data) => this.onClientMessage(ws, data));
+    }
+
+    public init () {
+        for (const shard of this.shard.options.shards) {
             if (this.shard.id !== shard.id) {
                 const ws: WebSocket = new WebSocket(shard.server.ip);
-                ws.onmessage = this.onmessage;
                 this.ws.set(shard.id, ws);
             }
         }
 
-        this.wss.on("message", this.onmessage);
+        this.wss.on("connection", this.onServerMessage);
     }
 
-    public send(id: number, op: number, d: any, e?: string) {
+    public send (id: number, op: number, d: any, e?: string) {
 
         if (id === this.shard.id) {
             return Promise.reject("REEEEEE");
@@ -90,9 +112,18 @@ export class SockConnection extends EventEmitter {
         ws.send(JSON.stringify(data));
     }
 
-    public request(type: string, data: any, shard?: number) {
+    /**
+     * Request something from another shard.
+     *
+     * @param {string} type
+     * @param {*} data
+     * @param {number} [shard]
+     * @returns {Promise<{ data: any, id: number }>}
+     * @memberof SockConnection
+     */
+    public request (type: string, data: any, shard?: number): Promise<{ data: any, id: number }> {
         const uniqueID: string = crypto.randomBytes(10).toString();
-        for (const id of (shard && [shard] || this.ws.entries())) {
+        for (const id of (shard && [shard] || this.ws.keys())) {
             this.send(id, OPCodes.REQUEST, {
                 data,
                 type,
@@ -107,11 +138,13 @@ export class SockConnection extends EventEmitter {
             this.on(`RESPONSE_${uniqueID}`, (d: any, id: number) => {
                 if (d) {
                     this.removeAllListeners(`RESPONSE_${uniqueID}`);
+
                     return resolve({ data: d, id });
                 }
 
                 if (res.length === config.shards.length - 2) {
                     this.removeAllListeners(`RESPONSE_${uniqueID}`);
+
                     return reject("None of the shards have what you want");
                 }
 
@@ -121,11 +154,25 @@ export class SockConnection extends EventEmitter {
         });
     }
 
-    public getGuild(id: string) {
+    /**
+     * Get a guild from another shard.
+     *
+     * @param {string} id
+     * @returns {Promise<{ data: any, id: number }>}
+     * @memberof SockConnection
+     */
+    public getGuild (id: string): Promise<{ data: any, id: number }> {
         return this.request("GUILD", { id });
     }
 
-    public getUser(id: string) {
+    /**
+     * Get a user from another shard.
+     *
+     * @param {string} id
+     * @returns {Promise<{ data: any, id: number }>}
+     * @memberof SockConnection
+     */
+    public getUser (id: string): Promise<{ data: any, id: number }> {
         return this.request("USER", { id });
     }
 }
