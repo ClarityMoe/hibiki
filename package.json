@@ -1,0 +1,45 @@
+{
+  "name": "hibiki",
+  "version": "2.0.0",
+  "description": "An advanced but easy to use Discord bot/framework, made in TypeScript",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc -p ./",
+    "tslint": "tslint -p ./ --force --fix"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClaraIO/hibiki.git"
+  },
+  "keywords": [
+    "typescript",
+    "discord",
+    "framework",
+    "bot"
+  ],
+  "author": "noud02",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ClaraIO/hibiki/issues"
+  },
+  "homepage": "https://github.com/ClaraIO/hibiki#readme",
+  "dependencies": {
+    "@types/chalk": "^0.4.31",
+    "@types/minimist": "^1.2.0",
+    "@types/node": "^8.0.23",
+    "@types/pg": "^6.1.43",
+    "@types/redis": "^2.6.0",
+    "@types/uws": "^0.13.0",
+    "chalk": "^2.1.0",
+    "eris": "abalabahaha/eris#dev",
+    "erlpack": "noud02/erlpack",
+    "minimist": "^1.2.0",
+    "moment": "^2.18.1",
+    "pg": "^7.1.2",
+    "redis": "^2.8.0",
+    "sanic": "^0.1.0",
+    "tslib": "^1.7.1",
+    "uws": "^8.14.1"
+  }
+}

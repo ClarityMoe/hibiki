@@ -1,0 +1,33 @@
+{
+    "token": "",
+    "database": {
+        "postgres": {
+            "satabase": "hibiki",
+            "host": "localhost",
+            "port": "default",
+            "user": "user",
+            "password": null
+        }
+    },
+    "shards": [
+        {
+            "id": 1,
+            "options": {
+            },
+            "server": {
+                "ip": ""
+            }
+        },
+        {
+            "id": 2,
+            "options": {
+            },
+            "server": {
+                "ip": ""
+            }
+        }
+    ],
+    "status": [
+        "on shard %SHARD%, %GUILDS% guilds, and %USERS% users."
+    ]
+}
