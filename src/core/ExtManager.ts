@@ -3,16 +3,8 @@
 import { EventEmitter } from "events";
 import * as sanic from "sanic";
 import { Shard } from "../client/Shard";
-import { Command } from "./Command";
-import { Context } from "./Context";
-
-export interface ICommandConfig {
-    arguments: string[];
-}
-
-export interface ISubCommandConfig extends ICommandConfig {
-    command: string;
-}
+import { Command, ICommandConfig, ISubCommandConfig } from "./Command";
+// import { Context } from "./Context";
 
 export class ExtManager extends EventEmitter {
 

@@ -1,10 +1,18 @@
 "use strict";
+// Connection.js - WebSocket Connection between shards (noud02)
 Object.defineProperty(exports, "__esModule", { value: true });
 const crypto = require("crypto");
 const events_1 = require("events");
-const WebSocket = require("uws");
-const config = require("../config");
+const WebSocket = require("ws");
 const Constants_1 = require("../Constants");
+/**
+ * WebSocket connection between shards.
+ *
+ * @todo fix this cuz noud is a meme
+ * @export
+ * @class SockConnection
+ * @extends {EventEmitter}
+ */
 class SockConnection extends events_1.EventEmitter {
     constructor(shard) {
         super();
@@ -12,48 +20,58 @@ class SockConnection extends events_1.EventEmitter {
         this.ws = new Map();
         this.wss = new WebSocket.Server();
     }
-    onmessage(shard, msg) {
-        let data;
+    /*
+    private onmessage (shard: number, msg: string): void {
+        let data: IHibikiMessage;
         try {
             data = JSON.parse(msg);
+        } catch (e) {
+            return e;
         }
-        catch (e) {
-            return Promise.reject(e);
-        }
+
         switch (data.op) {
-            case Constants_1.OPCodes.MESSAGE: {
+            case OPCodes.MESSAGE: {
                 this.emit("MESSAGE", data.d, shard);
                 break;
             }
-            case Constants_1.OPCodes.RESPONSE: {
+
+            case OPCodes.RESPONSE: {
                 this.emit(`RESPONSE_${data.d.uniqueID}`, data.d.data, shard);
                 break;
             }
-            case Constants_1.OPCodes.REQUEST: {
-                this.emit("REQUEST", data.d.data, (d) => {
+
+            case OPCodes.REQUEST: {
+                this.emit("REQUEST", data.d.data, (d: any) => {
                     this.send(`RESPONSE_${data.d.uniqueID}`, d, shard);
                 });
                 break;
             }
-            case Constants_1.OPCodes.EVENT: {
+
+            case OPCodes.EVENT: {
                 this.emit(`EVENT_${data.e}`, data.d, shard);
                 break;
             }
+
             default: {
                 this.emit("UNKNOWN_MESSAGE", data.d, shard);
-                break;
             }
         }
     }
+    */
+    onClientMessage(ws, data) {
+        console.log(data);
+    }
+    onServerMessage(ws) {
+        ws.on("message", (data) => this.onClientMessage(ws, data));
+    }
     init() {
-        for (const shard of config.shards) {
+        for (const shard of this.shard.options.shards) {
             if (this.shard.id !== shard.id) {
                 const ws = new WebSocket(shard.server.ip);
-                ws.onmessage = this.onmessage;
                 this.ws.set(shard.id, ws);
             }
         }
-        this.wss.on("message", this.onmessage);
+        this.wss.on("connection", this.onServerMessage);
     }
     send(id, op, d, e) {
         if (id === this.shard.id) {
@@ -70,9 +88,18 @@ class SockConnection extends events_1.EventEmitter {
         };
         ws.send(JSON.stringify(data));
     }
+    /**
+     * Request something from another shard.
+     *
+     * @param {string} type
+     * @param {*} data
+     * @param {number} [shard]
+     * @returns {Promise<{ data: any, id: number }>}
+     * @memberof SockConnection
+     */
     request(type, data, shard) {
         const uniqueID = crypto.randomBytes(10).toString();
-        for (const id of (shard && [shard] || this.ws.entries())) {
+        for (const id of (shard && [shard] || this.ws.keys())) {
             this.send(id, Constants_1.OPCodes.REQUEST, {
                 data,
                 type,
@@ -94,9 +121,23 @@ class SockConnection extends events_1.EventEmitter {
             });
         });
     }
+    /**
+     * Get a guild from another shard.
+     *
+     * @param {string} id
+     * @returns {Promise<{ data: any, id: number }>}
+     * @memberof SockConnection
+     */
     getGuild(id) {
         return this.request("GUILD", { id });
     }
+    /**
+     * Get a user from another shard.
+     *
+     * @param {string} id
+     * @returns {Promise<{ data: any, id: number }>}
+     * @memberof SockConnection
+     */
     getUser(id) {
         return this.request("USER", { id });
     }

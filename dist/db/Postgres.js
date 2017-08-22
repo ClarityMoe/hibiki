@@ -1,17 +1,43 @@
 "use strict";
+// Postgres.ts - PostgreSQL wrapper (noud02)
 Object.defineProperty(exports, "__esModule", { value: true });
 const eris_1 = require("eris");
 const events_1 = require("events");
 const pg_1 = require("pg");
 const sanic = require("sanic");
-const stream_1 = require("stream");
+/**
+ * PostgreSQL wrapper
+ *
+ * @export
+ * @class Postgres
+ * @extends {EventEmitter}
+ */
 class Postgres extends events_1.EventEmitter {
+    /**
+     * Creates an instance of Postgres.
+     * @param {Shard} shard
+     * @param {ClientConfig} options
+     * @memberof Postgres
+     */
     constructor(shard, options) {
         super();
         this.shard = shard;
         this.options = options;
+        /**
+         * "pg" client
+         *
+         * @private
+         * @type {Client}
+         * @memberof Postgres
+         */
         this.con = new pg_1.Client(this.options);
     }
+    /**
+     * Connect to the database
+     *
+     * @returns {Promise<void>}
+     * @memberof Postgres
+     */
     connect() {
         return new Promise((resolve, reject) => {
             this.con.connect((e) => {
@@ -27,6 +53,12 @@ class Postgres extends events_1.EventEmitter {
             });
         });
     }
+    /**
+     * Disconnect from the database
+     *
+     * @returns {Promise<void>}
+     * @memberof Postgres
+     */
     disconnect() {
         return new Promise((resolve, reject) => {
             this.con.end((err) => {
@@ -37,126 +69,164 @@ class Postgres extends events_1.EventEmitter {
             });
         });
     }
+    /**
+     * Release an error
+     *
+     * @param {Error} err
+     * @returns {void}
+     * @memberof Postgres
+     */
     release(err) {
         return this.con.release(err);
     }
+    /**
+     * Query the database
+     *
+     * @param {(string | QueryConfig & Readable | QueryConfig)} query
+     * @param {any[]} [values]
+     * @returns {(Promise<QueryResult> | Readable)}
+     * @memberof Postgres
+     */
     query(query, values) {
-        return new Promise((resolve, reject) => {
-            const _this = this;
-            sanic(function* () {
-                if (values) {
-                    return resolve(yield _this.con.query(query, values));
-                }
-                else {
-                    try {
-                        const q = _this.con.query(query);
-                        if (q instanceof stream_1.Readable) {
-                            return resolve(q);
-                        }
-                        return resolve(yield q);
-                    }
-                    catch (e) {
-                        return reject(e);
-                    }
-                }
-            })();
-        });
+        if (values) {
+            return this.con.query(query, values);
+        }
+        else {
+            return this.con.query(query);
+        }
     }
+    /**
+     * Copy from something
+     *
+     * @param {string} queryText
+     * @returns {Writable}
+     * @memberof Postgres
+     */
     copyFrom(queryText) {
         return this.con.copyFrom(queryText);
     }
+    /**
+     * Copy to something
+     *
+     * @param {string} queryText
+     * @returns {Readable}
+     * @memberof Postgres
+     */
     copyTo(queryText) {
         return this.con.copyTo(queryText);
     }
+    /**
+     * Pause the drain
+     *
+     * @returns {void}
+     * @memberof Postgres
+     */
     pauseDrain() {
         return this.con.pauseDrain();
     }
+    /**
+     * Resume the drain
+     *
+     * @returns {void}
+     * @memberof Postgres
+     */
     resumeDrain() {
         return this.con.resumeDrain();
     }
     /**
      * Functions to make life easier
      */
+    /**
+     * Insert data in the database
+     *
+     * @param {string} table
+     * @param {*} data
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
     insert(table, data) {
         return new Promise((resolve, reject) => {
-            const _this = this;
+            const this_ = this;
             sanic(function* () {
-                try {
-                    const vals = [];
-                    const keys = Object.keys(data);
-                    for (const key of keys) {
-                        vals.push(data[key]);
-                    }
-                    const q = yield _this.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((val, i) => `$${i + 1}`).join(", ")});`, vals);
-                    return resolve(q);
+                const vals = [];
+                const keys = Object.keys(data);
+                for (const key of keys) {
+                    vals.push(data[key]);
                 }
-                catch (e) {
-                    return reject(e);
-                }
-            })();
+                const q = yield this_.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((_, i) => `$${i + 1}`).join(", ")});`, vals);
+                return resolve(q);
+            })()
+                .catch(reject);
         });
     }
+    /**
+     * Get data from the database
+     *
+     * @param {string} table
+     * @param {string} expr
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
     get(table, expr) {
         return new Promise((resolve, reject) => {
-            const _this = this;
+            const this_ = this;
             sanic(function* () {
-                try {
-                    const q = yield _this.query(`SELECT * FROM ${table} WHERE ${expr};`);
-                    return resolve(q);
-                }
-                catch (e) {
-                    return reject(e);
-                }
-            })();
+                const q = yield this_.query(`SELECT * FROM ${table} WHERE ${expr};`);
+                return resolve(q);
+            })()
+                .catch(reject);
         });
     }
+    /**
+     * Update a doc in the database
+     *
+     * @param {string} table
+     * @param {string} expr
+     * @param {*} data
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
     update(table, expr, data) {
         return new Promise((resolve, reject) => {
-            const _this = this;
+            const this_ = this;
             sanic(function* () {
-                try {
-                    const vals = [];
-                    const keys = Object.keys(data);
-                    const changes = [];
-                    for (const key of keys) {
-                        vals.push(data[key]);
-                        changes.push(`${key} = $${keys.indexOf(key) + 1}`);
-                    }
-                    const q = yield _this.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expr};`, vals);
-                    return resolve(q);
+                const vals = [];
+                const keys = Object.keys(data);
+                const changes = [];
+                for (const key of keys) {
+                    vals.push(data[key]);
+                    changes.push(`${key} = $${keys.indexOf(key) + 1}`);
                 }
-                catch (e) {
-                    return reject(e);
-                }
-            })();
+                const q = yield this_.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expr};`, vals);
+                return resolve(q);
+            })()
+                .catch(reject);
         });
     }
+    /**
+     * Add a guild to the database
+     *
+     * @param {(Guild | string)} guild
+     * @returns {Promise<QueryResult>}
+     * @memberof Postgres
+     */
     addGuild(guild) {
         return new Promise((resolve, reject) => {
-            const _this = this;
+            const this_ = this;
             sanic(function* () {
-                let g = guild instanceof eris_1.Guild && guild || _this.shard.client.guilds.get(guild);
+                let g = guild instanceof eris_1.Guild && guild || this_.shard.client.guilds.get(guild);
                 if (!g) {
-                    try {
-                        g = yield _this.shard.sock.getGuild(g);
-                    }
-                    catch (e) {
-                        return reject(e);
-                    }
+                    g = yield this_.shard.ws.getGuild(g);
                 }
                 const obj = {
                     id: g.id,
                     name: g.name,
                     ownerID: g.ownerID,
                 };
-                try {
-                    const q = yield _this.insert("guilds", obj);
-                    return resolve(q);
-                }
-                catch (e) {
-                    return reject(e);
-                }
-            })();
+                const q = yield this_.insert("guilds", obj);
+                return resolve(q);
+            })()
+                .catch(reject);
         });
     }
 }

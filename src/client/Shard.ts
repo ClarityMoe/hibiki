@@ -3,7 +3,7 @@
 import { Client, ClientOptions } from "eris";
 import { EventEmitter } from "events";
 import * as sanic from "sanic";
-import { Core, ICoreOptions } from "../core/Core";
+import { Core } from "../core/Core";
 import { IExtManagerOptions } from "../core/ExtManager";
 import { IPostgresOptions } from "../db/Postgres";
 import { IRedisOptions } from "../db/Redis";
@@ -16,6 +16,7 @@ export interface IShardOptions {
         redis: IRedisOptions,
     };
     shards: Array<{ id: number, server: { host: string } }>;
+    logger: { debug: boolean };
     disabledEvents: string[];
     ext: IExtManagerOptions;
 }
@@ -49,7 +50,9 @@ export class Shard extends EventEmitter {
 
         return sanic(function* () {
             yield this_.client.connect();
-            yield this_.core.connect(10000);
+            if (this_.core) {
+                yield this_.core.connect(10000);
+            }
         })();
     }
 
@@ -58,7 +61,7 @@ export class Shard extends EventEmitter {
             return Promise.reject(new Error("Core is already loaded"));
         }
         const C = require("../core/Core");
-        const core: C = new C(this);
+        const core: Core = new C(this);
         this.core = core;
 
         return Promise.resolve(core);
@@ -71,12 +74,13 @@ export class Shard extends EventEmitter {
             }
             const this_: this = this;
             sanic(function* () {
-                const core: Core = _this.core;
-                yield this_.core.disconnect();
+                if (this_.core) { // IK this isn't needed but typememe isn't as smart as I thought
+                    const core: Core = this_.core;
+                    yield this_.core.disconnect();
+                    this_.core = null;
 
-                this_.core = null;
-
-                return resolve(core);
+                    return resolve(core);
+                }
             })()
                 .catch(reject);
         });
@@ -84,15 +88,15 @@ export class Shard extends EventEmitter {
 
     public reloadCore (): Promise<Core> {
         return new Promise((resolve, reject) => {
-            const _this: this = this;
+            const this_: this = this;
             sanic(function* () {
-                if (_this.core) {
-                    yield _this.core.disconnect();
+                if (this_.core) {
+                    yield this_.core.disconnect();
                 }
 
                 const C = require("../core/Core");
-                const core: C = new C(_this);
-                _this.core = core;
+                const core: Core = new C(this_);
+                this_.core = core;
 
                 return resolve(core);
             })()
