@@ -5,7 +5,6 @@ import { Context } from "./Context";
 /**
  * Command argument
  *
- * @export
  * @interface ICommandArgument
  */
 export interface ICommandArgument {
@@ -18,7 +17,6 @@ export interface ICommandArgument {
 /**
  * Command flag
  *
- * @export
  * @interface ICommandFlag
  */
 export interface ICommandFlag {
@@ -31,7 +29,6 @@ export interface ICommandFlag {
 /**
  * Command config
  *
- * @export
  * @interface ICommandConfig
  */
 export interface ICommandConfig {
@@ -49,7 +46,6 @@ export interface ICommandConfig {
  * Subcommand config
  *
  * @todo add subcommands on subcommands
- * @export
  * @interface ISubcommandConfig
  */
 export interface ISubcommandConfig {
@@ -66,7 +62,6 @@ export interface ISubcommandConfig {
 /**
  * Command package
  *
- * @export
  * @interface ICommandPackage
  */
 export interface ICommandPackage {
@@ -94,72 +89,55 @@ const defaultPackage: ICommandPackage = {
 /**
  * Command class
  *
- * @export
- * @class Command
  */
 export class Command {
 
     /**
      * Creates an instance of Command.
-     * @param {ICommandConfig} config
-     * @param {(ctx: Context) => Promise<any>} [run]
-     * @memberof Command
+     * @param ICommandConfig config
+     * @param (ctx: Context) => Promise<any> [run]
      */
     constructor (private config: ICommandConfig, public run?: (ctx: Context) => Promise<any>) {}
 
     /**
      * Aliases for the command
      *
-     * @type {string[]}
-     * @memberof Command
      */
     public readonly aliases: string[] = this.config.aliases || [];
 
     /**
      * Arguments on the command
      *
-     * @type {{ [key: string]: ICommandArgument }}
-     * @memberof Command
      */
     public readonly arguments: { [key: string]: ICommandArgument } = this.config.arguments || {};
 
     /**
      * Flags on the command
      *
-     * @type {{ [key: string]: ICommandFlag }}
-     * @memberof Command
      */
     public readonly flags: { [key: string]: ICommandFlag } = this.config.flags || {};
 
     /**
      * Subcommands on the command
      *
-     * @type {string[]}
-     * @memberof Command
      */
     public readonly subcommands: string[] = this.config.subcommands || [];
 
     /**
      * Description of the command
      *
-     * @type {string}
-     * @memberof Command
      */
     public readonly description: string = this.config.description || "Command doesn't have a description";
 
     /**
      * Category of the command
      *
-     * @type {string}
-     * @memberof Command
      */
     public readonly category: string = this.config.category || "Other";
 
     /**
      * Package file of the package the command came with
      *
-     * @type {ICommandPackage}
-     * @memberof Command
      */
     public readonly pkg: ICommandPackage = this.config.pkg || defaultPackage;
 

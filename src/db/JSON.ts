@@ -5,15 +5,12 @@ import * as fs from "fs";
 /**
  * meme
  *
- * @export
- * @class JSONDB
  */
 export class JSONDB {
 
     /**
      * Creates an instance of JSONDB.
      * @param {string} dir
-     * @memberof JSONDB
      */
     constructor (private dir: string) {}
 
@@ -21,7 +18,6 @@ export class JSONDB {
      * Initializes the JSON database
      *
      * @returns {Promise<void>}
-     * @memberof JSONDB
      */
     public init (): Promise<void> {
         if (fs.existsSync(this.dir)) {

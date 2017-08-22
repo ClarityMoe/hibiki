@@ -7,7 +7,6 @@ import { Shard } from "./Shard";
 /**
  * Options for the logger
  *
- * @export
  * @interface ILoggerOptions
  */
 export interface ILoggerOptions {
@@ -18,8 +17,6 @@ export interface ILoggerOptions {
 /**
  * Logger - where all the logging magic happens
  *
- * @export
- * @class Logger
  */
 export class Logger {
 
@@ -27,8 +24,6 @@ export class Logger {
      * Logger options
      *
      * @private
-     * @type {ILoggerOptions}
-     * @memberof Logger
      */
     private options: ILoggerOptions;
 
@@ -36,8 +31,6 @@ export class Logger {
      * Shard that initialized the logger (could be null)
      *
      * @private
-     * @type {Shard}
-     * @memberof Logger
      */
     private shard: Shard;
 
@@ -45,8 +38,6 @@ export class Logger {
      * Logger prefix
      *
      * @private
-     * @type {string}
-     * @memberof Logger
      */
     private prefix: string;
 
@@ -54,15 +45,12 @@ export class Logger {
      * Chalk instance
      *
      * @private
-     * @type {chalk.Chalk}
-     * @memberof Logger
      */
     private readonly clk: chalk.Chalk = new chalk.constructor({ enabled: true });
 
     /**
      * Creates an instance of Logger.
      * @param {(Shard | ILoggerOptions)} obj
-     * @memberof Logger
      */
     constructor (obj: Shard | ILoggerOptions) {
         if (obj instanceof Shard) {
@@ -80,7 +68,6 @@ export class Logger {
      *
      * @private
      * @returns {string}
-     * @memberof Logger
      */
     private getPrefix (): string {
         switch (this.prefix.toLowerCase()) {
@@ -99,7 +86,6 @@ export class Logger {
      * @private
      * @param {number} num
      * @returns {string}
-     * @memberof Logger
      */
     private getTime (num: number): string {
         const date: string = this.clk.cyan(moment(num).format("l"));
@@ -115,7 +101,6 @@ export class Logger {
      * @private
      * @param {string} type
      * @returns {string}
-     * @memberof Logger
      */
     private getLabel (type: string): string {
         switch (type) {
@@ -142,7 +127,6 @@ export class Logger {
      * @param {any[]} args
      * @param {boolean} [error]
      * @returns {*}
-     * @memberof Logger
      */
     private logBase (date: number, type: string, args: any[], error?: boolean): any {
         const prefix = this.getPrefix();
@@ -158,7 +142,6 @@ export class Logger {
      * @private
      * @param {any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     private checkArgs (args: any[]): Promise<void> {
         for (const arg of args) {
@@ -175,7 +158,6 @@ export class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     public log (...args: any[]): Promise<void> {
         const date: number = Date.now();
@@ -193,7 +175,6 @@ export class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     public info (...args: any[]): Promise<void> {
         const date: number = Date.now();
@@ -211,7 +192,6 @@ export class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     public ok (...args: any[]): Promise<void> {
         const date: number = Date.now();
@@ -229,7 +209,6 @@ export class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     public fail (...args: any[]): Promise<void> {
         const date: number = Date.now();
@@ -245,7 +224,6 @@ export class Logger {
      *
      * @param {...any[]} args
      * @returns {Promise<void>}
-     * @memberof Logger
      */
     public err (...args: any[]): Promise<void> {
         const date: number = Date.now();

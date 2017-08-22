@@ -10,7 +10,6 @@ import { Shard } from "../client/Shard";
 /**
  * Database guild object
  *
- * @export
  * @interface IDBGuild
  */
 export interface IDBGuild {
@@ -22,7 +21,6 @@ export interface IDBGuild {
 /**
  * Database user object
  *
- * @export
  * @interface IDBUser
  */
 export interface IDBUser {
@@ -34,9 +32,6 @@ export interface IDBUser {
 /**
  * PostgreSQL wrapper
  *
- * @export
- * @class Postgres
- * @extends {EventEmitter}
  */
 export class Postgres extends EventEmitter {
 
@@ -44,7 +39,6 @@ export class Postgres extends EventEmitter {
      * Creates an instance of Postgres.
      * @param {Shard} shard
      * @param {ClientConfig} options
-     * @memberof Postgres
      */
     constructor (private shard: Shard, private options: ClientConfig) {
         super();
@@ -54,8 +48,6 @@ export class Postgres extends EventEmitter {
      * "pg" client
      *
      * @private
-     * @type {Client}
-     * @memberof Postgres
      */
     private con: Client = new Client(this.options);
 
@@ -63,7 +55,6 @@ export class Postgres extends EventEmitter {
      * Connect to the database
      *
      * @returns {Promise<void>}
-     * @memberof Postgres
      */
     public connect (): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -87,7 +78,6 @@ export class Postgres extends EventEmitter {
      * Disconnect from the database
      *
      * @returns {Promise<void>}
-     * @memberof Postgres
      */
     public disconnect (): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -106,7 +96,6 @@ export class Postgres extends EventEmitter {
      *
      * @param {Error} err
      * @returns {void}
-     * @memberof Postgres
      */
     public release (err: Error): void {
         return this.con.release(err);
@@ -118,7 +107,6 @@ export class Postgres extends EventEmitter {
      * @param {(string} query
      * @param {any[]} [values]
      * @returns {(Promise<QueryResult>)}
-     * @memberof Postgres
      */
     public query (query: string, values?: any[]): Promise<QueryResult> {
         if (values) {
@@ -133,7 +121,6 @@ export class Postgres extends EventEmitter {
      *
      * @param {string} queryText
      * @returns {Writable}
-     * @memberof Postgres
      */
     public copyFrom (queryText: string): Writable {
         return this.con.copyFrom(queryText);
@@ -144,7 +131,6 @@ export class Postgres extends EventEmitter {
      *
      * @param {string} queryText
      * @returns {Readable}
-     * @memberof Postgres
      */
     public copyTo (queryText: string): Readable {
         return this.con.copyTo(queryText);
@@ -154,7 +140,6 @@ export class Postgres extends EventEmitter {
      * Pause the drain
      *
      * @returns {void}
-     * @memberof Postgres
      */
     public pauseDrain (): void {
         return this.con.pauseDrain();
@@ -164,7 +149,6 @@ export class Postgres extends EventEmitter {
      * Resume the drain
      *
      * @returns {void}
-     * @memberof Postgres
      */
     public resumeDrain (): void {
         return this.con.resumeDrain();
@@ -180,7 +164,6 @@ export class Postgres extends EventEmitter {
      * @param {string} table
      * @param {*} data
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     public insert (table: string, data: any): Promise<QueryResult> {
         return new Promise((resolve, reject) => {
@@ -207,7 +190,6 @@ export class Postgres extends EventEmitter {
      * @param {string} table
      * @param {string} expr
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     public get (table: string, expr: string): Promise<QueryResult> {
         return new Promise((resolve, reject) => {
@@ -229,7 +211,6 @@ export class Postgres extends EventEmitter {
      * @param {string} expr
      * @param {*} data
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     public update (table: string, expr: string, data: any): Promise<QueryResult> {
         return new Promise((resolve, reject) => {
@@ -257,7 +238,6 @@ export class Postgres extends EventEmitter {
      *
      * @param {(Guild | string)} guild
      * @returns {Promise<QueryResult>}
-     * @memberof Postgres
      */
     public addGuild (guild: Guild | string): Promise<QueryResult> {
         return new Promise((resolve, reject) => {

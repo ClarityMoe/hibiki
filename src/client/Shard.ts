@@ -12,7 +12,6 @@ import { Logger } from "./Logger";
 /**
  * Shard options
  *
- * @export
  * @interface IShardOptions
  */
 export interface IShardOptions {
@@ -29,9 +28,6 @@ export interface IShardOptions {
 /**
  * Shard class
  *
- * @export
- * @class Shard
- * @extends {EventEmitter}
  */
 export class Shard extends EventEmitter {
 
@@ -39,8 +35,6 @@ export class Shard extends EventEmitter {
      * Logger class
      *
      * @private
-     * @type {Logger}
-     * @memberof Shard
      */
     private readonly logger: Logger = new Logger(this);
 
@@ -48,16 +42,12 @@ export class Shard extends EventEmitter {
      * Eris options
      *
      * @private
-     * @type {ClientOptions}
-     * @memberof Shard
      */
     private erisOptions: ClientOptions;
 
     /**
      * Core
      *
-     * @type {(Core | null)}
-     * @memberof Shard
      */
     public core: Core | null;
 
@@ -65,7 +55,6 @@ export class Shard extends EventEmitter {
      * Creates an instance of Shard.
      * @param {string} token
      * @param {IShardOptions} options
-     * @memberof Shard
      */
     constructor (private token: string, public options: IShardOptions) {
         super();
@@ -81,24 +70,18 @@ export class Shard extends EventEmitter {
     /**
      * Eris client
      *
-     * @type {Eris.Client}
-     * @memberof Shard
      */
     public readonly client: Client = new Client(this.token, this.erisOptions);
 
     /**
      * WebSocket connection
      *
-     * @type {SockConnection}
-     * @memberof Shard
      */
     public readonly ws: SockConnection = new SockConnection(this);
 
     /**
      * Shard ID
      *
-     * @type {number}
-     * @memberof Shard
      */
     public readonly id: number = this.options.useENV && Number(process.env.SHARD_ID) || 1;
 
@@ -106,7 +89,6 @@ export class Shard extends EventEmitter {
      * Connects the shard and core
      *
      * @returns {Promise<void>}
-     * @memberof Shard
      */
     public connect (): Promise<void> {
         if (!this.core) {
@@ -126,7 +108,6 @@ export class Shard extends EventEmitter {
      * Loads the core (if not loaded)
      *
      * @returns {Promise<Core>}
-     * @memberof Shard
      */
     public loadCore (): Promise<Core> {
         if (this.core) {
@@ -143,7 +124,6 @@ export class Shard extends EventEmitter {
      * Unloads the core (if loaded)
      *
      * @returns {Promise<Core>}
-     * @memberof Shard
      */
     public unloadCore (): Promise<Core> {
         return new Promise((resolve, reject) => {
@@ -168,7 +148,6 @@ export class Shard extends EventEmitter {
      * Reloads the core
      *
      * @returns {Promise<Core>}
-     * @memberof Shard
      */
     public reloadCore (): Promise<Core> {
         return new Promise((resolve, reject) => {

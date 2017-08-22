@@ -9,32 +9,24 @@ import { Command, ICommandConfig, ISubcommandConfig } from "./Command";
 /**
  * Extension manager
  *
- * @export
- * @class ExtManager
- * @extends {EventEmitter}
  */
 export class ExtManager extends EventEmitter {
 
     /**
      * Loaded commands
      *
-     * @type {Map<string, Command>}
-     * @memberof ExtManager
      */
     public commands: Map<string, Command> = new Map<string, Command>();
 
     /**
      * Loaded subcommands
      *
-     * @type {Map<string, Command>}
-     * @memberof ExtManager
      */
     public subcommands: Map<string, Command> = new Map<string, Command>();
 
     /**
      * Creates an instance of ExtManager.
      * @param {Shard} shard
-     * @memberof ExtManager
      */
     constructor (private shard: Shard) {
         super();
@@ -44,7 +36,6 @@ export class ExtManager extends EventEmitter {
      * Initializes the extension manager
      *
      * @returns {Promise<void>}
-     * @memberof ExtManager
      */
     public init (): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -61,7 +52,6 @@ export class ExtManager extends EventEmitter {
      * Breaks/Stops the extension manager
      *
      * @returns {Promise<void>}
-     * @memberof ExtManager
      */
     public break (): Promise<void> {
         this.commands.clear();
@@ -76,7 +66,6 @@ export class ExtManager extends EventEmitter {
      * @decorator
      * @param {ICommandConfig} config
      * @returns {(target: any, key: string, descriptor: PropertyDescriptor) => void}
-     * @memberof ExtManager
      */
     public command (config: ICommandConfig): (target: any, key: string, descriptor: PropertyDescriptor) => void {
         return (_target: any, key: string, descriptor: PropertyDescriptor) => {
@@ -94,7 +83,6 @@ export class ExtManager extends EventEmitter {
      * @param {string} command
      * @param {ISubcommandConfig} config
      * @returns {(target: any, key: string, descriptor: PropertyDescriptor) => void}
-     * @memberof ExtManager
      */
     public subcommand (command: string, config: ISubcommandConfig): (target: any, key: string, descriptor: PropertyDescriptor) => void {
         return (_target: any, key: string, descriptor: PropertyDescriptor) => {
@@ -110,7 +98,6 @@ export class ExtManager extends EventEmitter {
      * @decorator
      * @param {string} event
      * @returns {(target: any, key: string, descriptor: PropertyDescriptor) => void}
-     * @memberof ExtManager
      */
     public event (event: string): (target: any, key: string, descriptor: PropertyDescriptor) => void {
         return (_target: any, _key: string, descriptor: PropertyDescriptor) => {

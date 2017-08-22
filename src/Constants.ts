@@ -3,7 +3,6 @@
 /**
  * WebSocket OP codes
  *
- * @export
  * @interface IOPCodes
  */
 export interface IOPCodes {

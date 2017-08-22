@@ -5,8 +5,6 @@ import * as redis from "redis";
 /**
  * Redis wrapper
  *
- * @export
- * @class Redis
  */
 export class Redis {
 
@@ -14,8 +12,6 @@ export class Redis {
      * Redis client
      *
      * @private
-     * @type {redis.RedisClient}
-     * @memberof Redis
      */
     private client: redis.RedisClient;
 
@@ -23,7 +19,6 @@ export class Redis {
      * Creates an instance of Redis.
      * @param {Shard} shard
      * @param {redis.ClientOpts} options
-     * @memberof Redis
      */
     constructor (private options: redis.ClientOpts) {}
 
@@ -31,7 +26,6 @@ export class Redis {
      * Connect to redis
      *
      * @returns {Promise<void>}
-     * @memberof Redis
      */
     public connect (): Promise<void> {
         this.client = redis.createClient(this.options);
@@ -43,7 +37,6 @@ export class Redis {
      * Disconnect from redis
      *
      * @returns {Promise<void>}
-     * @memberof Redis
      */
     public disconnect (): Promise<void> {
         this.client.end(true);
@@ -57,7 +50,6 @@ export class Redis {
      * @param {string} key
      * @param {object} value
      * @returns {Promise<any>}
-     * @memberof Redis
      */
     public set (key: string, value: object): Promise<any> {
         return new Promise((resolve, reject) => {
@@ -76,7 +68,6 @@ export class Redis {
      *
      * @param {string} key
      * @returns {Promise<object>}
-     * @memberof Redis
      */
     public get (key: string): Promise<object> {
         return new Promise((resolve, reject) => {

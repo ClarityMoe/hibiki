@@ -10,16 +10,12 @@ import { ExtManager } from "./ExtManager";
 /**
  * Core of the bot
  *
- * @export
- * @class Core
- * @extends {EventEmitter}
  */
 export class Core extends EventEmitter {
 
     /**
      * Creates an instance of Core.
      * @param {Shard} shard
-     * @memberof Core
      */
     constructor (private shard: Shard) {
         super();
@@ -28,24 +24,18 @@ export class Core extends EventEmitter {
     /**
      * Extension manager class
      *
-     * @type {ExtManager}
-     * @memberof Core
      */
     public ext: ExtManager = new ExtManager(this.shard);
 
     /**
      * Postgres wrapper class
      *
-     * @type {Postgres}
-     * @memberof Core
      */
     public pg: Postgres = new Postgres(this.shard, this.shard.options.db.postgres);
 
     /**
      * Redis wrapper class
      *
-     * @type {Redis}
-     * @memberof Core
      */
     public r: Redis = new Redis(this.shard.options.db.redis);
 
@@ -54,7 +44,6 @@ export class Core extends EventEmitter {
      *
      * @param {number} timeout
      * @returns {Promise<void>}
-     * @memberof Core
      */
     public connect (timeout: number): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -78,7 +67,6 @@ export class Core extends EventEmitter {
      * Disconnect all modules
      *
      * @returns {Promise<void>}
-     * @memberof Core
      */
     public disconnect (): Promise<void> {
         return new Promise((resolve, reject) => {

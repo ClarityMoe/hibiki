@@ -21,9 +21,6 @@ export interface IWSEvent {
  * WebSocket connection between shards.
  *
  * @todo fix this cuz noud is a meme
- * @export
- * @class SockConnection
- * @extends {EventEmitter}
  */
 export class SockConnection extends EventEmitter {
 
@@ -126,7 +123,6 @@ export class SockConnection extends EventEmitter {
      * @param {*} data
      * @param {number} [shard]
      * @returns {Promise<{ data: any, id: number }>}
-     * @memberof SockConnection
      */
     public request (type: string, data: any, shard?: number): Promise<{ data: any, id: number }> {
         const uniqueID: string = crypto.randomBytes(10).toString();
@@ -166,7 +162,6 @@ export class SockConnection extends EventEmitter {
      *
      * @param {string} id
      * @returns {Promise<{ data: any, id: number }>}
-     * @memberof SockConnection
      */
     public getGuild (id: string): Promise<{ data: any, id: number }> {
         return this.request("GUILD", { id });
@@ -177,7 +172,6 @@ export class SockConnection extends EventEmitter {
      *
      * @param {string} id
      * @returns {Promise<{ data: any, id: number }>}
-     * @memberof SockConnection
      */
     public getUser (id: string): Promise<{ data: any, id: number }> {
         return this.request("USER", { id });
