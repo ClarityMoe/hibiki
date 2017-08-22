@@ -2,7 +2,7 @@
     "token": "",
     "db": {
         "postgres": {
-            "satabase": "hibiki",
+            "database": "hibiki",
             "host": "localhost",
             "user": "user",
             "password": null
