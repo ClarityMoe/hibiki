@@ -1,14 +1,26 @@
 /// <reference types="node" />
 import { Guild } from "eris";
 import { EventEmitter } from "events";
-import { ClientConfig, QueryConfig, QueryResult } from "pg";
+import { ClientConfig, QueryResult } from "pg";
 import { Readable, Writable } from "stream";
 import { Shard } from "../client/Shard";
+/**
+ * Database guild object
+ *
+ * @export
+ * @interface IDBGuild
+ */
 export interface IDBGuild {
     id: string;
     name: string;
     ownerID: string;
 }
+/**
+ * Database user object
+ *
+ * @export
+ * @interface IDBUser
+ */
 export interface IDBUser {
     id: string;
     username: string;
@@ -64,12 +76,12 @@ export declare class Postgres extends EventEmitter {
     /**
      * Query the database
      *
-     * @param {(string | QueryConfig & Readable | QueryConfig)} query
+     * @param {(string} query
      * @param {any[]} [values]
-     * @returns {(Promise<QueryResult> | Readable)}
+     * @returns {(Promise<QueryResult>)}
      * @memberof Postgres
      */
-    query(query: string | QueryConfig & Readable | QueryConfig, values?: any[]): Promise<QueryResult> | Readable;
+    query(query: string, values?: any[]): Promise<QueryResult>;
     /**
      * Copy from something
      *

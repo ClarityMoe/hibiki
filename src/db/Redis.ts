@@ -1,7 +1,6 @@
 // Redis.ts - Redis wrapper (noud02)
 
 import * as redis from "redis";
-import { Shard } from "../client/Shard";
 
 /**
  * Redis wrapper
@@ -26,7 +25,7 @@ export class Redis {
      * @param {redis.ClientOpts} options
      * @memberof Redis
      */
-    constructor (private shard: Shard, private options: redis.ClientOpts) {}
+    constructor (private options: redis.ClientOpts) {}
 
     /**
      * Connect to redis
@@ -36,6 +35,18 @@ export class Redis {
      */
     public connect (): Promise<void> {
         this.client = redis.createClient(this.options);
+
+        return Promise.resolve();
+    }
+
+    /**
+     * Disconnect from redis
+     *
+     * @returns {Promise<void>}
+     * @memberof Redis
+     */
+    public disconnect (): Promise<void> {
+        this.client.end(true);
 
         return Promise.resolve();
     }

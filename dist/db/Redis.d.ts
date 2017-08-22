@@ -1,5 +1,4 @@
 import * as redis from "redis";
-import { Shard } from "../client/Shard";
 /**
  * Redis wrapper
  *
@@ -7,7 +6,6 @@ import { Shard } from "../client/Shard";
  * @class Redis
  */
 export declare class Redis {
-    private shard;
     private options;
     /**
      * Redis client
@@ -23,7 +21,7 @@ export declare class Redis {
      * @param {redis.ClientOpts} options
      * @memberof Redis
      */
-    constructor(shard: Shard, options: redis.ClientOpts);
+    constructor(options: redis.ClientOpts);
     /**
      * Connect to redis
      *
@@ -31,6 +29,13 @@ export declare class Redis {
      * @memberof Redis
      */
     connect(): Promise<void>;
+    /**
+     * Disconnect from redis
+     *
+     * @returns {Promise<void>}
+     * @memberof Redis
+     */
+    disconnect(): Promise<void>;
     /**
      * Set a key to an object
      *

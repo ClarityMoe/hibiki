@@ -2,32 +2,71 @@
 
 import { Client, ClientOptions } from "eris";
 import { EventEmitter } from "events";
+import * as pg from "pg";
+import * as redis from "redis";
 import * as sanic from "sanic";
 import { Core } from "../core/Core";
-import { IExtManagerOptions } from "../core/ExtManager";
-import { IPostgresOptions } from "../db/Postgres";
-import { IRedisOptions } from "../db/Redis";
 import { SockConnection } from "./Connection";
 import { Logger } from "./Logger";
 
+/**
+ * Shard options
+ *
+ * @export
+ * @interface IShardOptions
+ */
 export interface IShardOptions {
-    database: {
-        postgres: IPostgresOptions,
-        redis: IRedisOptions,
+    db: {
+        postgres: pg.ClientConfig,
+        redis: redis.ClientOpts,
     };
     shards: Array<{ id: number, server: { host: string } }>;
     logger: { debug: boolean };
     disabledEvents: string[];
-    ext: IExtManagerOptions;
+    useENV: boolean;
 }
 
+/**
+ * Shard class
+ *
+ * @export
+ * @class Shard
+ * @extends {EventEmitter}
+ */
 export class Shard extends EventEmitter {
 
+    /**
+     * Logger class
+     *
+     * @private
+     * @type {Logger}
+     * @memberof Shard
+     */
     private readonly logger: Logger = new Logger(this);
+
+    /**
+     * Eris options
+     *
+     * @private
+     * @type {ClientOptions}
+     * @memberof Shard
+     */
     private erisOptions: ClientOptions;
 
+    /**
+     * Core
+     *
+     * @type {(Core | null)}
+     * @memberof Shard
+     */
     public core: Core | null;
 
+    /**
+     * Creates an instance of Shard.
+     * @param {string} token
+     * @param {IShardOptions} options
+     * @memberof Shard
+     */
     constructor (private token: string, public options: IShardOptions) {
         super();
         this.loadCore()
@@ -35,13 +74,40 @@ export class Shard extends EventEmitter {
                 return this.logger.ok("Core loaded");
             })
             .catch((e) => {
-                return this.logger.err("Error while loading core:\n", e.stack);
+                return this.logger.fail("Error while loading core:\n", e.stack);
             });
     }
 
+    /**
+     * Eris client
+     *
+     * @type {Eris.Client}
+     * @memberof Shard
+     */
     public readonly client: Client = new Client(this.token, this.erisOptions);
+
+    /**
+     * WebSocket connection
+     *
+     * @type {SockConnection}
+     * @memberof Shard
+     */
     public readonly ws: SockConnection = new SockConnection(this);
 
+    /**
+     * Shard ID
+     *
+     * @type {number}
+     * @memberof Shard
+     */
+    public readonly id: number = this.options.useENV && Number(process.env.SHARD_ID) || 1;
+
+    /**
+     * Connects the shard and core
+     *
+     * @returns {Promise<void>}
+     * @memberof Shard
+     */
     public connect (): Promise<void> {
         if (!this.core) {
             return Promise.reject(new Error("Core is not loaded"));
@@ -56,6 +122,12 @@ export class Shard extends EventEmitter {
         })();
     }
 
+    /**
+     * Loads the core (if not loaded)
+     *
+     * @returns {Promise<Core>}
+     * @memberof Shard
+     */
     public loadCore (): Promise<Core> {
         if (this.core) {
             return Promise.reject(new Error("Core is already loaded"));
@@ -67,6 +139,12 @@ export class Shard extends EventEmitter {
         return Promise.resolve(core);
     }
 
+    /**
+     * Unloads the core (if loaded)
+     *
+     * @returns {Promise<Core>}
+     * @memberof Shard
+     */
     public unloadCore (): Promise<Core> {
         return new Promise((resolve, reject) => {
             if (!this.core) {
@@ -86,6 +164,12 @@ export class Shard extends EventEmitter {
         });
     }
 
+    /**
+     * Reloads the core
+     *
+     * @returns {Promise<Core>}
+     * @memberof Shard
+     */
     public reloadCore (): Promise<Core> {
         return new Promise((resolve, reject) => {
             const this_: this = this;
@@ -103,5 +187,4 @@ export class Shard extends EventEmitter {
                 .catch(reject);
         });
     }
-
 }

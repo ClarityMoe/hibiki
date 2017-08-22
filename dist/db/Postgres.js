@@ -82,9 +82,9 @@ class Postgres extends events_1.EventEmitter {
     /**
      * Query the database
      *
-     * @param {(string | QueryConfig & Readable | QueryConfig)} query
+     * @param {(string} query
      * @param {any[]} [values]
-     * @returns {(Promise<QueryResult> | Readable)}
+     * @returns {(Promise<QueryResult>)}
      * @memberof Postgres
      */
     query(query, values) {
@@ -154,8 +154,9 @@ class Postgres extends events_1.EventEmitter {
                     vals.push(data[key]);
                 }
                 const q = yield this_.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((_, i) => `$${i + 1}`).join(", ")});`, vals);
-                return resolve(q);
+                return q;
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }
@@ -172,8 +173,9 @@ class Postgres extends events_1.EventEmitter {
             const this_ = this;
             sanic(function* () {
                 const q = yield this_.query(`SELECT * FROM ${table} WHERE ${expr};`);
-                return resolve(q);
+                return q;
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }
@@ -198,8 +200,9 @@ class Postgres extends events_1.EventEmitter {
                     changes.push(`${key} = $${keys.indexOf(key) + 1}`);
                 }
                 const q = yield this_.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expr};`, vals);
-                return resolve(q);
+                return q;
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }
@@ -215,17 +218,23 @@ class Postgres extends events_1.EventEmitter {
             const this_ = this;
             sanic(function* () {
                 let g = guild instanceof eris_1.Guild && guild || this_.shard.client.guilds.get(guild);
-                if (!g) {
-                    g = yield this_.shard.ws.getGuild(g);
+                if (!g && typeof guild === "string") {
+                    g = yield this_.shard.ws.getGuild(guild);
                 }
-                const obj = {
-                    id: g.id,
-                    name: g.name,
-                    ownerID: g.ownerID,
-                };
-                const q = yield this_.insert("guilds", obj);
-                return resolve(q);
+                if (g) {
+                    const obj = {
+                        id: g.id,
+                        name: g.name,
+                        ownerID: g.ownerID,
+                    };
+                    const q = yield this_.insert("guilds", obj);
+                    return q;
+                }
+                else {
+                    throw new Error("Guild not found");
+                }
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }

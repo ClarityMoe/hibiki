@@ -29,7 +29,7 @@ export declare class SockConnection extends EventEmitter {
     private onClientMessage(ws, data);
     private onServerMessage(ws);
     init(): void;
-    send(id: number, op: number, d: any, e?: string): Promise<never> | undefined;
+    send(id: number, op: number, d: any, e?: string): Promise<void>;
     /**
      * Request something from another shard.
      *

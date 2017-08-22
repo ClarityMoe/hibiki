@@ -15,8 +15,7 @@ class Redis {
      * @param {redis.ClientOpts} options
      * @memberof Redis
      */
-    constructor(shard, options) {
-        this.shard = shard;
+    constructor(options) {
         this.options = options;
     }
     /**
@@ -27,6 +26,16 @@ class Redis {
      */
     connect() {
         this.client = redis.createClient(this.options);
+        return Promise.resolve();
+    }
+    /**
+     * Disconnect from redis
+     *
+     * @returns {Promise<void>}
+     * @memberof Redis
+     */
+    disconnect() {
+        this.client.end(true);
         return Promise.resolve();
     }
     /**

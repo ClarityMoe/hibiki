@@ -40,6 +40,7 @@ export interface ICommandConfig {
     category?: string;
     description: string;
     flags?: { [key: string]: ICommandFlag };
+    name?: string;
     pkg: ICommandPackage;
     subcommands?: string[];
 }
@@ -57,6 +58,8 @@ export interface ISubcommandConfig {
     command: string;
     description: string;
     flags?: { [key: string]: ICommandFlag };
+    name?: string;
+    pkg: ICommandPackage;
     // subcommands?: string[];
 }
 

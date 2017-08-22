@@ -6,22 +6,67 @@ const events_1 = require("events");
 const sanic = require("sanic");
 const Connection_1 = require("./Connection");
 const Logger_1 = require("./Logger");
+/**
+ * Shard class
+ *
+ * @export
+ * @class Shard
+ * @extends {EventEmitter}
+ */
 class Shard extends events_1.EventEmitter {
+    /**
+     * Creates an instance of Shard.
+     * @param {string} token
+     * @param {IShardOptions} options
+     * @memberof Shard
+     */
     constructor(token, options) {
         super();
         this.token = token;
         this.options = options;
+        /**
+         * Logger class
+         *
+         * @private
+         * @type {Logger}
+         * @memberof Shard
+         */
         this.logger = new Logger_1.Logger(this);
+        /**
+         * Eris client
+         *
+         * @type {Eris.Client}
+         * @memberof Shard
+         */
         this.client = new eris_1.Client(this.token, this.erisOptions);
+        /**
+         * WebSocket connection
+         *
+         * @type {SockConnection}
+         * @memberof Shard
+         */
         this.ws = new Connection_1.SockConnection(this);
+        /**
+         * Shard ID
+         *
+         * @type {number}
+         * @memberof Shard
+         */
+        this.id = this.options.useENV && Number(process.env.SHARD_ID) || 1;
         this.loadCore()
             .then(() => {
             return this.logger.ok("Core loaded");
         })
             .catch((e) => {
-            return this.logger.err("Error while loading core:\n", e.stack);
+            return this.logger.fail("Error while loading core:\n", e.stack);
         });
     }
+    /**
+     * Connects the shard and core
+     *
+     * @returns {Promise<void>}
+     * @memberof Shard
+     */
     connect() {
         if (!this.core) {
             return Promise.reject(new Error("Core is not loaded"));
@@ -34,6 +79,12 @@ class Shard extends events_1.EventEmitter {
             }
         })();
     }
+    /**
+     * Loads the core (if not loaded)
+     *
+     * @returns {Promise<Core>}
+     * @memberof Shard
+     */
     loadCore() {
         if (this.core) {
             return Promise.reject(new Error("Core is already loaded"));
@@ -43,6 +94,12 @@ class Shard extends events_1.EventEmitter {
         this.core = core;
         return Promise.resolve(core);
     }
+    /**
+     * Unloads the core (if loaded)
+     *
+     * @returns {Promise<Core>}
+     * @memberof Shard
+     */
     unloadCore() {
         return new Promise((resolve, reject) => {
             if (!this.core) {
@@ -60,6 +117,12 @@ class Shard extends events_1.EventEmitter {
                 .catch(reject);
         });
     }
+    /**
+     * Reloads the core
+     *
+     * @returns {Promise<Core>}
+     * @memberof Shard
+     */
     reloadCore() {
         return new Promise((resolve, reject) => {
             const this_ = this;

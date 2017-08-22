@@ -67,7 +67,8 @@ class SockConnection extends events_1.EventEmitter {
     init() {
         for (const shard of this.shard.options.shards) {
             if (this.shard.id !== shard.id) {
-                const ws = new WebSocket(shard.server.ip);
+                const ws = new WebSocket(shard.server.host);
+                ws.on("message", (data) => this.onClientMessage(ws, data));
                 this.ws.set(shard.id, ws);
             }
         }
@@ -83,10 +84,15 @@ class SockConnection extends events_1.EventEmitter {
         const ws = this.ws.get(id);
         const data = {
             d,
-            e: e || null,
+            e,
             op,
         };
-        ws.send(JSON.stringify(data));
+        if (ws) {
+            return Promise.resolve(ws.send(JSON.stringify(data)));
+        }
+        else {
+            return Promise.reject(new Error("404 WebSocket not found"));
+        }
     }
     /**
      * Request something from another shard.
@@ -113,7 +119,7 @@ class SockConnection extends events_1.EventEmitter {
                     this.removeAllListeners(`RESPONSE_${uniqueID}`);
                     return resolve({ data: d, id });
                 }
-                if (res.length === config.shards.length - 2) {
+                if (res.length === this.shard.options.shards.length - 2) {
                     this.removeAllListeners(`RESPONSE_${uniqueID}`);
                     return reject("None of the shards have what you want");
                 }

@@ -1,6 +1,6 @@
 {
     "token": "",
-    "database": {
+    "db": {
         "postgres": {
             "satabase": "hibiki",
             "host": "localhost",
@@ -8,6 +8,9 @@
             "user": "user",
             "password": null
         }
+    },
+    "logger": {
+        "debug": false
     },
     "shards": [
         {

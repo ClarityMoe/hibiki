@@ -12,4 +12,11 @@ export declare class JSONDB {
      * @memberof JSONDB
      */
     constructor(dir: string);
+    /**
+     * Initializes the JSON database
+     *
+     * @returns {Promise<void>}
+     * @memberof JSONDB
+     */
+    init(): Promise<void>;
 }

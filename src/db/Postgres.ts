@@ -1,18 +1,30 @@
 // Postgres.ts - PostgreSQL wrapper (noud02)
 
-import { Guild, Message, User } from "eris";
+import { Guild } from "eris";
 import { EventEmitter } from "events";
-import { Client, ClientConfig, QueryConfig, QueryResult } from "pg";
+import { Client, ClientConfig, QueryResult } from "pg";
 import sanic = require("sanic");
 import { Readable, Writable } from "stream";
 import { Shard } from "../client/Shard";
 
+/**
+ * Database guild object
+ *
+ * @export
+ * @interface IDBGuild
+ */
 export interface IDBGuild {
     id: string;
     name: string;
     ownerID: string;
 }
 
+/**
+ * Database user object
+ *
+ * @export
+ * @interface IDBUser
+ */
 export interface IDBUser {
     id: string;
     username: string;
@@ -103,12 +115,12 @@ export class Postgres extends EventEmitter {
     /**
      * Query the database
      *
-     * @param {(string | QueryConfig & Readable | QueryConfig)} query
+     * @param {(string} query
      * @param {any[]} [values]
-     * @returns {(Promise<QueryResult> | Readable)}
+     * @returns {(Promise<QueryResult>)}
      * @memberof Postgres
      */
-    public query (query: string | QueryConfig & Readable | QueryConfig, values?: any[]): Promise<QueryResult> | Readable {
+    public query (query: string, values?: any[]): Promise<QueryResult> {
         if (values) {
             return this.con.query(query, values);
         } else {
@@ -182,8 +194,9 @@ export class Postgres extends EventEmitter {
 
                 const q: QueryResult = yield this_.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((_, i) => `$${i + 1}`).join(", ")});`, vals);
 
-                return resolve(q);
+                return q;
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }
@@ -202,8 +215,9 @@ export class Postgres extends EventEmitter {
             sanic(function* () {
                 const q: QueryResult = yield this_.query(`SELECT * FROM ${table} WHERE ${expr};`);
 
-                return resolve(q);
+                return q;
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }
@@ -231,8 +245,9 @@ export class Postgres extends EventEmitter {
 
                 const q: QueryResult = yield this_.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expr};`, vals);
 
-                return resolve(q);
+                return q;
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }
@@ -248,22 +263,27 @@ export class Postgres extends EventEmitter {
         return new Promise((resolve, reject) => {
             const this_: this = this;
             sanic(function* () {
-                let g: Guild = guild instanceof Guild && guild || this_.shard.client.guilds.get(guild);
+                let g: Guild | undefined = guild instanceof Guild && guild || this_.shard.client.guilds.get(guild);
 
-                if (!g) {
-                    g = yield this_.shard.ws.getGuild(g);
+                if (!g && typeof guild === "string") { // TypeMaymay strikes again
+                    g = yield this_.shard.ws.getGuild(guild);
                 }
 
-                const obj: IDBGuild = {
-                    id: g.id,
-                    name: g.name,
-                    ownerID: g.ownerID,
-                };
+                if (g) {
+                    const obj: IDBGuild = {
+                        id: g.id,
+                        name: g.name,
+                        ownerID: g.ownerID,
+                    };
 
-                const q: QueryResult = yield this_.insert("guilds", obj);
+                    const q: QueryResult = yield this_.insert("guilds", obj);
 
-                return resolve(q);
+                    return q;
+                } else {
+                    throw new Error("Guild not found");
+                }
             })()
+                .then(resolve)
                 .catch(reject);
         });
     }
