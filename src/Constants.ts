@@ -1,6 +1,11 @@
 // Constants.js - Constant variables (noud02)
-// test
 
+/**
+ * WebSocket OP codes
+ *
+ * @export
+ * @interface IOPCodes
+ */
 export interface IOPCodes {
     EVENT: number;
     HEARTBEAT: number;
