@@ -38,14 +38,10 @@ export class ExtManager extends EventEmitter {
      * @returns {Promise<void>}
      */
     public init (): Promise<void> {
-        return new Promise((resolve, reject) => {
-            sanic(function* () {
-                /** @todo add command loader */
-                yield Promise.resolve("temp yield here");
-            })()
-                .then(resolve)
-                .catch(reject);
-        });
+        return sanic(function* () {
+            /** @todo add command loader */
+            yield Promise.resolve("temp yield here");
+        })();
     }
 
     /**
