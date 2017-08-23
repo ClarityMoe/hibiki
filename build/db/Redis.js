@@ -2,6 +2,7 @@
 // Redis.ts - Redis wrapper (noud02)
 Object.defineProperty(exports, "__esModule", { value: true });
 const redis = require("redis");
+const Logger_1 = require("../client/Logger");
 /**
  * Redis wrapper
  *
@@ -14,6 +15,11 @@ class Redis {
      */
     constructor(options) {
         this.options = options;
+        /**
+         * Logger
+         *
+         */
+        this.logger = new Logger_1.Logger({ prefix: "redis", debug: false });
     }
     /**
      * Connect to redis
@@ -22,6 +28,7 @@ class Redis {
      */
     connect() {
         this.client = redis.createClient(this.options);
+        this.logger.ok("Connected to Redis");
         return Promise.resolve();
     }
     /**
@@ -31,6 +38,7 @@ class Redis {
      */
     disconnect() {
         this.client.end(true);
+        this.logger.ok("Disconnected from Redis");
         return Promise.resolve();
     }
     /**

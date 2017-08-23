@@ -27,7 +27,7 @@ class Logger {
         }
         else {
             this.options = obj;
-            this.prefix = obj.prefix || "UNKNOWN";
+            this.prefix = obj.prefix && obj.prefix.toUpperCase().substring(0, 5) || "UNKNOWN";
         }
     }
     /**
@@ -90,11 +90,11 @@ class Logger {
      * Base for logging
      *
      * @private
-     * @param {number} date
-     * @param {string} type
-     * @param {any[]} args
-     * @param {boolean} [error]
-     * @returns {*}
+     * @param date
+     * @param type
+     * @param args
+     * @param [error]
+     * @returns
      */
     logBase(date, type, args, error) {
         const prefix = this.getPrefix();
@@ -103,87 +103,54 @@ class Logger {
         return console[error && "error" || "log"](prefix, time, label, args.join(" "));
     }
     /**
-     * Check the args for errors
-     *
-     * @private
-     * @param {any[]} args
-     * @returns {Promise<void>}
-     */
-    checkArgs(args) {
-        for (const arg of args) {
-            if (arg instanceof Error) {
-                return Promise.reject(new Error("Logging errors under non-error types is NOT allowed!"));
-            }
-        }
-        return Promise.resolve();
-    }
-    /**
      * Logs I guess
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
     log(...args) {
         const date = Date.now();
-        return new Promise((resolve, reject) => {
-            // const args: any[] = Array.from(arguments); - IK this is faster but I don't want TS to be a bitch
-            this.checkArgs(args).catch(reject);
-            return resolve(this.logBase(date, "log", args, false));
-        });
+        return this.logBase(date, "log", args, false);
     }
     /**
      * Logs something as INFO
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
     info(...args) {
         const date = Date.now();
-        return new Promise((resolve, reject) => {
-            // const args: any[] = Array.from(arguments);
-            this.checkArgs(args).catch(reject);
-            return resolve(this.logBase(date, "info", args, false));
-        });
+        return this.logBase(date, "info", args, false);
     }
     /**
      * Logs something as OK
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
     ok(...args) {
         const date = Date.now();
-        return new Promise((resolve, reject) => {
-            // const args: any[] = Array.from(arguments);
-            this.checkArgs(args).catch(reject);
-            return resolve(this.logBase(date, "ok", args, false));
-        });
+        return this.logBase(date, "ok", args, false);
     }
     /**
      * Logs something as FAIL
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
     fail(...args) {
         const date = Date.now();
-        return new Promise((resolve) => {
-            // const args: any[] = Array.from(arguments);
-            return resolve(this.logBase(date, "fail", args, true));
-        });
+        return this.logBase(date, "fail", args, true);
     }
     /**
      * Logs something as ERR
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
     err(...args) {
         const date = Date.now();
-        return new Promise((resolve) => {
-            // const args: any[] = Array.from(arguments);
-            return resolve(this.logBase(date, "err", args, true));
-        });
+        return this.logBase(date, "err", args, true);
     }
     /**
      * Logs something as debug
@@ -193,21 +160,20 @@ class Logger {
      */
     debug(...args) {
         const date = Date.now();
-        return new Promise((resolve) => {
-            // const args: any[] = Array.from(arguments);
-            if (!this.options.debug) {
-                return resolve();
-            }
-            return resolve(this.logBase(date, "debug", args, true));
-        });
+        if (!this.options.debug) {
+            return;
+        }
+        return this.logBase(date, "debug", args, false);
     }
+    /**
+     * Logs a normal message
+     *
+     * @param args
+     * @returns
+     */
     msg(...args) {
         const date = Date.now();
-        return new Promise((resolve, reject) => {
-            // const args: any[] = Array.from(arguments);
-            this.checkArgs(args).catch(reject);
-            return resolve(this.logBase(date, "msg", args, false));
-        });
+        return this.logBase(date, "msg", args, false);
     }
 }
 exports.Logger = Logger;

@@ -1,8 +1,10 @@
 "use strict";
 // Connection.js - WebSocket Connection between shards (noud02)
 Object.defineProperty(exports, "__esModule", { value: true });
+// import * as crypto from "crypto";
 const events_1 = require("events");
-const WebSocket = require("uws");
+const WebSocket = require("ws"); // Have to use WS here instead of uWS cuz uWS doesnt support custom headers
+const Logger_1 = require("./Logger");
 /**
  * WebSocket connection between shards
  *
@@ -15,21 +17,35 @@ class Connection extends events_1.EventEmitter {
     constructor(shard) {
         super();
         this.shard = shard;
+        /**
+         * Logger
+         *
+         */
+        this.logger = new Logger_1.Logger({ prefix: "ws", debug: false });
     }
+    /**
+     * Connects the WebSocket
+     *
+     * @returns
+     */
     connect() {
         return new Promise((resolve, reject) => {
-            this.ws = new WebSocket(`ws://${this.shard.options.wss.host}:${this.shard.options.wss.port}`, {
+            this.ws = new WebSocket(`ws://${this.shard.options.wss.host || "localhost"}:${this.shard.options.wss.port}`, {
                 headers: {
+                    id: this.shard.id.toString(),
                     token: this.shard.token,
-                    id: this.shard.id,
-                }
+                },
+            });
+            this.ws.once("error", reject);
+            this.ws.once("open", () => {
+                this.ws.ping();
+                return resolve();
             });
         });
     }
     /**
      * Send a message to the shards
      *
-     * @param id
      * @param op
      * @param d
      * @param [e]

@@ -1,4 +1,5 @@
 import * as redis from "redis";
+import { Logger } from "../client/Logger";
 /**
  * Redis wrapper
  *
@@ -11,6 +12,11 @@ export declare class Redis {
      * @private
      */
     private client;
+    /**
+     * Logger
+     *
+     */
+    readonly logger: Logger;
     /**
      * Creates an instance of Redis.
      * @param {Shard} shard

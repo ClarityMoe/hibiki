@@ -1,3 +1,6 @@
 node_modules
 *.log
 config.json
+websocket.png
+yarn.lock
+bench.js

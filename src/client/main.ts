@@ -7,12 +7,10 @@ import { Shard } from "./Shard";
 const config: IHibikiConfig = require("../../config.json"); // tslint:disable-line:no-var-requires
 const args: minimist.ParsedArgs = minimist(process.argv);
 
-const shard: Shard = new Shard(args.shard, config.token, config);
+const shard: Shard = new Shard(args.shard || 1, config.token, config);
+
+shard.connect().catch(console.error);
 
 process.on("SIGINT", () => {
-    shard.disconnect();
-});
-
-shard.connect().catch((e: Error) => {
-    console.error(e);
+    shard.disconnect().catch(console.error);
 });

@@ -4,6 +4,7 @@ import { EventEmitter } from "events";
 import { IHibikiConfig } from "../Constants";
 import { Core } from "../core/Core";
 import { Connection } from "./Connection";
+import { Logger } from "./Logger";
 /**
  * Shard class
  *
@@ -15,9 +16,8 @@ export declare class Shard extends EventEmitter {
     /**
      * Logger class
      *
-     * @private
      */
-    private readonly logger;
+    readonly logger: Logger;
     /**
      * Eris options
      *
@@ -46,11 +46,16 @@ export declare class Shard extends EventEmitter {
      */
     readonly ws: Connection;
     /**
-     * Connects the shard and core
+     * Connects the shard.
      *
      * @returns {Promise<void>}
      */
-    connect(): Promise<void>;
+    connect(): Promise<any>;
+    /**
+     * Disconnects the shard.
+     *
+     * @returns
+     */
     disconnect(): Promise<void>;
     /**
      * Loads the core (if not loaded)

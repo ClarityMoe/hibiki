@@ -5,6 +5,7 @@ import { EventEmitter } from "events";
 import { Client, ClientConfig, QueryResult } from "pg";
 import sanic = require("sanic");
 import { Readable, Writable } from "stream";
+import { Logger } from "../client/Logger";
 import { Shard } from "../client/Shard";
 
 /**
@@ -52,6 +53,12 @@ export class Postgres extends EventEmitter {
     private con: Client = new Client(this.options);
 
     /**
+     * Logger
+     *
+     */
+    public readonly logger: Logger = new Logger({ prefix: "postgres", debug: false });
+
+    /**
      * Connect to the database
      *
      * @returns {Promise<void>}
@@ -69,6 +76,8 @@ export class Postgres extends EventEmitter {
                 this.con.on("notice", (msg: any) => this.emit("notice", msg));
                 this.con.on("end", () => this.emit("end"));
 
+                this.logger.ok("Connected to PostgreSQL database:", this.options.database);
+
                 return resolve();
             });
         });
@@ -83,8 +92,12 @@ export class Postgres extends EventEmitter {
         return new Promise((resolve, reject) => {
             this.con.end((err: Error) => {
                 if (err) {
+                    this.logger.err("Disconnected from PostgreSQL database:", this.options.database, ", but got an error:", err.stack);
+
                     return reject(err);
                 }
+
+                this.logger.ok("Disconnected from PostgreSQL database:", this.options.database);
 
                 return resolve();
             });
@@ -243,11 +256,14 @@ export class Postgres extends EventEmitter {
         return new Promise((resolve, reject) => {
             const this_: this = this;
             sanic(function* () {
-                let g: Guild | undefined = guild instanceof Guild && guild || this_.shard.client.guilds.get(guild);
+                const g: Guild | undefined = guild instanceof Guild && guild || this_.shard.client.guilds.get(guild);
 
-                if (!g && typeof guild === "string") { // TypeMaymay strikes again
+                /** @todo uncomment when implemented */
+                /*
+                if (!g && typeof guild === "string") {
                     g = yield this_.shard.ws.getGuild(guild);
                 }
+                */
 
                 if (g) {
                     const obj: IDBGuild = {

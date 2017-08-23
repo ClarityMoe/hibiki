@@ -69,62 +69,60 @@ export declare class Logger {
      * Base for logging
      *
      * @private
-     * @param {number} date
-     * @param {string} type
-     * @param {any[]} args
-     * @param {boolean} [error]
-     * @returns {*}
+     * @param date
+     * @param type
+     * @param args
+     * @param [error]
+     * @returns
      */
     private logBase(date, type, args, error?);
     /**
-     * Check the args for errors
-     *
-     * @private
-     * @param {any[]} args
-     * @returns {Promise<void>}
-     */
-    private checkArgs(args);
-    /**
      * Logs I guess
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
-    log(...args: any[]): Promise<void>;
+    log(...args: any[]): any;
     /**
      * Logs something as INFO
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
-    info(...args: any[]): Promise<void>;
+    info(...args: any[]): any;
     /**
      * Logs something as OK
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
-    ok(...args: any[]): Promise<void>;
+    ok(...args: any[]): any;
     /**
      * Logs something as FAIL
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
-    fail(...args: any[]): Promise<void>;
+    fail(...args: any[]): any;
     /**
      * Logs something as ERR
      *
-     * @param {...any[]} args
-     * @returns {Promise<void>}
+     * @param args
+     * @returns
      */
-    err(...args: any[]): Promise<void>;
+    err(...args: any[]): any;
     /**
      * Logs something as debug
      *
      * @param args
      * @returns
      */
-    debug(...args: any[]): Promise<void>;
-    msg(...args: any[]): Promise<void>;
+    debug(...args: any[]): any;
+    /**
+     * Logs a normal message
+     *
+     * @param args
+     * @returns
+     */
+    msg(...args: any[]): any;
 }

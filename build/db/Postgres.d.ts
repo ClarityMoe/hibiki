@@ -3,6 +3,7 @@ import { Guild } from "eris";
 import { EventEmitter } from "events";
 import { ClientConfig, QueryResult } from "pg";
 import { Readable, Writable } from "stream";
+import { Logger } from "../client/Logger";
 import { Shard } from "../client/Shard";
 /**
  * Database guild object
@@ -43,6 +44,11 @@ export declare class Postgres extends EventEmitter {
      * @private
      */
     private con;
+    /**
+     * Logger
+     *
+     */
+    readonly logger: Logger;
     /**
      * Connect to the database
      *

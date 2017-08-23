@@ -1,101 +1,83 @@
+"use strict";
 // Server.ts - WebSocket Server (noud02)
-
-import { EventEmitter } from "events";
-import * as http from "http";
-import * as WebSocket from "ws";
-import { Logger } from "../client/Logger";
-import { IHibikiConfig } from "../Constants";
-
+Object.defineProperty(exports, "__esModule", { value: true });
+const events_1 = require("events");
+const WebSocket = require("ws");
+const Logger_1 = require("../client/Logger");
 /**
  * WebSocket Server class
  *
  */
-export class Server extends EventEmitter {
-
+class Server extends events_1.EventEmitter {
     /**
      * Creates an instance of Server.
      * @param config
      */
-    constructor (private config: IHibikiConfig) {
+    constructor(config) {
         super();
+        this.config = config;
+        /**
+         * Logger
+         *
+         */
+        this.logger = new Logger_1.Logger({ prefix: "server", debug: false });
     }
-
-    /**
-     * WebSocket Server
-     *
-     */
-    public wss: WebSocket.Server;
-
-    /**
-     * Logger
-     *
-     */
-    public logger: Logger = new Logger({ prefix: "server", debug: false });
-
     /**
      * Initializes the server
      *
      * @returns
      */
-    public init (): Promise<void> {
+    init() {
         return new Promise((resolve, reject) => {
             this.logger.log("Initializing Server");
-
             this.wss = new WebSocket.Server({
                 port: this.config.wss.port,
                 // Make sure the client isn't some random script kid trying to heck up your db
-                verifyClient: (info: { origin: string; secure: boolean; req: http.IncomingMessage; }, cb: (res: boolean) => void) => {
-                    const token: string | string[] = info.req.headers.token;
-
+                verifyClient: (info, cb) => {
+                    const token = info.req.headers.token;
                     if (!token) {
                         cb(false);
-                    } else {
+                    }
+                    else {
                         if (token === this.config.token) {
                             cb(true);
-                        } else {
+                        }
+                        else {
                             cb(false);
                         }
                     }
                 },
             });
-
-            this.wss.on("connection", (ws: WebSocket, req: http.IncomingMessage) => {
-
+            this.wss.on("connection", (ws, req) => {
                 this.logger.info("New connection:", req.connection.remoteAddress);
-
-                ws.on("message", (data: any) => {
-                    const msg: any = JSON.parse(data);
-
+                ws.on("message", (data) => {
+                    const msg = JSON.parse(data);
                     this.logger.msg("Message from shard", req.headers.id, "\n\tOP:", msg.op, "\n\tEVENT:", msg.e, "\n\tDATA", msg.d);
-
-                    this.wss.clients.forEach((client: WebSocket) => {
+                    this.wss.clients.forEach((client) => {
                         if (client !== ws && client.readyState === WebSocket.OPEN) {
                             client.send(data);
                         }
                     });
                 });
             });
-
             this.wss.once("error", reject);
-
             return resolve();
         });
     }
-
     /**
      * Closes the server
      *
      * @returns
      */
-    public close (): Promise<void> {
+    close() {
         return new Promise((resolve, reject) => {
-            this.wss.close((err: any) => {
+            this.wss.close((err) => {
                 if (err) {
                     return reject(err);
                 }
-
                 return resolve();
             });
         });
     }
 }
+exports.Server = Server;

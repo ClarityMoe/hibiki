@@ -5,10 +5,8 @@ const minimist = require("minimist");
 const Shard_1 = require("./Shard");
 const config = require("../../config.json"); // tslint:disable-line:no-var-requires
 const args = minimist(process.argv);
-const shard = new Shard_1.Shard(args.shard, config.token, config);
+const shard = new Shard_1.Shard(args.shard || 1, config.token, config);
+shard.connect().catch(console.error);
 process.on("SIGINT", () => {
-    shard.disconnect();
-});
-shard.connect().catch((e) => {
-    console.error(e);
+    shard.disconnect().catch(console.error);
 });

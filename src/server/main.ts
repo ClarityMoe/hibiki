@@ -14,15 +14,15 @@ if (cluster.isMaster) {
     }
 
     cluster.on("online", (worker: cluster.Worker) => {
-        logger.ok("Worker online:", worker.id).catch(console.error);
+        logger.ok("Worker online:", worker.id);
     });
 
     cluster.on("exit", (worker: cluster.Worker) => {
-        logger.err("Worker", worker.id, "died").catch(console.error);
+        logger.err("Worker", worker.id, "died");
         cluster.fork();
     });
 } else {
     const server: Server = new Server(config);
 
-    server.init();
+    server.init().catch((e: Error) => logger.err(e));
 }

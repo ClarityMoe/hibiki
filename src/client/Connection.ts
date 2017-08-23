@@ -1,9 +1,10 @@
 // Connection.js - WebSocket Connection between shards (noud02)
 
-import * as crypto from "crypto";
+// import * as crypto from "crypto";
 import { EventEmitter } from "events";
-import * as WebSocket from "uws";
-import { OPCodes } from "../Constants";
+import * as WebSocket from "ws"; // Have to use WS here instead of uWS cuz uWS doesnt support custom headers
+import { Logger } from "./Logger";
+// import { OPCodes } from "../Constants";
 import { Shard } from "./Shard";
 
 export interface IHibikiMessage {
@@ -24,7 +25,17 @@ export interface IWSEvent {
  */
 export class Connection extends EventEmitter {
 
+    /**
+     * WebSocket
+     *
+     */
     public ws: WebSocket;
+
+    /**
+     * Logger
+     *
+     */
+    public readonly logger: Logger = new Logger({ prefix: "ws", debug: false });
 
     /**
      * Creates an instance of Connection.
@@ -34,13 +45,25 @@ export class Connection extends EventEmitter {
         super();
     }
 
+    /**
+     * Connects the WebSocket
+     *
+     * @returns
+     */
     public connect (): Promise<void> {
         return new Promise((resolve, reject) => {
-            this.ws = new WebSocket(`ws://${this.shard.options.wss.host}:${this.shard.options.wss.port}`, {
+            this.ws = new WebSocket(`ws://${this.shard.options.wss.host || "localhost"}:${this.shard.options.wss.port}`, {
                 headers: {
+                    id: this.shard.id.toString(),
                     token: this.shard.token,
-                    id: this.shard.id,
                 },
+            });
+
+            this.ws.once("error", reject);
+            this.ws.once("open", () => {
+                this.ws.ping();
+
+                return resolve();
             });
         });
     }
@@ -48,7 +71,6 @@ export class Connection extends EventEmitter {
     /**
      * Send a message to the shards
      *
-     * @param id
      * @param op
      * @param d
      * @param [e]

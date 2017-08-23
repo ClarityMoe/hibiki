@@ -1,7 +1,8 @@
-/// <reference types="uws" />
+/// <reference types="ws" />
 /// <reference types="node" />
 import { EventEmitter } from "events";
-import * as WebSocket from "uws";
+import * as WebSocket from "ws";
+import { Logger } from "./Logger";
 import { Shard } from "./Shard";
 export interface IHibikiMessage {
     op: number;
@@ -19,17 +20,30 @@ export interface IWSEvent {
  */
 export declare class Connection extends EventEmitter {
     private shard;
+    /**
+     * WebSocket
+     *
+     */
     ws: WebSocket;
+    /**
+     * Logger
+     *
+     */
+    readonly logger: Logger;
     /**
      * Creates an instance of Connection.
      * @param shard
      */
     constructor(shard: Shard);
+    /**
+     * Connects the WebSocket
+     *
+     * @returns
+     */
     connect(): Promise<void>;
     /**
      * Send a message to the shards
      *
-     * @param id
      * @param op
      * @param d
      * @param [e]

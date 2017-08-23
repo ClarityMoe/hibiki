@@ -99,6 +99,7 @@
 						<section class="tsd-index-section ">
 							<h3>Properties</h3>
 							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-class"><a href="connection.html#logger" class="tsd-kind-icon">logger</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class"><a href="connection.html#ws" class="tsd-kind-icon">ws</a></li>
 								<li class="tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static"><a href="connection.html#defaultmaxlisteners" class="tsd-kind-icon">default<wbr>Max<wbr>Listeners</a></li>
 							</ul>
@@ -139,7 +140,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/client/Connection.ts#L27">client/Connection.ts:27</a></li>
+									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/3c5705b/src/client/Connection.ts#L38">client/Connection.ts:38</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -165,14 +166,34 @@
 			<section class="tsd-panel-group tsd-member-group ">
 				<h2>Properties</h2>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
+					<a name="logger" class="tsd-anchor"></a>
+					<h3>logger</h3>
+					<div class="tsd-signature tsd-kind-icon">logger<span class="tsd-signature-symbol">:</span> <a href="logger.html" class="tsd-signature-type">Logger</a><span class="tsd-signature-symbol"> =&nbsp;new Logger({ prefix: &quot;ws&quot;, debug: false })</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/3c5705b/src/client/Connection.ts#L38">client/Connection.ts:38</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>Logger</p>
+						</div>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class">
 					<a name="ws" class="tsd-anchor"></a>
 					<h3>ws</h3>
 					<div class="tsd-signature tsd-kind-icon">ws<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">WebSocket</span></div>
 					<aside class="tsd-sources">
 						<ul>
-							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/client/Connection.ts#L27">client/Connection.ts:27</a></li>
+							<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/3c5705b/src/client/Connection.ts#L32">client/Connection.ts:32</a></li>
 						</ul>
 					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>WebSocket</p>
+						</div>
+					</div>
 				</section>
 				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-class tsd-is-inherited tsd-is-static">
 					<a name="defaultmaxlisteners" class="tsd-anchor"></a>
@@ -244,9 +265,14 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/client/Connection.ts#L37">client/Connection.ts:37</a></li>
+									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/3c5705b/src/client/Connection.ts#L53">client/Connection.ts:53</a></li>
 								</ul>
 							</aside>
+							<div class="tsd-comment tsd-typography">
+								<div class="lead">
+									<p>Connects the WebSocket</p>
+								</div>
+							</div>
 							<h4 class="tsd-returns-title">Returns <span class="tsd-signature-type">Promise</span><span class="tsd-signature-symbol">&lt;</span><span class="tsd-signature-type">void</span><span class="tsd-signature-symbol">&gt;</span></h4>
 						</li>
 					</ul>
@@ -632,7 +658,7 @@
 						<li class="tsd-description">
 							<aside class="tsd-sources">
 								<ul>
-									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/b7727fd/src/client/Connection.ts#L57">client/Connection.ts:57</a></li>
+									<li>Defined in <a href="https://github.com/ClaraIO/hibiki/blob/3c5705b/src/client/Connection.ts#L79">client/Connection.ts:79</a></li>
 								</ul>
 							</aside>
 							<div class="tsd-comment tsd-typography">
@@ -730,6 +756,9 @@
 						<ul>
 							<li class=" tsd-kind-constructor tsd-parent-kind-class">
 								<a href="connection.html#constructor" class="tsd-kind-icon">constructor</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-class">
+								<a href="connection.html#logger" class="tsd-kind-icon">logger</a>
 							</li>
 							<li class=" tsd-kind-property tsd-parent-kind-class">
 								<a href="connection.html#ws" class="tsd-kind-icon">ws</a>

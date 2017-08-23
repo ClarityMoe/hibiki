@@ -5,6 +5,7 @@ const eris_1 = require("eris");
 const events_1 = require("events");
 const pg_1 = require("pg");
 const sanic = require("sanic");
+const Logger_1 = require("../client/Logger");
 /**
  * PostgreSQL wrapper
  *
@@ -25,6 +26,11 @@ class Postgres extends events_1.EventEmitter {
          * @private
          */
         this.con = new pg_1.Client(this.options);
+        /**
+         * Logger
+         *
+         */
+        this.logger = new Logger_1.Logger({ prefix: "postgres", debug: false });
     }
     /**
      * Connect to the database
@@ -42,6 +48,7 @@ class Postgres extends events_1.EventEmitter {
                 this.con.on("notification", (msg) => this.emit("notification", msg));
                 this.con.on("notice", (msg) => this.emit("notice", msg));
                 this.con.on("end", () => this.emit("end"));
+                this.logger.ok("Connected to PostgreSQL database:", this.options.database);
                 return resolve();
             });
         });
@@ -55,8 +62,10 @@ class Postgres extends events_1.EventEmitter {
         return new Promise((resolve, reject) => {
             this.con.end((err) => {
                 if (err) {
+                    this.logger.err("Disconnected from PostgreSQL database:", this.options.database, ", but got an error:", err.stack);
                     return reject(err);
                 }
+                this.logger.ok("Disconnected from PostgreSQL database:", this.options.database);
                 return resolve();
             });
         });
@@ -199,10 +208,13 @@ class Postgres extends events_1.EventEmitter {
         return new Promise((resolve, reject) => {
             const this_ = this;
             sanic(function* () {
-                let g = guild instanceof eris_1.Guild && guild || this_.shard.client.guilds.get(guild);
+                const g = guild instanceof eris_1.Guild && guild || this_.shard.client.guilds.get(guild);
+                /** @todo uncomment when implemented */
+                /*
                 if (!g && typeof guild === "string") {
                     g = yield this_.shard.ws.getGuild(guild);
                 }
+                */
                 if (g) {
                     const obj = {
                         id: g.id,

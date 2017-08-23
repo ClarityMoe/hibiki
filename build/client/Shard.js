@@ -24,9 +24,14 @@ class Shard extends events_1.EventEmitter {
         /**
          * Logger class
          *
-         * @private
          */
         this.logger = new Logger_1.Logger(this);
+        /**
+         * Eris options
+         *
+         * @private
+         */
+        this.erisOptions = {};
         /**
          * Eris client
          *
@@ -46,7 +51,7 @@ class Shard extends events_1.EventEmitter {
         });
     }
     /**
-     * Connects the shard and core
+     * Connects the shard.
      *
      * @returns {Promise<void>}
      */
@@ -57,11 +62,17 @@ class Shard extends events_1.EventEmitter {
         const this_ = this;
         return sanic(function* () {
             yield this_.client.connect();
+            yield this_.ws.connect();
             if (this_.core) {
                 yield this_.core.connect(10000);
             }
         })();
     }
+    /**
+     * Disconnects the shard.
+     *
+     * @returns
+     */
     disconnect() {
         const this_ = this;
         return sanic(function* () {
@@ -91,22 +102,19 @@ class Shard extends events_1.EventEmitter {
      * @returns {Promise<Core>}
      */
     unloadCore() {
-        return new Promise((resolve, reject) => {
-            if (!this.core) {
-                return reject(new Error("Core is not loaded"));
+        if (!this.core) {
+            return Promise.reject(new Error("Core is not loaded"));
+        }
+        const this_ = this;
+        return sanic(function* () {
+            if (this_.core) {
+                const core = this_.core;
+                yield this_.core.disconnect();
+                this_.core = null;
+                this_.logger.ok("Unloaded core");
+                return core;
             }
-            const this_ = this;
-            sanic(function* () {
-                if (this_.core) {
-                    const core = this_.core;
-                    yield this_.core.disconnect();
-                    this_.core = null;
-                    this_.logger.ok("Unloaded core");
-                    return resolve(core);
-                }
-            })()
-                .catch(reject);
-        });
+        })();
     }
     /**
      * Reloads the core
