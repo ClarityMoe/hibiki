@@ -1,6 +1,7 @@
 // Redis.ts - Redis wrapper (noud02)
 
 import * as redis from "redis";
+import { Logger } from "../client/Logger";
 
 /**
  * Redis wrapper
@@ -16,6 +17,12 @@ export class Redis {
     private client: redis.RedisClient;
 
     /**
+     * Logger
+     *
+     */
+    public readonly logger: Logger = new Logger({ prefix: "redis", debug: false });
+
+    /**
      * Creates an instance of Redis.
      * @param {Shard} shard
      * @param {redis.ClientOpts} options
@@ -29,6 +36,7 @@ export class Redis {
      */
     public connect (): Promise<void> {
         this.client = redis.createClient(this.options);
+        this.logger.ok("Connected to Redis");
 
         return Promise.resolve();
     }
@@ -40,6 +48,7 @@ export class Redis {
      */
     public disconnect (): Promise<void> {
         this.client.end(true);
+        this.logger.ok("Disconnected from Redis");
 
         return Promise.resolve();
     }

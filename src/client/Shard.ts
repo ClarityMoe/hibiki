@@ -2,9 +2,7 @@
 
 import { Client, ClientOptions } from "eris";
 import { EventEmitter } from "events";
-import * as pg from "pg";
 import * as sanic from "sanic";
-import { OPCodes } from "../Constants";
 import { IHibikiConfig } from "../Constants";
 import { Core } from "../core/Core";
 import { Connection } from "./Connection";
@@ -19,16 +17,15 @@ export class Shard extends EventEmitter {
     /**
      * Logger class
      *
-     * @private
      */
-    private readonly logger: Logger = new Logger(this);
+    public readonly logger: Logger = new Logger(this);
 
     /**
      * Eris options
      *
      * @private
      */
-    private erisOptions: ClientOptions;
+    private erisOptions: ClientOptions = {};
 
     /**
      * Core
@@ -65,25 +62,31 @@ export class Shard extends EventEmitter {
     public readonly ws: Connection = new Connection(this);
 
     /**
-     * Connects the shard and core
+     * Connects the shard.
      *
      * @returns {Promise<void>}
      */
-    public connect (): Promise<void> {
+    public connect (): Promise<any> {
         if (!this.core) {
             return Promise.reject(new Error("Core is not loaded"));
         }
+
         const this_: this = this;
 
         return sanic(function* () {
-            yield this_.ws.connect();
             yield this_.client.connect();
+            yield this_.ws.connect();
             if (this_.core) {
                 yield this_.core.connect(10000);
             }
         })();
     }
 
+    /**
+     * Disconnects the shard.
+     *
+     * @returns
+     */
     public disconnect (): Promise<void> {
         const this_: this = this;
 
@@ -117,24 +120,22 @@ export class Shard extends EventEmitter {
      * @returns {Promise<Core>}
      */
     public unloadCore (): Promise<Core> {
-        return new Promise((resolve, reject) => {
-            if (!this.core) {
-                return reject(new Error("Core is not loaded"));
+        if (!this.core) {
+            return Promise.reject(new Error("Core is not loaded"));
+        }
+        const this_: this = this;
+
+        return sanic(function* () {
+            if (this_.core) { // IK this isn't needed but typememe isn't as smart as I thought
+                const core: Core = this_.core;
+                yield this_.core.disconnect();
+                this_.core = null;
+
+                this_.logger.ok("Unloaded core");
+
+                return core;
             }
-            const this_: this = this;
-            sanic(function* () {
-                if (this_.core) { // IK this isn't needed but typememe isn't as smart as I thought
-                    const core: Core = this_.core;
-                    yield this_.core.disconnect();
-                    this_.core = null;
-
-                    this_.logger.ok("Unloaded core");
-
-                    return resolve(core);
-                }
-            })()
-                .catch(reject);
-        });
+        })();
     }
 
     /**

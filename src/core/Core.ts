@@ -52,7 +52,6 @@ export class Core extends EventEmitter {
             sanic(function* () {
                 yield this_.pg.connect();
                 yield this_.r.connect();
-                // yield this_.shard.ws.connect();
                 yield this_.ext.init();
             })()
                 .then(() => {
