@@ -3,7 +3,7 @@ engines:
     enabled: true
     config: tslint.json
   duplication:
-  	enabled: true
+    enabled: true
     config:
     	languages:
       - typescript
