@@ -1,0 +1,19 @@
+engines:
+  tslint:
+    enabled: true
+    config: tslint.json
+  duplication:
+  	enabled: true
+    config:
+    	languages:
+      - typescript
+  fixme:
+    enabled: true
+ratings:
+  paths:
+  - src/**.ts
+exclude_paths:
+- build/*
+- types/*
+- docs/*
+- dist/*

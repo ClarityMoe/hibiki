@@ -4,6 +4,4 @@ config.json
 websocket.png
 yarn.lock
 bench.js
-
-dist/*.js
-dist/*.ts
+dist/*
