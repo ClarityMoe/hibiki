@@ -26,7 +26,6 @@
   },
   "homepage": "https://github.com/ClaraIO/hibiki#readme",
   "dependencies": {
-    "benchmark": "^2.1.4",
     "chalk": "^2.1.0",
     "eris": "abalabahaha/eris#dev",
     "minimist": "^1.2.0",
