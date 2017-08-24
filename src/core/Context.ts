@@ -62,7 +62,7 @@ export class Context {
         if (!id) {
             return this.send(content, file);
         } else {
-            return  this.msg.createMessage(id, content, file);
+            return this.msg.createMessage(id, content, file);
         }
     }
 }
