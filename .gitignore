@@ -5,3 +5,4 @@ websocket.png
 yarn.lock
 bench.js
 dist/*
+typings
