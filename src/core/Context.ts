@@ -50,4 +50,14 @@ export class Context {
     public send (content: Eris.MessageContent, file?: Eris.MessageFile): Promise<Eris.Message> {
         return this.msg.channel.createMessage(content, file);
     }
+
+    /**
+     * alias to send
+     * @param {Eris.MessageContent} content
+     * @param {Eris.MessageFile} [file]
+     * @returns {Promise<Eris.Message>}
+     */
+    public createMessage (content: Eris.MessageContent, file?:Eris.MessageFile): Promise<Eris.Message> {
+        return this.send(content, file);
+    }
 }
