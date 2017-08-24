@@ -46,7 +46,8 @@
     "@types/uws": "^0.13.0",
     "@types/ws": "^3.0.2",
     "gulp": "3.9.1",
-    "gulp-typescript": "3.2.2"
+    "gulp-typescript": "3.2.2",
+    "jasmine": "^2.7.0"
   },
   "optionalDependencies": {
     "bluebird": "^3.5.0",
