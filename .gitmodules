@@ -1,4 +1,4 @@
 [submodule "i18n"]
     path = i18n
-    url = https://github.com/kyuubey/translations
+    url = https://github.com/kyuubey/translations.git
     branch = hibiki
