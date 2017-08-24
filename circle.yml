@@ -9,7 +9,7 @@ jobs:
       - checkout  
       - run:
           name: Resolve Dependencies
-          command: npm i --save --save-dev --no-optional
+          command: npm i --no-optional --save-dev
       - run:
           name: Install Gulp
           command: npm i -g gulp gulp-cli 
