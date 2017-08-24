@@ -15,7 +15,7 @@ gulp.task('compile', () => {
         rootDir: './src',
         experimentalDecorators: true,
         target: 'es5',
-        outDir: './dist/',
+        outDir: './build/',
         module: 'commonjs',
         removeComments: true
     }))

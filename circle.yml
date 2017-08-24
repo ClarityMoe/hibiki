@@ -5,11 +5,10 @@ jobs:
       - image: library/node:8.4.0-wheezy
     working_directory: ./hibiki
     steps:
-      - setup_remote_docker
       - checkout  
       - run:
           name: Resolve Dependencies
-          command: npm i --save
+          command: npm i --save --no-optional
       - run:
           name: Install Gulp
           command: npm i -g gulp gulp-cli 
