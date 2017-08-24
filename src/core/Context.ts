@@ -58,7 +58,7 @@ export class Context {
      * @param {Eris.MessageFile} [file]
      * @returns {Promise<Eris.Message>}
      */
-    public createMessage ( content: Eris.MessageContent, file?: Eris.MessageFile, id?: Eris.Channel.id): Promise<Eris.Message> {
+    public createMessage (content: Eris.MessageContent, file?: Eris.MessageFile, id?: Eris.Channel.id): Promise<Eris.Message> {
         if (!id) {
             return this.send(content, file);
         } else {
