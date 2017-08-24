@@ -2,8 +2,7 @@
 
 describe('this is a test', () => {
     it('this is a task', () => {
-        const nya = 'nya';
-        console.log(nya);
-        expect(nya).toBe(typeof nya === 'string');
+        a = true;
+        expect(a).toBe(true);
     })
 }) 
