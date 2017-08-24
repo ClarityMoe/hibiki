@@ -23,9 +23,6 @@ export interface IHibikiOptions {
     };
     postgres: ClientConfig;
     ext: IExtOptions;
-    i18n: {
-        locales: string[];
-    };
 }
 
 export class Shard extends Eris.Client {
