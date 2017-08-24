@@ -15,7 +15,7 @@ export class LocaleManager {
                 addPath: "../../i18n/{{lng}}/{{ns}}.missing.json",
                 jsonIndent: 4,
                 loadPath: "../../i18n/{{lng}}/{{ns}}.json",
-            }
+            };
 
             const langs: string[] = [];
 

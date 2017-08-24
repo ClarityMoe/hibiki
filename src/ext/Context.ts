@@ -22,7 +22,7 @@ export class Context {
         return this.msg.channel.createMessage(args.join(" "));
     }
 
-    public sendCode(type: string, ...code: any[]): Promise<Eris.Message> {
+    public sendCode (type: string, ...code: any[]): Promise<Eris.Message> {
         return this.msg.channel.createMessage(`\`\`\`${type}\n${code.join(" ")}\`\`\``);
     }
 

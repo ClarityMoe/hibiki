@@ -68,7 +68,7 @@ export class CommandHandler {
         const cmd: Command | undefined = this.shard.ext.commands.get(command);
 
         if (!cmd) {
-            return Promise.reject(new Error(`Command ${command} not found`))
+            return Promise.reject(new Error(`Command ${command} not found`));
         }
 
         if (cmd.ownerOnly && this.shard.hibikiOptions.hibiki.owners.indexOf(msg.author.id) === -1) {
