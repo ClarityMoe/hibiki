@@ -1,0 +1,9 @@
+{
+    "files.autoSave": "onWindowChange",
+    "tslint.jsEnable": false,
+    "tslint.run": "onType",
+    "docthis.includeTypes": true,
+    "docthis.includeMemberOfOnClassMembers": false,
+    // Please set your author name in your settings and enable this
+    // "docthis.includeAuthorTag": true
+}

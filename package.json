@@ -1,0 +1,59 @@
+{
+  "name": "hibiki",
+  "version": "2.0.0",
+  "description": "An advanced but easy to use Discord bot framework, made in TypeScript",
+  "main": "build/",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "tsc": "tsc -p ./",
+    "tslint": "tslint -p ./ --force --fix",
+    "gulp": "gulp compile"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ClaraIO/hibiki.git"
+  },
+  "keywords": [
+    "typescript",
+    "discord",
+    "framework",
+    "bot"
+  ],
+  "author": "noud02",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/ClaraIO/hibiki/issues"
+  },
+  "homepage": "https://github.com/ClaraIO/hibiki#readme",
+  "dependencies": {
+    "eris": "github:abalabahaha/eris#dev",
+    "i18next": "^8.4.3",
+    "i18next-node-fs-backend": "^1.0.0",
+    "minimist": "^1.2.0",
+    "pg": "^7.2.0",
+    "recursive-readdir-sync": "^1.0.6",
+    "tslib": "^1.7.1",
+    "ws": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/bluebird": "^3.5.8",
+    "@types/i18next": "^8.4.1",
+    "@types/i18next-node-fs-backend": "0.0.29",
+    "@types/minimist": "^1.2.0",
+    "@types/node": "^8.0.24",
+    "@types/pg": "^6.1.43",
+    "@types/ws": "^3.0.2",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.2.2",
+    "typescript": "^2.4.2"
+  },
+  "optionalDependencies": {
+    "bluebird": "^3.5.0",
+    "bufferutil": "^3.0.2",
+    "erlpack": "hammerandchisel/erlpack",
+    "eventemitter3": "^2.0.3",
+    "node-opus": "^0.2.6",
+    "sodium-native": "^1.10.3",
+    "uws": "^8.14.1"
+  }
+}
