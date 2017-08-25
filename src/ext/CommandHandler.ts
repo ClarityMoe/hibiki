@@ -6,8 +6,11 @@ import * as pg from "pg";
 import { Shard } from "../client/Shard";
 import { Command } from "./Command";
 import { Context } from "./Context";
+import { Ratelimiter } from "./Ratelimiter";
 
 export class CommandHandler {
+
+    public buckets: Map<string, Ratelimiter> = new Map<string, Ratelimiter>();
 
     constructor (private shard: Shard) {}
 
@@ -66,9 +69,45 @@ export class CommandHandler {
 
     public executeCommand (msg: Eris.Message, command: string, args: minimist.ParsedArgs, prefix: string): Promise<any> {
         const cmd: Command | undefined = this.shard.ext.commands.get(command);
+        let bucket: Ratelimiter | undefined = this.buckets.get(msg.author.id);
+        let ok: boolean = false;
 
         if (!cmd) {
             return Promise.reject(new Error(`Command ${command} not found`));
+        }
+
+        const useBucket: any = () => {
+            if (bucket) {
+                switch (bucket.use()) {
+                    default:
+                    case "OK": {
+                        ok = true;
+                        break;
+                    }
+                    case "RATELIMITED": {
+                        const waitTime = (bucket.lastUse + bucket.time / 2) - Date.now();
+                        ok = false;
+
+                        if (bucket.sentWarn) {
+                            return;
+                        } else {
+                            return msg.channel.createMessage(this.shard.lm.t("commands.cooldown", { username: msg.author.username, time: Math.round(waitTime / 1000) }))
+                                .then(() => bucket ? bucket.sentWarn = true : true) // tslint:disable-line;no-unused-expression
+                                .catch((e: Error) => console.error(e)); // tslint:disable-line:no-unused-expression
+                        }
+                    }
+                }
+            }
+
+            return;
+        };
+
+        if (bucket) {
+            useBucket();
+        } else {
+            this.buckets.set(msg.author.id, new Ratelimiter());
+            bucket = this.buckets.get(msg.author.id);
+            useBucket();
         }
 
         if (cmd.ownerOnly && this.shard.hibikiOptions.hibiki.owners.indexOf(msg.author.id) === -1) {
@@ -77,7 +116,11 @@ export class CommandHandler {
 
         const ctx: Context = new Context(this.shard, msg, prefix, command, args);
 
-        return cmd.run(ctx);
+        if (ok) {
+            return cmd.run(ctx);
+        } else {
+            return Promise.resolve();
+        }
     }
 
 }

@@ -1,5 +1,6 @@
 // WebSocket.ts - WebSockets for everyone!!1! (noud02)
 
+import * as crypto from "crypto";
 import * as WebSocket from "ws";
 
 export class WebSocketClient {
