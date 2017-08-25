@@ -40,8 +40,8 @@ export class PostgreSQL {
                     return reject(err);
                 }
 
-                return resolve(stdout)
-            })
+                return resolve(stdout);
+            });
         });
     }
 

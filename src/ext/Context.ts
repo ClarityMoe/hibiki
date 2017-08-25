@@ -75,8 +75,7 @@ export class Context {
 
         const compilerOptions: ts.CompilerOptions = {
             "target": ts.ScriptTarget.ES5,
-            // tslint:disable-next-line:object-literal-sort-keys
-            "module": ts.ModuleKind.CommonJS,
+            "module": ts.ModuleKind.CommonJS, // tslint:disable-line:object-literal-sort-keys
             "lib": ["es6"],
             "allowJs": false,
             "checkJs": false,
@@ -125,7 +124,7 @@ export class Context {
             formatter: "json",
         });
 
-        // linter.lint("eval.ts", require("../../tslint.json"));
+        linter.lint("eval.ts", code, tslint.Configuration.findConfiguration("tslint.json", "../../").results);
 
         const errs: any[] = program.getSyntacticDiagnostics();
 
