@@ -11,8 +11,11 @@ jobs:
           name: Resolve Dependencies
           command: npm i --no-optional --save-dev
       - run:
+          name: Install Gulp
+          command: npm i gulp gulp-cli -g
+      - run:
           name: Compile
-          command: npm run tsc
+          command: npm run gulp
 notify:
   webhooks:
     - url: https://claraio-circledisc.herokuapp.com/hooks/circleci
