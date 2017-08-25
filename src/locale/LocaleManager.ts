@@ -12,9 +12,9 @@ export class LocaleManager {
     public init (): Promise<i18next.TranslationFunction> {
         return new Promise((resolve, reject) => {
             const opts: i18nextNodeFsBackEnd.i18nextNodeFsBackEndOptions = {
-                addPath: "../../i18n/{{lng}}/{{ns}}.missing.json",
+                addPath: `${__dirname}/../../i18n/{{lng}}/{{ns}}.missing.json`,
                 jsonIndent: 4,
-                loadPath: "../../i18n/{{lng}}/{{ns}}.json",
+                loadPath: `${__dirname}/../../i18n/{{lng}}/{{ns}}.json`,
             };
 
             const langs: string[] = [];
