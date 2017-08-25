@@ -13,7 +13,7 @@ gulp.task('compile', () => {
         experimentalDecorators: true,
         emitDecoratorMetadata: true,
         target: 'es6',
-        lib: ["es6"],
+        lib: ['es6'],
         outDir: './dist/',
         module: 'commonjs',
         removeComments: false,
@@ -29,9 +29,9 @@ gulp.task('compile', () => {
         noImplicitAny: true,
         noImplicitThis: true,
         alwaysStrict: true,
-        moduleResolution: "node",
-        baseUrl: "./",
-        typeRoots: [ "./types/", "./node_modules/@types/" ]
+        moduleResolution: 'node',
+        baseUrl: './',
+        typeRoots: [ './types/', './node_modules/@types/' ]
     }))
     //finally output this shit in dist
     .pipe(gulp.dest('./dist/'));
