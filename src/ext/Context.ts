@@ -65,6 +65,11 @@ export class Context {
 
                 return process;
             },
+            set (val: any) {
+                delete context.process;
+                context.process = val;
+            },
+            configurable: true,
         });
 
         for (const prop of Object.keys(customProps)) {
