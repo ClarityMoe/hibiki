@@ -18,6 +18,9 @@ export class Context {
     public author: Eris.User = this.msg.author;
     public channel: Eris.GuildChannel | Eris.PrivateChannel | Eris.GroupChannel = this.msg.channel;
     public channelMentions?: string[] | undefined = this.msg.channelMentions;
+    public content: string | undefined = this.msg.content;
+    public embeds: Eris.Embed[] = this.msg.embeds;
+    public cleanContent: string | undefined = this.msg.cleanContent;
     public guild?: Eris.Guild | undefined = this.msg.channel instanceof Eris.GuildChannel ? this.msg.channel.guild : undefined;
     public member?: Eris.Member | undefined = this.msg.member;
     public mentions: Eris.User[] = this.msg.mentions;
@@ -25,29 +28,29 @@ export class Context {
     public editedTimestamp: number | undefined = this.msg.editedTimestamp;
     public roleMentions: string[] = this.msg.roleMentions;
 
-    constructor(public shard: Shard, public msg: Eris.Message, public prefix: string, public command: string, public args: minimist.ParsedArgs) { }
+    constructor (public shard: Shard, public msg: Eris.Message, public prefix: string, public command: string, public args: minimist.ParsedArgs) { }
 
-    public send(...args: any[]): Promise<Eris.Message> {
+    public send (...args: any[]): Promise<Eris.Message> {
         return this.msg.channel.createMessage(args.join(" "));
     }
 
-    public sendCode(type: string, ...code: any[]): Promise<Eris.Message> {
+    public sendCode (type: string, ...code: any[]): Promise<Eris.Message> {
         return this.msg.channel.createMessage(`\`\`\`${type}\n${code.join(" ")}\`\`\``);
     }
 
     /** @todo add linter */
-    public async eval(code: string, customProps: { [key: string]: any }): Promise<any> {
+    public async eval (code: string, customProps: { [key: string]: any }): Promise<any> {
         const builtins: string[] = require("repl")._builtinLibs;
         const context: IEvalContext = vm.createContext();
 
         for (const builtin of builtins) {
             Object.defineProperty(context, builtin, {
-                get() {
+                get () {
                     context[builtin] = require(builtin);
 
                     return require(builtin);
                 },
-                set(val: any) {
+                set (val: any) {
                     delete context[builtin];
                     context[builtin] = val;
                 },
@@ -57,12 +60,12 @@ export class Context {
 
         for (const prop of Object.keys(customProps)) {
             Object.defineProperty(context, prop, {
-                get() {
+                get () {
                     context[prop] = customProps[prop];
 
                     return customProps[prop];
                 },
-                set(val: any) {
+                set (val: any) {
                     delete context[prop];
                     context[prop] = val;
                 },
@@ -110,7 +113,7 @@ export class Context {
             }
 
             return getSourceFile.apply(this, arguments);
-        }
+        };
 
         let output: string = "";
 
@@ -131,13 +134,13 @@ export class Context {
         program.emit();
 
         return {
-            eval: vm.runInContext(output, context),
+            eval: await vm.runInContext(output, context),
             ts: {
                 errs,
                 program,
             },
             tslint: linter.getResult(),
-        }
+        };
     }
 
 }
