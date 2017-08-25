@@ -17,10 +17,10 @@ export class Command {
 
     public name: string;
     public desc: string;
-    public args: ICommandArg[] = [];
-    public flags: ICommandFlag[] = [];
-    public subcommands: Array<(ctx: Context) => any> = [];
-    public ownerOnly: boolean = false;
+    public args: ICommandArg[]
+    public flags: ICommandFlag[]
+    public subcommands: Array<(ctx: Context) => any>;
+    public ownerOnly: boolean;
 
     public run (ctx: Context): Promise<any> {
         return ctx.send("This command does not have a valid run function");
