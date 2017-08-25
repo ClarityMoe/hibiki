@@ -27,8 +27,9 @@ export class Context {
     public timestamp: number = this.msg.timestamp;
     public editedTimestamp: number | undefined = this.msg.editedTimestamp;
     public roleMentions: string[] = this.msg.roleMentions;
+    public suffix: string = this.flags._.join(" ");
 
-    constructor (public shard: Shard, public msg: Eris.Message, public prefix: string, public command: string, public args: minimist.ParsedArgs) { }
+    constructor (public shard: Shard, public msg: Eris.Message, public prefix: string, public command: string, public flags: minimist.ParsedArgs, public args: { [key: string]: any }) { }
 
     public send (...args: any[]): Promise<Eris.Message> {
         return this.msg.channel.createMessage(args.join(" "));
