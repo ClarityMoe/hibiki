@@ -5,6 +5,7 @@ import { Context } from "./Context";
 export interface ICommandArg {
     name: string;
     optional: boolean;
+    type: string;
 }
 
 export interface ICommandFlag {

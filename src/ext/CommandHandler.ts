@@ -4,7 +4,7 @@ import * as Eris from "eris";
 import * as minimist from "minimist";
 import * as pg from "pg";
 import { Shard } from "../client/Shard";
-import { Command } from "./Command";
+import { Command, ICommandArg } from "./Command";
 import { Context } from "./Context";
 import { Ratelimiter } from "./Ratelimiter";
 
@@ -67,7 +67,7 @@ export class CommandHandler {
         return this.executeCommand(msg, command, args, usedPrefix);
     }
 
-    public executeCommand (msg: Eris.Message, command: string, args: minimist.ParsedArgs, prefix: string): Promise<any> {
+    public async executeCommand (msg: Eris.Message, command: string, args: minimist.ParsedArgs, prefix: string): Promise<any> {
         const cmd: Command | undefined = this.shard.ext.commands.get(command);
         let bucket: Ratelimiter | undefined = this.buckets.get(msg.author.id);
         let ok: boolean = false;
@@ -116,11 +116,91 @@ export class CommandHandler {
 
         const ctx: Context = new Context(this.shard, msg, prefix, command, args);
 
+        try {
+            await this.checkArguments(msg, args._, cmd.args);
+        } catch (e) {
+            return msg.channel.createMessage(e);
+        }
+
         if (ok) {
             return cmd.run(ctx);
         } else {
             return Promise.resolve();
         }
+    }
+
+    public checkArguments (msg: Eris.Message, given: string[], args: ICommandArg[]): Promise<void> {
+        let ok: boolean = true;
+
+        for (const arg of args) {
+            const i: number = args.indexOf(arg);
+            if (!given[i] && !arg.optional) {
+                return Promise.reject(this.shard.lm.t("commands.argument_not_specified", { username: msg.author.username, argument: arg.name }));
+            }
+            switch (arg.type) {
+                case "number": {
+                    if (isNaN(given[i] as any)) {
+                        ok = false;
+                    }
+                    break;
+                }
+                case "user": {
+                    const mention: RegExp = /<@\d+>/i;
+                    const userdisc: RegExp = /.{0,32}#\d{4}/i;
+                    const username: RegExp = /.{0,32}/i;
+                    const id: RegExp = /\d+/i;
+
+                    if (!mention.test(given[i]) || !userdisc.test(given[i]) || !username.test(given[i]) || !id.test(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+
+                    break;
+                }
+
+                case "channel": {
+                    const mention: RegExp = /<#\d+>/i;
+                    const name: RegExp = /[^\s]{0,100}/i;
+                    const id: RegExp = /\d+/i;
+
+                    if (!mention.test(given[i]) || !name.test(given[i]) || !id.test(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+
+                    break;
+                }
+
+                case "role": {
+                    const mention: RegExp = /<&\d+>/i;
+                    const name: RegExp = /.{0,}/i;
+                    const id: RegExp = /\d+/i;
+
+                    if (!mention.test(given[i]) || !name.test(given[i]) || !id.test(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+
+                    break;
+                }
+
+                case "string":
+                default: {
+                    return Promise.resolve();
+                }
+            }
+        }
+
+        return Promise.resolve();
     }
 
 }

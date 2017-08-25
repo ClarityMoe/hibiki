@@ -19,7 +19,7 @@ export function command (name: string): ClassDecorator {
     return applyMeta("name", name);
 }
 
-export function argument (name: string, type: string[], optional: boolean): ClassDecorator {
+export function argument (name: string, type: string, optional: boolean): ClassDecorator {
     return <T extends Function>(target: T) => { // tslint:disable-line:ban-types
         if (!target.prototype.args) {
             Object.defineProperty(target.prototype, "args", {
