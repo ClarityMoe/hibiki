@@ -2,17 +2,16 @@ version: 2
 jobs:
   build:
     docker:
-      - image: library/node:8.4.0-wheezy
+      - image: library/node:6.11.2
     working_directory: ./hibiki
     steps:
-      - setup_remote_docker
       - checkout  
       - run:
           name: Resolve Dependencies
-          command: npm i --no-optional --save-dev
+          command: npm i --save --no-optional
       - run:
           name: Install Gulp
-          command: npm i gulp gulp-cli -g
+          command: npm i -g gulp gulp-cli gulp-typescript typescript
       - run:
           name: Compile
           command: gulp compile
