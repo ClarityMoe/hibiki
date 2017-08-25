@@ -27,7 +27,6 @@
   "homepage": "https://github.com/ClaraIO/hibiki#readme",
   "dependencies": {
     "eris": "github:abalabahaha/eris#dev",
-    "gulp": "^3.9.1",
     "i18next": "^8.4.3",
     "i18next-node-fs-backend": "^1.0.0",
     "minimist": "^1.2.0",
@@ -36,7 +35,7 @@
     "tslib": "^1.7.1",
     "tslint": "^5.6.0",
     "typescript": "^2.4.2",
-    "ws": "^3.1.0"
+     "ws": "^3.1.0"
   },
   "devDependencies": {
     "@types/bluebird": "^3.5.8",

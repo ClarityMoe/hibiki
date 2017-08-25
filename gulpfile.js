@@ -33,7 +33,7 @@ gulp.task('compile', () => {
         allowSyntheticDefaultImports: true,
         moduleResolution: 'node',
         baseUrl: './',
-        typeRoots: [ './types/', './node_modules/@types/', './node_modules/***']
+        typeRoots: [ './types/', './node_modules/@types/']
     }))
     //finally output this shit in dist
     .pipe(gulp.dest('./dist/'));
