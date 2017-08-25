@@ -59,6 +59,14 @@ export class Context {
             });
         }
 
+        Object.defineProperty(context, "process", {
+            get () {
+                context.process = process;
+
+                return process;
+            },
+        });
+
         for (const prop of Object.keys(customProps)) {
             Object.defineProperty(context, prop, {
                 get () {
