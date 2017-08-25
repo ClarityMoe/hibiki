@@ -108,7 +108,7 @@ export class Context {
         const getSourceFile = compilerHost.getSourceFile;
         compilerHost.getSourceFile = function (fn) {
             if (fn === "eval.ts") {
-                return ts.createSourceFile(fn, code, ts.ScriptTarget.ES5, false);
+                return ts.createSourceFile(fn, `${code}\r\n`, ts.ScriptTarget.ES5, false);
             }
 
             return getSourceFile.apply(this, arguments);
@@ -124,11 +124,12 @@ export class Context {
             formatter: "json",
         });
 
-        linter.lint("eval.ts", code, tslint.Configuration.findConfiguration("tslint.json", "../../").results);
+        linter.lint("eval.js", `${code}\r\n`, tslint.Configuration.findConfiguration("tslint.json", "../../").results);
 
-        const errs: any[] = program.getSyntacticDiagnostics();
+        const errs: ts.Diagnostic[] = program.getSyntacticDiagnostics(program.getSourceFile("eval.ts"));
 
-        errs.concat(program.getSemanticDiagnostics());
+        errs.concat(program.getSemanticDiagnostics(program.getSourceFile("eval.ts")));
+        errs.concat(program.getDeclarationDiagnostics(program.getSourceFile("eval.ts")));
 
         program.emit();
 
