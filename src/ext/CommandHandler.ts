@@ -71,8 +71,6 @@ export class CommandHandler {
             return Promise.reject(new Error(`Command ${command} not found`));
         }
 
-        console.log(cmd.ownerOnly);
-
         if (cmd.ownerOnly && this.shard.hibikiOptions.hibiki.owners.indexOf(msg.author.id) === -1) {
             return Promise.reject(new Error("Command is owner only"));
         }
