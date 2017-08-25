@@ -15,7 +15,7 @@ jobs:
           command: npm i -g gulp gulp-cli 
       - run:
           name: Compile
-          command: gulp compile
+          command: npm run tsc
 notify:
   webhooks:
     - url: https://claraio-circledisc.herokuapp.com/hooks/circleci
