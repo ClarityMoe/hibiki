@@ -1,7 +1,10 @@
 // Context.ts - Context for commands (noud02)
 
 import * as Eris from "eris";
+import * as fs from "fs";
 import * as minimist from "minimist";
+import * as path from "path";
+import * as tslint from "tslint";
 import * as ts from "typescript";
 import * as vm from "vm";
 import { Shard } from "../client/Shard";
@@ -22,17 +25,18 @@ export class Context {
     public editedTimestamp: number | undefined = this.msg.editedTimestamp;
     public roleMentions: string[] = this.msg.roleMentions;
 
-    constructor (public shard: Shard, public msg: Eris.Message, public prefix: string, public command: string, public args: minimist.ParsedArgs) {}
+    constructor(public shard: Shard, public msg: Eris.Message, public prefix: string, public command: string, public args: minimist.ParsedArgs) { }
 
-    public send (...args: any[]): Promise<Eris.Message> {
+    public send(...args: any[]): Promise<Eris.Message> {
         return this.msg.channel.createMessage(args.join(" "));
     }
 
-    public sendCode (type: string, ...code: any[]): Promise<Eris.Message> {
+    public sendCode(type: string, ...code: any[]): Promise<Eris.Message> {
         return this.msg.channel.createMessage(`\`\`\`${type}\n${code.join(" ")}\`\`\``);
     }
 
-    public async eval (code: string, customProps: { [key: string]: any }): Promise<any> {
+    /** @todo add linter */
+    public async eval(code: string, customProps: { [key: string]: any }): Promise<any> {
         const builtins: string[] = require("repl")._builtinLibs;
         const context: IEvalContext = vm.createContext();
 
@@ -65,23 +69,75 @@ export class Context {
                 configurable: true,
             });
         }
-        const transpiled: ts.TranspileOutput = ts.transpileModule(code, {
-            compilerOptions: {
-                target: ts.ScriptTarget.ES2016,
-                libs: ["es6"],
-                noImplicitAny: true,
-                noUnusedParameters: true,
-                experimentalDecorators: true,
-                emitDecoratorMetadata: true,
-                allowJs: false,
-                strict: true,
-                noFallthroughCasesInSwitch: true,
-                module: ts.ModuleKind.CommonJS,
-                moduleResolution: ts.ModuleResolutionKind.NodeJs,
-            },
+
+        const compilerOptions: ts.CompilerOptions = {
+            "target": ts.ScriptTarget.ES5,
+            // tslint:disable-next-line:object-literal-sort-keys
+            "module": ts.ModuleKind.CommonJS,
+            "lib": ["es6"],
+            "allowJs": false,
+            "checkJs": false,
+            "removeComments": false,
+            "noEmit": false,
+            "importHelpers": true,
+            "downlevelIteration": true,
+            "isolatedModules": false,
+            "strict": true,
+            "noImplicitAny": true,
+            "strictNullChecks": true,
+            "noImplicitThis": true,
+            "alwaysStrict": false,
+            "noUnusedLocals": true,
+            "noUnusedParameters": true,
+            "noImplicitReturns": true,
+            "noFallthroughCasesInSwitch": true,
+            "moduleResolution": ts.ModuleResolutionKind.NodeJs,
+            "experimentalDecorators": true,
+            "emitDecoratorMetadata": true,
+            "plugins": [
+                {
+                    "name": "tslint-language-service",
+                },
+            ],
+        };
+
+        const compilerHost = ts.createCompilerHost(compilerOptions);
+
+        const getSourceFile = compilerHost.getSourceFile;
+        compilerHost.getSourceFile = function (fn) {
+            if (fn === "eval.ts") {
+                return ts.createSourceFile(fn, code, ts.ScriptTarget.ES5, false);
+            }
+
+            return getSourceFile.apply(this, arguments);
+        }
+
+        let output: string = "";
+
+        compilerHost.writeFile = (_fn: string, txt: string) => output += txt;
+
+        const program: ts.Program = ts.createProgram(["eval.ts"], compilerOptions, compilerHost);
+        const linter: tslint.Linter = new tslint.Linter({
+            fix: false,
+            formatter: "json",
         });
 
-        return vm.runInContext(transpiled.outputText, context);
+        // linter.lint("eval.ts", require("../../tslint.json"));
+
+        const errs: any[] = program.getSyntacticDiagnostics();
+
+        errs.concat(program.getSemanticDiagnostics());
+
+        program.emit();
+
+        return {
+            eval: vm.runInContext(output, context),
+            ts: {
+                errs,
+                program,
+            },
+            tslint: linter.getResult(),
+        }
     }
 
 }
