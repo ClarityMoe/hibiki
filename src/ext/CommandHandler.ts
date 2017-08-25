@@ -169,7 +169,10 @@ export class CommandHandler {
                         }));
                     }
 
-                    if (mention.test(given[i])) {
+                    // meme
+                    if (given[i] === "me") {
+                        newArgs[arg.name] = msg.author;
+                    } else if (mention.test(given[i])) {
                         const res: RegExpExecArray | null = mention.exec(given[i]);
 
                         if (res) {
