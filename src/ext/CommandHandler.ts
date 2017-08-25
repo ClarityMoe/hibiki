@@ -64,8 +64,6 @@ export class CommandHandler {
         command = msg.content.substring(usedPrefix.length).split(" ")[0];
         args = minimist(msg.content.substring(usedPrefix.length).split(" ").slice(1), { strings: true });
 
-        console.log(args._)
-
         return this.executeCommand(msg, command, args, usedPrefix);
     }
 
