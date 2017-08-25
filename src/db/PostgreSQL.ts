@@ -9,7 +9,7 @@ export class PostgreSQL {
 
     constructor (private options: pg.ClientConfig) {}
 
-    puriptblic connect (): Promise<void> {
+    public connect (): Promise<void> {
         return new Promise((resolve, reject) => {
             this.client.connect((err: Error) => {
                 if (err) {
