@@ -2,7 +2,7 @@ version: 2
 jobs:
   build:
     docker:
-      - image: library/node:8.4.0-wheezy
+      - image: library/node:6.11.2
     working_directory: ./hibiki
     steps:
       - setup_remote_docker
