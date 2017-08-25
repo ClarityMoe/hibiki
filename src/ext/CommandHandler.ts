@@ -62,7 +62,9 @@ export class CommandHandler {
         }
 
         command = msg.content.substring(usedPrefix.length).split(" ")[0];
-        args = minimist(msg.content.substring(usedPrefix.length).split(" ").slice(1));
+        args = minimist(msg.content.substring(usedPrefix.length).split(" ").slice(1), { strings: true });
+
+        console.log(args._)
 
         return this.executeCommand(msg, command, args, usedPrefix);
     }
@@ -118,13 +120,15 @@ export class CommandHandler {
             return Promise.reject(new Error("Command is owner only"));
         }
 
-        const ctx: Context = new Context(this.shard, msg, prefix, command, args);
+        let newArgs: { [key: string]: any } = {};
 
         try {
-            await this.checkArguments(msg, args._, cmd.args);
+            newArgs = await this.checkArguments(msg, args._, cmd.args);
         } catch (e) {
             return msg.channel.createMessage(e);
         }
+
+        const ctx: Context = new Context(this.shard, msg, prefix, command, args, newArgs);
 
         if (ok) {
             return cmd.run(ctx);
@@ -133,13 +137,18 @@ export class CommandHandler {
         }
     }
 
-    public checkArguments (msg: Eris.Message, given: string[], args: ICommandArg[]): Promise<void> {
+    public checkArguments (msg: Eris.Message, given: string[], args: ICommandArg[]): Promise<{ [key: string]: any }> {
         let ok: boolean = true;
+        let newArgs: { [key: string]: any } = {};
 
         for (const arg of args) {
             const i: number = args.indexOf(arg);
-            if (!given[i] && !arg.optional) {
-                return Promise.reject(this.shard.lm.t("commands.argument_not_specified", { username: msg.author.username, argument: arg.name }));
+            if (!given[i]) {
+                if (arg.optional) {
+                    continue;
+                } else {
+                    return Promise.reject(this.shard.lm.t("commands.argument_not_specified", { username: msg.author.username, argument: arg.name }));
+                }
             }
             switch (arg.type) {
                 case "number": {
@@ -149,18 +158,53 @@ export class CommandHandler {
                     break;
                 }
                 case "user": {
-                    const mention: RegExp = /<@\d+>/i;
+                    const mention: RegExp = /<@!?(\d+)>/i;
                     const userdisc: RegExp = /.{0,32}#\d{4}/i;
                     const username: RegExp = /.{0,32}/i;
                     const id: RegExp = /\d+/i;
 
-                    if (!mention.test(given[i]) || !userdisc.test(given[i]) || !username.test(given[i]) || !id.test(given[i])) {
+                    if (!mention.test(given[i]) && !userdisc.test(given[i]) && !username.test(given[i]) && !id.test(given[i])) {
                         return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
                             argument: arg.name,
                             type: arg.type,
                             username: msg.author.username,
                         }));
                     }
+
+                    if (mention.test(given[i])) {
+                        const res: RegExpExecArray | null = mention.exec(given[i]);
+
+                        if (res) {
+                            const user: Eris.User | undefined = this.shard.users.get(res[1]);
+                            /** @todo add websockets and try to get user from other shard using them */
+                            if (user) {
+                                newArgs[arg.name] = user;
+                            }
+                        }
+                    } else if (userdisc.test(given[i])) {
+                        if (!(msg.channel instanceof Eris.GuildChannel)) {
+                            return Promise.reject(this.shard.lm.t("commands.guild_only", { username: msg.author.username }));
+                        }
+
+                        const user: Eris.Member | undefined = msg.channel.guild.members.filter((member: Eris.Member) => `${member.username}#${member.discriminator}` === given[i])[0];
+
+                        if (!user) {
+                            return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = user;
+                    } else if (id.test(given[i])) {
+
+                        const user: Eris.User | undefined = this.shard.users.get(given[i]);
+
+                        if (!user) {
+                            return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = user;
+                    }
+
+                    /** @todo add search thing if username is specified */
 
                     break;
                 }
@@ -170,7 +214,7 @@ export class CommandHandler {
                     const name: RegExp = /[^\s]{0,100}/i;
                     const id: RegExp = /\d+/i;
 
-                    if (!mention.test(given[i]) || !name.test(given[i]) || !id.test(given[i])) {
+                    if (!mention.test(given[i]) && !name.test(given[i]) && !id.test(given[i])) {
                         return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
                             argument: arg.name,
                             type: arg.type,
@@ -186,7 +230,7 @@ export class CommandHandler {
                     const name: RegExp = /.{0,}/i;
                     const id: RegExp = /\d+/i;
 
-                    if (!mention.test(given[i]) || !name.test(given[i]) || !id.test(given[i])) {
+                    if (!mention.test(given[i]) && !name.test(given[i]) && !id.test(given[i])) {
                         return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
                             argument: arg.name,
                             type: arg.type,
@@ -199,12 +243,14 @@ export class CommandHandler {
 
                 case "string":
                 default: {
-                    return Promise.resolve();
+                    newArgs[arg.name] = given[i];
+
+                    return Promise.resolve(newArgs);
                 }
             }
         }
 
-        return Promise.resolve();
+        return Promise.resolve(newArgs);
     }
 
 }
