@@ -47,6 +47,6 @@ export function description (...args: any[]): ClassDecorator {
     return applyMeta("desc", args.join("\n"));
 }
 
-export function ownerOnly (bool: boolean = true) {
-    return applyMeta("ownerOnly", bool);
+export function ownerOnly (): ClassDecorator {
+    return applyMeta("ownerOnly", true);
 }
