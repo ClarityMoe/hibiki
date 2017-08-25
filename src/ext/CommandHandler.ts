@@ -102,12 +102,16 @@ export class CommandHandler {
             return;
         };
 
-        if (bucket) {
-            useBucket();
+        if (this.shard.hibikiOptions.hibiki.owners.indexOf(msg.author.id) === -1) {
+            if (bucket) {
+                useBucket();
+            } else {
+                this.buckets.set(msg.author.id, new Ratelimiter());
+                bucket = this.buckets.get(msg.author.id);
+                useBucket();
+            }
         } else {
-            this.buckets.set(msg.author.id, new Ratelimiter());
-            bucket = this.buckets.get(msg.author.id);
-            useBucket();
+            ok = true;
         }
 
         if (cmd.ownerOnly && this.shard.hibikiOptions.hibiki.owners.indexOf(msg.author.id) === -1) {
