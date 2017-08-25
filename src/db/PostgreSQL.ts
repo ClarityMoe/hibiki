@@ -1,5 +1,6 @@
 // PostgreSQL.ts - PostgreSQL client (noud02)
 
+import { exec } from "child_process";
 import * as pg from "pg";
 
 export class PostgreSQL {
@@ -29,6 +30,18 @@ export class PostgreSQL {
 
                 return resolve();
             });
+        });
+    }
+
+    public rawQuery (query: string): Promise<string> {
+        return new Promise((resolve, reject) => {
+            exec(`psql ${this.options.database} -c '${query}'`, (err: Error, stdout: string) => {
+                if (err) {
+                    return reject(err);
+                }
+
+                return resolve(stdout)
+            })
         });
     }
 
