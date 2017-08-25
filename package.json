@@ -43,7 +43,7 @@
     "@types/i18next": "^8.4.1",
     "@types/i18next-node-fs-backend": "0.0.29",
     "@types/minimist": "^1.2.0",
-    "@types/node": "^8.0.24",
+    "@types/node": "^8.0.25",
     "@types/pg": "^6.1.43",
     "@types/ws": "^3.0.2",
     "gulp": "^3.9.1",
