@@ -25,6 +25,7 @@ gulp.task('compile', () => {
         declaration: true,
         importHelpers: true,
         downlevelIteration: true,
+        noEmitOnError: true,
         strict: true,
         noImplicitAny: true,
         noImplicitThis: true,
