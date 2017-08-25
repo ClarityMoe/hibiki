@@ -5,7 +5,6 @@ jobs:
       - image: library/node:6.11.2
     working_directory: ./hibiki
     steps:
-      - setup_remote_docker
       - checkout  
       - run:
           name: Resolve Dependencies
