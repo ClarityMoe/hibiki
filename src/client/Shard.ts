@@ -1,5 +1,6 @@
 // Shard.ts - Shard class (noud02)
 
+import * as blocked from "blocked";
 import * as Eris from "eris";
 import * as path from "path";
 import { ClientConfig } from "pg";
@@ -36,6 +37,7 @@ export class Shard extends Eris.Client {
     public ext: ExtensionManager = new ExtensionManager(this.hibikiOptions.ext);
     public ch: CommandHandler = new CommandHandler(this);
     public lm: LocaleManager = new LocaleManager();
+    public blocked: NodeJS.Timer = blocked((ms: number) => this.emit("blocked", ms));
 
     constructor (token: string, public hibikiOptions: IHibikiOptions) {
         super(token, hibikiOptions.eris);

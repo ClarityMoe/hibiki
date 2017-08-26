@@ -26,6 +26,7 @@
   },
   "homepage": "https://github.com/ClaraIO/hibiki#readme",
   "dependencies": {
+    "blocked": "^1.2.1",
     "eris": "github:abalabahaha/eris#dev",
     "i18next": "^8.4.3",
     "i18next-node-fs-backend": "^1.0.0",

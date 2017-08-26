@@ -137,7 +137,7 @@ export class CommandHandler {
 
     public checkArguments (msg: Eris.Message, given: string[], args: ICommandArg[]): Promise<{ [key: string]: any }> {
         let ok: boolean = true;
-        let newArgs: { [key: string]: any } = {};
+        const newArgs: { [key: string]: any } = {};
 
         for (const arg of args) {
             const i: number = args.indexOf(arg);

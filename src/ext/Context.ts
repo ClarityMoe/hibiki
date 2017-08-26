@@ -147,8 +147,10 @@ export class Context {
 
         program.emit();
 
+        const out: string = await vm.runInContext(output, context);
+
         return {
-            eval: await vm.runInContext(output, context),
+            eval: out,
             ts: {
                 errs,
                 program,

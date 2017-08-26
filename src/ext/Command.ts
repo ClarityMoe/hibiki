@@ -18,8 +18,8 @@ export class Command {
 
     public name: string;
     public desc: string;
-    public args: ICommandArg[]
-    public flags: ICommandFlag[]
+    public args: ICommandArg[];
+    public flags: ICommandFlag[];
     public subcommands: Array<(ctx: Context) => any>;
     public ownerOnly: boolean;
 
