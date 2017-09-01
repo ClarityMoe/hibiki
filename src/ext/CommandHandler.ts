@@ -4,7 +4,11 @@ import * as Eris from "eris";
 import * as minimist from "minimist";
 import * as pg from "pg";
 import { Shard } from "../client/Shard";
-import { Command, ICommandArg } from "./Command";
+import {
+    Command,
+    ICommandArg,
+    ICommandPermission,
+} from "./Command";
 import { Context } from "./Context";
 import { Ratelimiter } from "./Ratelimiter";
 
@@ -119,9 +123,23 @@ export class CommandHandler {
         }
 
         let newArgs: { [key: string]: any } = {};
+        let newPerms: { [key: string]: boolean } = {};
+        let newBotPerms: { [key: string]: boolean } = {};
 
         try {
-            newArgs = await this.checkArguments(msg, args._, cmd.args);
+            newArgs = await this.checkArguments(msg, args._, cmd.args || []);
+        } catch (e) {
+            return msg.channel.createMessage(e);
+        }
+
+        try {
+            newPerms = await this.checkPermissions(msg, cmd.perms || []);
+        } catch (e) {
+            return msg.channel.createMessage(e);
+        }
+
+        try {
+            newBotPerms = await this.checkBotPermissions(msg, cmd.botPerms || []);
         } catch (e) {
             return msg.channel.createMessage(e);
         }
@@ -135,8 +153,57 @@ export class CommandHandler {
         }
     }
 
+    public checkPermissions (msg: Eris.Message, perms: ICommandPermission[]): Promise<{ [key: string]: boolean }> {
+        const newPerms: { [key: string]: boolean } = {};
+
+        if (!(msg.channel instanceof Eris.GuildChannel)) {
+            for (const perm of perms) {
+                newPerms[perm.name] = true;
+            }
+
+            return Promise.resolve(newPerms);
+        }
+
+        for (const perm of perms) {
+            if (!perm.optional && !msg.channel.permissionsOf(msg.author.id).has(perm.name)) {
+                return Promise.reject(this.shard.lm.t("permissions.user_lack_perms", {
+                    permission: this.shard.lm.localizedPerm(perm.name),
+                    username: msg.author.username,
+                }))
+            }
+
+            newPerms[perm.name] = msg.channel.permissionsOf(msg.author.id).has(perm.name);
+        }
+
+        return Promise.resolve(newPerms);
+    }
+
+    public checkBotPermissions (msg: Eris.Message, perms: ICommandPermission[]): Promise<{ [key: string]: boolean }> {
+        const newPerms: { [key: string]: boolean } = {};
+
+        if (!(msg.channel instanceof Eris.GuildChannel)) {
+            for (const perm of perms) {
+                newPerms[perm.name] = true;
+            }
+
+            return Promise.resolve(newPerms);
+        }
+
+        for (const perm of perms) {
+            if (!perm.optional && !msg.channel.permissionsOf(this.shard.user.id).has(perm.name)) {
+                return Promise.reject(this.shard.lm.t("permissions.bot_lack_perms", {
+                    permission: this.shard.lm.localizedPerm(perm.name),
+                    username: msg.author.username,
+                }));
+            }
+
+            newPerms[perm.name] = msg.channel.permissionsOf(this.shard.user.id).has(perm.name);
+        }
+
+        return Promise.resolve(newPerms);
+    }
+
     public checkArguments (msg: Eris.Message, given: string[], args: ICommandArg[]): Promise<{ [key: string]: any }> {
-        let ok: boolean = true;
         const newArgs: { [key: string]: any } = {};
 
         for (const arg of args) {
@@ -151,7 +218,11 @@ export class CommandHandler {
             switch (arg.type) {
                 case "number": {
                     if (isNaN(given[i] as any)) {
-                        ok = false;
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
                     }
                     break;
                 }

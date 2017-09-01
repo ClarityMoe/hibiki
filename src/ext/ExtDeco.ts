@@ -43,6 +43,30 @@ export function argument (name: string, type: string, optional: boolean): ClassD
     };
 }
 
+export function permission (name: string, optional: boolean, bot?: boolean): ClassDecorator {
+    return <T extends Function>(target: T) => { // tslint:disable-line:ban-types
+        if (!target.prototype.perms) {
+            Object.defineProperty(target.prototype, bot && "botPerms" || "perms", {
+                configurable: true,
+                enumerable: true,
+                value: [{ name, optional }],
+                writable: true,
+            });
+
+            return target;
+        }
+
+        Object.defineProperty(target.prototype, bot && "botPerms" || "perms", {
+            configurable: true,
+            enumerable: true,
+            value: target.prototype.args.push({ name, optional }),
+            writable: true,
+        });
+
+        return target;
+    };
+}
+
 export function description (...args: any[]): ClassDecorator {
     return applyMeta("desc", args.join("\n"));
 }

@@ -14,12 +14,19 @@ export interface ICommandFlag {
 
 }
 
+export interface ICommandPermission {
+    name: string;
+    optional: boolean;
+}
+
 export class Command {
 
     public name: string;
     public desc: string;
     public args: ICommandArg[];
     public flags: ICommandFlag[];
+    public perms: ICommandPermission[];
+    public botPerms: ICommandPermission[];
     public subcommands: Array<(ctx: Context) => any>;
     public ownerOnly: boolean;
 
