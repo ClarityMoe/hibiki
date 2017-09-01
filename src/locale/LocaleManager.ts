@@ -50,4 +50,8 @@ export class LocaleManager {
         });
     }
 
+    public localizedPerm (perm: string): string {
+        return this.t(`localized_perms.${perm}`);
+    }
+
 }
