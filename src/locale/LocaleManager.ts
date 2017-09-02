@@ -7,7 +7,7 @@ import * as path from "path";
 
 /**
  * Locale manager class
- * 
+ *
  * @export
  * @class LocaleManager
  */
@@ -22,8 +22,8 @@ export class LocaleManager {
 
     /**
      * Initializes the locale manager
-     * 
-     * @returns {Promise<i18next.TranslationFunction>} 
+     *
+     * @returns {Promise<i18next.TranslationFunction>}
      */
     public init (): Promise<i18next.TranslationFunction> {
         return new Promise((resolve, reject) => {
@@ -60,8 +60,8 @@ export class LocaleManager {
 
     /**
      * Reloads the locales
-     * 
-     * @returns {Promise<void>} 
+     *
+     * @returns {Promise<void>}
      */
     public reload (): Promise<void> {
         return new Promise((resolve, reject) => {
@@ -83,7 +83,7 @@ export class LocaleManager {
 
     /**
      * Returns a localized string
-     * 
+     *
      * @param {string | string[]} str string
      * @param {map} opt options
      * @returns {string}

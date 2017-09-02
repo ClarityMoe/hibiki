@@ -22,13 +22,13 @@ export class Ratelimiter {
     public sentWarn: boolean = false;
     /**
      * Last use (timestamp)
-     * 
+     *
      * @type {number}
      */
     public lastUse: number = 0;
     /**
      * Uses
-     * 
+     *
      * @type {number}
      */
     public uses: number = 0;

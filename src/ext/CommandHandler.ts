@@ -14,7 +14,7 @@ import { Ratelimiter } from "./Ratelimiter";
 
 /**
  * Command handler class
- * 
+ *
  * @export
  * @class CommandHandler
  */
@@ -32,7 +32,7 @@ export class CommandHandler {
     /**
      * Initializes the command handler
      *
-     * @returns {Promise<void>} 
+     * @returns {Promise<void>}
      */
     public init (): Promise<void> {
         // link the messageCreate event to checkMessage to check if the message is a command
@@ -44,7 +44,7 @@ export class CommandHandler {
 
     /**
      * Check if a message is a command
-     * 
+     *
      * @param {Eris.Message} msg Message
      * @returns {Promise<void>}
      */
@@ -95,7 +95,7 @@ export class CommandHandler {
 
     /**
      * Execute a command
-     * 
+     *
      * @param {Eris.Message} msg Message
      * @param {string} command Command name
      * @param {minimist.ParsedArgs} args Arguments
@@ -186,7 +186,7 @@ export class CommandHandler {
 
     /**
      * Check the permissions
-     * 
+     *
      * @param {Eris.Message} msg Message
      * @param {ICommandPermission[]} perms Array of permissions
      * @returns {Promise<map>}
@@ -218,7 +218,7 @@ export class CommandHandler {
 
     /**
      * Check the bot permissions
-     * 
+     *
      * @param {Eris.Message} msg Message
      * @param {ICommandPermission[]} perms Array of permissions
      * @returns {Promise<map>}
@@ -250,7 +250,7 @@ export class CommandHandler {
 
     /**
      * Check the arguments and return new args
-     * 
+     *
      * @param {Eris.Message} msg Message
      * @param {string[]} given Array of given arguments
      * @param {ICommandArg[]} args Array of command args
