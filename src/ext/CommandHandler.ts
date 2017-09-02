@@ -306,6 +306,18 @@ export class CommandHandler {
                                 newArgs[arg.name] = user;
                             }
                         }
+                    } else if (username.test(given[i])) {
+                        if (!(msg.channel instanceof Eris.GuildChannel)) {
+                            return Promise.reject(this.shard.lm.t("commands.guild_only", { username: msg.author.username }));
+                        }
+
+                        const user: Eris.Member | undefined = msg.channel.guild.members.filter((member: Eris.Member) => `${member.username}` === given[i])[0];
+
+                        if (!user) {
+                            return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = user;
                     } else if (userdisc.test(given[i])) {
                         if (!(msg.channel instanceof Eris.GuildChannel)) {
                             return Promise.reject(this.shard.lm.t("commands.guild_only", { username: msg.author.username }));
