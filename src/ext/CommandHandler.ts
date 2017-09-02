@@ -169,7 +169,7 @@ export class CommandHandler {
                 return Promise.reject(this.shard.lm.t("permissions.user_lack_perms", {
                     permission: this.shard.lm.localizedPerm(perm.name),
                     username: msg.author.username,
-                }))
+                }));
             }
 
             newPerms[perm.name] = msg.channel.permissionsOf(msg.author.id).has(perm.name);
