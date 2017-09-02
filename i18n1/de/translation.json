@@ -26,7 +26,7 @@
     },
     "permissions": {
         "user_lack_perms": "Tut mir leid, **{{username}}**, Sie haben nicht die Erlaubnis {{permission}}",
-        "kyubey_lack_perms": "Tut mir leid, **{{username}}**, Ich habe nicht die Erlaubnis {{permission}}"
+        "bot_lack_perms": "Tut mir leid, **{{username}}**, Ich habe nicht die Erlaubnis {{permission}}"
     },
     "user": {
         "member": "Mitglied",

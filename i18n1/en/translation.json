@@ -1,6 +1,6 @@
 {
     "commands": {
-        "help_message": "／ **{{username}}** 人◕ ‿‿ ◕人 Revise sus mensajes ＼",
+        "help_message": "／ **{{username}}** 人◕ ‿‿ ◕人 Check your dm's ＼",
         "cooldown": "Sorry **{{username}}**, but you need to wait {{time}} second(s) before you can use this command again!",
         "argument_not_specified": "Sorry **{{username}}**, argument `{{argument}}` is required but you didn't specify it",
         "nsfw_not_enabled": "Sorry **{{username}}**, NSFW is not enabled in this channel!\nAsk someone who can edit this channel to enable it here. (https://support.discordapp.com/hc/en-us/articles/115000084051)",
@@ -17,68 +17,68 @@
         "pruned_msgs": "Pruned `{{number}}` message(s)!"
     },
     "guild": {
-        "guild": "Servidor",
-        "guilds": "Servidores",
-        "user": "Usuario",
-        "users": "Usuarios",
-        "icon": "Icono",
-        "icons": "Iconos"
+        "guild": "Server",
+        "guilds": "Servers",
+        "user": "User",
+        "users": "Users",
+        "icon": "Icon",
+        "icons": "Icons"
     },
     "permissions": {
-        "user_lack_perms": "Lo siento **{{username}}**, pero tu no tienes el permiso {{permission}}.",
-        "kyubey_lack_perms": "Lo siento **{{username}}**, pero yo no tienes el permiso {{permission}}."
+        "user_lack_perms": "Sorry **{{username}}**, you don't have the `{{permission}}` permission.",
+        "bot_lack_perms": "Sorry **{{username}}**, I don't have the {{permission}} permission."
     },
     "user": {
-        "member": "Miembro",
-        "members": "Miembros",
+        "member": "Member",
+        "members": "Members",
         "avatar": "Avatar",
-        "avatars": "Avatares"
+        "avatars": "Avatars"
     },
     "role": {
-        "role": "oficio",
-        "roles": "oficio"
+        "role": "Role",
+        "roles": "Roles"
     },
     "error": {
-        "error": "Oh no! Un error ocurrió!\n```diff\n- {{error}}\n```",
+        "error": "Oh no! An error occured! \n```diff\n- {{error}}\n```\nIf you feel like this shouldn't have happened, please report it!",
         "join_voice_channel_error": "Oh no! An error occurred while trying to join the voicechannel! ```diff\n- {{error}}\n```"
     },
     "channel": {
-        "channel": "Canal",
-        "textchannel": "Canal de texto",
-        "voicechannel": "Canal de voz"
+        "channel": "Channel",
+        "textchannel": "Text channel",
+        "voicechannel": "Voicechannel"
     },
     "info": {
-        "channels": "Canales",
-        "textchannels": "Canales de texto",
-        "voicechannels": "Canales de voz",
-        "info": "Informacion",
+        "channels": "Channels",
+        "textchannels": "Text channels",
+        "voicechannels": "Voicechannels",
+        "info": "Info",
         "user_avatar": "{{username}}'s avatar",
         "tags": "Tags"
     },
     "language": {
-        "language": "Idioma",
-        "languages": "Idiomas"
+        "language": "Language",
+        "languages": "Languages"
     },
     "translations": {
-        "list_languages": "Lista de idiomas disponible:\n```fix\n{{translations}}\n```",
-        "invalid_language": " **{{language}}** no es un idioma valiado, por el lista de idiomas, hace `{{prefix}}language list`",
-        "language_set": "Idioma cambiado a **{{language}}**",
-        "language_check": "Tu idioma es **{{language}}**",
+        "list_languages": "List of languages available:\n```fix\n{{translations}}\n```",
+        "invalid_language": "**{{language}}** is not a valid language, for a list of languages use `{{prefix}}locale list`",
+        "language_set": "Set your language to **{{language}}**",
+        "language_check": "Your language is set to: **{{language}}**",
         "language_guild_set": "Set guild language to **{{language}}**"
     },
     "settings": {
-        "setting_enable_success": "🔓 Activado **{{setting}}**",
-        "setting_enable_fail": "🚫 **{{setting}}** ya está activado!",
-        "prefix_change_success": "🔧 Prefijo cambiado a **{{custom_prefix}}**",
-        "prefix_change_fail": "🚫 No has especificado un prefijo!",
-        "prefix_remove_success": "🔧 Prefijo quitado exitosamente!",
-        "prefix_remove_fail": "🚫 Este servidor no tiene un prefijo personalizado!",
-        "setting_disable_success": "🔒 Desactivado **{{setting}}**",
-        "setting_disable_fail": "🚫 **{{setting}}** ya está activado!",
-        "enable_here_success": "🔓 **{{setting}}** ha sido activado aquí",
-        "enable_here_fail": "🚫 **{{setting}}** ya está activado aquí",
-        "disable_here_success": "🔒 Desactivado **{{setting}}** aquí",
-        "disable_here_fail": "🚫 **{{setting}}** Ya está activado aquí!",
+        "setting_enable_success": "🔓 Enabled **{{setting}}**",
+        "setting_enable_fail": "🚫 **{{setting}}** already enabled!",
+        "prefix_change_success": "🔧 Set prefix to `{{custom_prefix}}`",
+        "prefix_change_fail": "🚫 Prefix not specified!",
+        "prefix_remove_success": "🔧 Succesfully removed prefix!",
+        "prefix_remove_fail": "🚫 This server hasn't got a custom prefix yet!",
+        "setting_disable_success": "🔒 Disabled **{{setting}}**",
+        "setting_disable_fail": "🚫 **{{setting}}** already disabled!",
+        "enable_here_success": "🔓 Enabled **{{setting}}** here",
+        "enable_here_fail": "🚫 **{{setting}}** already enabled here!",
+        "disable_here_success": "🔒 Disabled **{{setting}}** here",
+        "disable_here_fail": "🚫 **{{setting}}** already disabled here!",
         "log_channel_set_succes": "🛠 Log channel set to **{{channel}}**",
         "log_channel_set_fail": "🚫 You can't set the default channel as log channel!",
         "prefix_check": "Server prefix is set to `{{custom_prefix}}`",
@@ -94,10 +94,10 @@
         "set_starboard": "Set starboard to {{channel}}!"
     },
     "music": {
-        "now_playing": "jugando_ahora",
-        "requested_by": "requerido_por",
-        "finished_playing": "terminado_jugando",
-        "already_playing": "estas_jugando",
+        "now_playing": "Now playing:",
+        "requested_by": "Requested by",
+        "finished_playing": "Finished playing **{{song_title}}**",
+        "already_playing": "I'm already playing music here!",
         "queue_empty": "The queue is empty!",
         "join_voice_channel_fail": "**{{username}}** you aren't in a voice channel!",
         "voteskip_success": "Enough votes, skipped current song",

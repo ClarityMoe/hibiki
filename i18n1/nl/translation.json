@@ -26,7 +26,7 @@
     },
     "permissions": {
         "user_lack_perms": "Sorry **{{username}}**, je hebt niet de `{{permission}}` permissie.",
-        "kyubey_lack_perms": "Sorry **{{username}}**, ik heb niet de `{{permission}}` permissie."
+        "bot_lack_perms": "Sorry **{{username}}**, ik heb niet de `{{permission}}` permissie."
     },
     "user": {
         "member": "Lid",

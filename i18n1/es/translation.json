@@ -1,6 +1,6 @@
 {
     "commands": {
-        "help_message": "／ **{{username}}** 人◕ ‿‿ ◕人 Check tes mp's ＼ ",
+        "help_message": "／ **{{username}}** 人◕ ‿‿ ◕人 Revise sus mensajes ＼",
         "cooldown": "Sorry **{{username}}**, but you need to wait {{time}} second(s) before you can use this command again!",
         "argument_not_specified": "Sorry **{{username}}**, argument `{{argument}}` is required but you didn't specify it",
         "nsfw_not_enabled": "Sorry **{{username}}**, NSFW is not enabled in this channel!\nAsk someone who can edit this channel to enable it here. (https://support.discordapp.com/hc/en-us/articles/115000084051)",
@@ -17,72 +17,72 @@
         "pruned_msgs": "Pruned `{{number}}` message(s)!"
     },
     "guild": {
-        "guild": "Serveur",
-        "guilds": "Serveurs",
-        "user": "Utilisateur",
-        "users": "Utilisateurs",
-        "icon": "Icône",
-        "icons": "Icônes"
+        "guild": "Servidor",
+        "guilds": "Servidores",
+        "user": "Usuario",
+        "users": "Usuarios",
+        "icon": "Icono",
+        "icons": "Iconos"
     },
     "permissions": {
-        "user_lack_perms": "Je me suits desolé, **{{username}}**, mais tu n'as pas la permission {{permission}}.",
-        "kyubey_lack_perms": "Je me suits desolé, **{{username}}**, mais ja n'ai pas la permission {{permission}}."
+        "user_lack_perms": "Lo siento **{{username}}**, pero tu no tienes el permiso {{permission}}.",
+        "bot_lack_perms": "Lo siento **{{username}}**, pero yo no tienes el permiso {{permission}}."
     },
     "user": {
-        "member": "Membre",
-        "members": "Membres",
+        "member": "Miembro",
+        "members": "Miembros",
         "avatar": "Avatar",
-        "avatars": "Avatars"
+        "avatars": "Avatares"
     },
     "role": {
-        "role": "Grade",
-        "roles": "Grades"
+        "role": "oficio",
+        "roles": "oficio"
     },
     "error": {
-        "error": "Oh non! Une erreur s'est produite! \n```diff\n- {{error}}\n```",
+        "error": "Oh no! Un error ocurrió!\n```diff\n- {{error}}\n```",
         "join_voice_channel_error": "Oh no! An error occurred while trying to join the voicechannel! ```diff\n- {{error}}\n```"
     },
     "channel": {
-        "channel": "Channel",
-        "textchannel": "Channel Textuel",
-        "voicechannel": "Channel Vocal"
+        "channel": "Canal",
+        "textchannel": "Canal de texto",
+        "voicechannel": "Canal de voz"
     },
     "info": {
-        "channels": "Channels",
-        "textchannels": "Channels Textuels",
-        "voicechannels": "Channels Vocaux",
-        "info": "Info",
-        "user_avatar": "Avatar de {{username}}",
+        "channels": "Canales",
+        "textchannels": "Canales de texto",
+        "voicechannels": "Canales de voz",
+        "info": "Informacion",
+        "user_avatar": "{{username}}'s avatar",
         "tags": "Tags"
     },
     "language": {
-        "language": "Langue",
-        "languages": "Langues"
+        "language": "Idioma",
+        "languages": "Idiomas"
     },
     "translations": {
-        "list_languages": "Liste des langues disponibles:\n```fix\n{{translations}}\n```",
-        "invalid_language": "**{{language}}** n'est pas une langue valide, pour une liste des langues utilisez`{{prefix}}language list`",
-        "language_set": "Paramétrer votre langue en **{{language}}**",
-        "language_check": "Votre langue a été paramétrée en: **{{language}}**",
+        "list_languages": "Lista de idiomas disponible:\n```fix\n{{translations}}\n```",
+        "invalid_language": " **{{language}}** no es un idioma valiado, por el lista de idiomas, hace `{{prefix}}language list`",
+        "language_set": "Idioma cambiado a **{{language}}**",
+        "language_check": "Tu idioma es **{{language}}**",
         "language_guild_set": "Set guild language to **{{language}}**"
     },
     "settings": {
-        "setting_enable_success": "🔓 Enabled **{{setting}}**",
-        "setting_enable_fail": "🚫 **{{setting}}** already enabled!",
-        "prefix_change_success": "🔧 Set prefix to `{{custom_prefix}}`",
-        "prefix_change_fail": "🚫 Prefix not specified!",
-        "prefix_remove_success": "🔧 Succesfully removed prefix!",
-        "prefix_remove_fail": "🚫 This server hasn't got a custom prefix yet!",
-        "setting_disable_success": "🔒 Disabled **{{setting}}**",
-        "setting_disable_fail": "🚫 **{{setting}}** already disabled!",
-        "enable_here_success": "🔓 Enabled **{{setting}}** here",
-        "enable_here_fail": "🚫 **{{setting}}** already enabled here!",
-        "disable_here_success": "🔒 Disabled **{{setting}}** here",
-        "disable_here_fail": "🚫 **{{setting}}** already disabled here!",
-        "log_channel_set_succes": "🛠 Channel de log paramétré sur **{{channel}}**",
-        "log_channel_set_fail": "🚫 Vous ne pouvez pas parametrer le channel par défaut comme channel pour les logs!",
-        "prefix_check": "Le préfixe custom est `{{custom_prefix}}`",
-        "prefix_default": "Le serveur n'a pas de préfixe customisé!",
+        "setting_enable_success": "🔓 Activado **{{setting}}**",
+        "setting_enable_fail": "🚫 **{{setting}}** ya está activado!",
+        "prefix_change_success": "🔧 Prefijo cambiado a **{{custom_prefix}}**",
+        "prefix_change_fail": "🚫 No has especificado un prefijo!",
+        "prefix_remove_success": "🔧 Prefijo quitado exitosamente!",
+        "prefix_remove_fail": "🚫 Este servidor no tiene un prefijo personalizado!",
+        "setting_disable_success": "🔒 Desactivado **{{setting}}**",
+        "setting_disable_fail": "🚫 **{{setting}}** ya está activado!",
+        "enable_here_success": "🔓 **{{setting}}** ha sido activado aquí",
+        "enable_here_fail": "🚫 **{{setting}}** ya está activado aquí",
+        "disable_here_success": "🔒 Desactivado **{{setting}}** aquí",
+        "disable_here_fail": "🚫 **{{setting}}** Ya está activado aquí!",
+        "log_channel_set_succes": "🛠 Log channel set to **{{channel}}**",
+        "log_channel_set_fail": "🚫 You can't set the default channel as log channel!",
+        "prefix_check": "Server prefix is set to `{{custom_prefix}}`",
+        "prefix_default": "Server hasn't got a custom prefix!",
         "channel_already_ignored": "I'm already ignoring that channel!",
         "channel_not_ignored": "I'm not ignoring that channel!",
         "ignored_channel": "Ignoring channel..",
@@ -94,20 +94,20 @@
         "set_starboard": "Set starboard to {{channel}}!"
     },
     "music": {
-        "now_playing": "Actuellement:",
-        "requested_by": "Demandée par",
-        "finished_playing": "Finished playing **{{song_title}}**",
-        "already_playing": "Je joue déjà de la musique ici!",
-        "queue_empty": "La queue est vide!",
+        "now_playing": "jugando_ahora",
+        "requested_by": "requerido_por",
+        "finished_playing": "terminado_jugando",
+        "already_playing": "estas_jugando",
+        "queue_empty": "The queue is empty!",
         "join_voice_channel_fail": "**{{username}}** you aren't in a voice channel!",
-        "voteskip_success": "Assez de votes, musique actuelle passée",
+        "voteskip_success": "Enough votes, skipped current song",
         "song_stop_success": "**{{username}}** stopped the music",
-        "song_stop_fail": "Vous ne pouvez pas arrêter la musique!",
+        "song_stop_fail": "You can't stop the music!",
         "queue": "Queue",
         "video_search_fail": "Sorry **{{user}}**, I couldn't find any videos matching `{{search}}`",
-        "queue_more_songs": "Encore {{number}} muisques!",
+        "queue_more_songs": "And {{number}} more songs!",
         "queue_add_fail": "Failed to add {{song_title}}",
-        "queue_clear_success": "Queue nettoyée",
+        "queue_clear_success": "Cleared the queue",
         "voteskip_add_success": "Added your vote to skip. `{{votes}}` votes, `{{total_votes}}` needed",
         "source_not_supported": "Sorry **{{username}}**, I don't support playing music from that site (yet?)!",
         "playlist_non_premium": "Sorry **{{username}}**, but adding a playlist with more than 20 songs is a premium feature! I'll be adding the first 20 songs instead of whole playlist/album. (for more info on premium features, use `{{prefix}}premium`)",
@@ -133,7 +133,7 @@
     },
     "search": {
         "user_not_found": "Sorry **{{username}}**, I couldn't find that user!",
-        "guild_not_found": "Pardon **{{username}}**, je n'ai pas pu trouver cette guilde!",
+        "guild_not_found": "Sorry **{{username}}**, I couldn't find that guild!",
         "anime_not_found": "Sorry **{{username}}**, I couldn't find anime matching your query!",
         "manga_not_found": "Sorry **{{username}}**, I couldn't find manga matching your query!",
         "choose_user": "**{{username}}**, please choose a user from the list below. (times out in 30 seconds)",
@@ -142,6 +142,6 @@
         "no_images_found": "Sorry **{{username}}**, but I couldn't find any images matching your query!"
     },
     "logs": {
-        "logs_success": "Voici les logs: {{url}}"
+        "logs_success": "Here are the logs: {{url}}"
     }
 }
