@@ -15,3 +15,8 @@ test_script:
   - gulp compile
 
 build: off
+
+notifications:
+  - provider: Webhook
+    url: https://claraio-circledisc.herokuapp.com/hooks/appveyor
+    method: POST
