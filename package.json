@@ -11,7 +11,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ClaraIO/hibiki.git"
+    "url": "git+https://github.com/ClarityMoe/hibiki.git"
   },
   "keywords": [
     "typescript",
@@ -22,9 +22,9 @@
   "author": "noud02",
   "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/ClaraIO/hibiki/issues"
+    "url": "https://github.com/ClarityMoe/hibiki/issues"
   },
-  "homepage": "https://github.com/ClaraIO/hibiki#readme",
+  "homepage": "https://github.com/ClarityMoe/hibiki#readme",
   "dependencies": {
     "blocked": "^1.2.1",
     "eris": "github:abalabahaha/eris#dev",
@@ -45,8 +45,12 @@
     "@types/node": "^8.0.26",
     "@types/pg": "^6.1.43",
     "@types/ws": "^3.0.2",
+    "docdash": "^0.4.0",
     "gulp": "^3.9.1",
-    "gulp-typescript": "^3.2.2"
+    "gulp-clean": "^0.3.2",
+    "gulp-jsdoc3": "^1.0.1",
+    "gulp-typescript": "^3.2.2",
+    "jsdoc": "^3.5.4"
   },
   "optionalDependencies": {
     "bluebird": "^3.5.0",

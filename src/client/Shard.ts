@@ -11,6 +11,12 @@ import { ExtensionManager, IExtOptions } from "../ext/ExtensionManager";
 import { LocaleManager } from "../locale/LocaleManager";
 import { WebSocketClient } from "./WebSocketClient";
 
+/**
+ * Options
+ *
+ * @export
+ * @interface IHibikiOptions
+ */
 export interface IHibikiOptions {
     hibiki: {
         prefixes: string[];
@@ -26,23 +32,72 @@ export interface IHibikiOptions {
     ext: IExtOptions;
 }
 
+/**
+ * Main Shard/Client class
+ * @see https://abal.moe/Eris/docs/Client
+ *
+ * @export
+ * @class Shard
+ * @extends {Eris.Client}
+ */
 export class Shard extends Eris.Client {
 
+    /**
+     * PostgreSQL client
+     *
+     * @type {PostgreSQL}
+     */
     public pg: PostgreSQL = new PostgreSQL(this.hibikiOptions.postgres);
+    /**
+     * WebSocket client
+     *
+     * @type {WebSocketClient}
+     */
     public ws: WebSocketClient = new WebSocketClient(`${this.hibikiOptions.ws.ssl && "wss" || "ws"}://${this.hibikiOptions.ws.host}:${this.hibikiOptions.ws.port || 8080}`, {
         headers: {
             token: this.token,
         },
     });
+    /**
+     * Extension manager
+     *
+     * @type {ExtensionManager}
+     */
     public ext: ExtensionManager = new ExtensionManager(this.hibikiOptions.ext);
+    /**
+     * Command handler
+     *
+     * @type {CommandHandler}
+     */
     public ch: CommandHandler = new CommandHandler(this);
+    /**
+     * Locale manager
+     *
+     * @type {LocaleManager}
+     */
     public lm: LocaleManager = new LocaleManager();
+    /**
+     * Event loop block detector
+     *
+     * @type {NodeJS.Timer}
+     */
+    /**
+     * Emitted when the event loop is blocked
+     *
+     * @event blocked
+     */
     public blocked: NodeJS.Timer = blocked((ms: number) => this.emit("blocked", ms));
 
     constructor (token: string, public hibikiOptions: IHibikiOptions) {
         super(token, hibikiOptions.eris);
     }
 
+    /**
+     * Connects the shard.
+     *
+     * @param {number} [timeout] Timeout in ms
+     * @returns {Promise<void>}
+     */
     public async connectShard (timeout?: number): Promise<void> {
         const connTimeout: any = setTimeout(() => {
             return Promise.reject(new Error("Connect timed out"));
@@ -63,6 +118,11 @@ export class Shard extends Eris.Client {
         }
     }
 
+    /**
+     * Disconnects the shard
+     *
+     * @returns {Promise<void>}
+     */
     public async disconnectShard (): Promise<void> {
         try {
             this.disconnect({ reconnect: false });

@@ -2,6 +2,10 @@
 
 import { Command } from "./Command";
 
+/**
+ * @namespace ext
+ */
+
 function applyMeta (key: string, val: any): ClassDecorator {
     return <T extends Function>(target: T) => { // tslint:disable-line:ban-types
         Object.defineProperty(target.prototype, key, {
@@ -15,10 +19,40 @@ function applyMeta (key: string, val: any): ClassDecorator {
     };
 }
 
+/**
+ * Sets the command name
+ *
+ * @example @Hibiki.ext.command("nya")
+ * class MyCommand extends Hibiki.Command {
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {string} name Command name
+ * @returns {ClassDecorator}
+ */
 export function command (name: string): ClassDecorator {
     return applyMeta("name", name);
 }
 
+/**
+ * Adds an argument to the command
+ *
+ * @example @Hibiki.ext.argument("nyan", "user", false)
+ * class MyCommand extends Hibiki.Command {
+ *
+ *      public run (ctx: Hibiki.Context): Promise<any> {
+ *          // ctx.args.nyan = given user
+ *          ctx.send(ctx.args.nyan.username);
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {string} name Argument name
+ * @param {string} type Argument type (user, guild, channel, role, string, number)
+ * @param {boolean} optional Whether the argument is optional or not
+ * @returns {ClassDecorator}
+ */
 export function argument (name: string, type: string, optional: boolean): ClassDecorator {
     return <T extends Function>(target: T) => { // tslint:disable-line:ban-types
         if (!target.prototype.args) {
@@ -43,6 +77,23 @@ export function argument (name: string, type: string, optional: boolean): ClassD
     };
 }
 
+/**
+ * Adds a required permission
+ *
+ * @example @Hibiki.ext.permission("manageGuild", true) // set the permission to `optional` because we don't need it
+ * class MyCommand extends Hibiki.Command {
+ *
+ *      public run (ctx: Hibiki.Context): Promise<any> {
+ *          ctx.send(ctx.perms.manageGuild) // sends if the user has the permission or not
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {string} name Permission name @see https://abal.moe/Eris/docs/reference
+ * @param {boolean} optional Sets the permission to optional
+ * @param {boolean} [bot] If the permission should be required by the bot rather than the user
+ * @returns {ClassDecorator}
+ */
 export function permission (name: string, optional: boolean, bot?: boolean): ClassDecorator {
     return <T extends Function>(target: T) => { // tslint:disable-line:ban-types
         if (!target.prototype.perms) {
@@ -67,10 +118,30 @@ export function permission (name: string, optional: boolean, bot?: boolean): Cla
     };
 }
 
+/**
+ * Sets the command description
+ *
+ * @example @Hibiki.ext.description("nya", "nya", "nya") // nya nya nya
+ * class MyCommand extends Hibiki.Command {
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {...any[]} args Description
+ * @returns {ClassDecorator}
+ */
 export function description (...args: any[]): ClassDecorator {
     return applyMeta("desc", args.join("\n"));
 }
 
+/**
+ * Sets the command to owner only
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @returns {ClassDecorator}
+ */
 export function ownerOnly (): ClassDecorator {
     return applyMeta("ownerOnly", true);
 }

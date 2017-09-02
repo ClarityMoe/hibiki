@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ext/Context.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Command.html">Command</a><ul class='methods'><li data-type='method'><a href="Command.html#run">run</a></li></ul></li><li><a href="PostgreSQL.html">PostgreSQL</a><ul class='methods'><li data-type='method'><a href="PostgreSQL.html#connect">connect</a></li><li data-type='method'><a href="PostgreSQL.html#disconnect">disconnect</a></li><li data-type='method'><a href="PostgreSQL.html#insert">insert</a></li><li data-type='method'><a href="PostgreSQL.html#rawQuery">rawQuery</a></li><li data-type='method'><a href="PostgreSQL.html#select">select</a></li><li data-type='method'><a href="PostgreSQL.html#update">update</a></li></ul></li><li><a href="Shard.html">Shard</a><ul class='methods'><li data-type='method'><a href="Shard.html#connectShard">connectShard</a></li><li data-type='method'><a href="Shard.html#disconnectShard">disconnectShard</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="global.html#event:blocked">blocked</a></li></ul><h3>Namespaces</h3><ul><li><a href="ext.html">ext</a><ul class='methods'><li data-type='method'><a href="ext.html#.argument">argument</a></li><li data-type='method'><a href="ext.html#.command">command</a></li><li data-type='method'><a href="ext.html#.description">description</a></li><li data-type='method'><a href="ext.html#.ownerOnly">ownerOnly</a></li><li data-type='method'><a href="ext.html#.permission">permission</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">ext/Context.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+// Context.ts - Context for commands (noud02)
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const Eris = require("eris");
+const tslint = require("tslint");
+const ts = require("typescript");
+const vm = require("vm");
+class Context {
+    constructor(shard, msg, prefix, command, flags, args) {
+        this.shard = shard;
+        this.msg = msg;
+        this.prefix = prefix;
+        this.command = command;
+        this.flags = flags;
+        this.args = args;
+        this.author = this.msg.author;
+        this.channel = this.msg.channel;
+        this.channelMentions = this.msg.channelMentions;
+        this.content = this.msg.content;
+        this.embeds = this.msg.embeds;
+        this.cleanContent = this.msg.cleanContent;
+        this.guild = this.msg.channel instanceof Eris.GuildChannel ? this.msg.channel.guild : undefined;
+        this.member = this.msg.member;
+        this.mentions = this.msg.mentions;
+        this.timestamp = this.msg.timestamp;
+        this.editedTimestamp = this.msg.editedTimestamp;
+        this.roleMentions = this.msg.roleMentions;
+        this.suffix = this.flags._.join(" ");
+    }
+    send(...args) {
+        return this.msg.channel.createMessage(args.join(" "));
+    }
+    sendCode(type, ...code) {
+        return this.msg.channel.createMessage(`\`\`\`${type}\n${code.join(" ")}\`\`\``);
+    }
+    /** @todo add linter */
+    eval(code, customProps) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const builtins = require("repl")._builtinLibs;
+            const context = vm.createContext();
+            for (const builtin of builtins) {
+                Object.defineProperty(context, builtin, {
+                    get() {
+                        context[builtin] = require(builtin);
+                        return require(builtin);
+                    },
+                    set(val) {
+                        delete context[builtin];
+                        context[builtin] = val;
+                    },
+                    configurable: true,
+                });
+            }
+            Object.defineProperty(context, "process", {
+                get() {
+                    context.process = process;
+                    return process;
+                },
+                set(val) {
+                    delete context.process;
+                    context.process = val;
+                },
+                configurable: true,
+            });
+            for (const prop of Object.keys(customProps)) {
+                Object.defineProperty(context, prop, {
+                    get() {
+                        context[prop] = customProps[prop];
+                        return customProps[prop];
+                    },
+                    set(val) {
+                        delete context[prop];
+                        context[prop] = val;
+                    },
+                    configurable: true,
+                });
+            }
+            const compilerOptions = {
+                "target": ts.ScriptTarget.ES5,
+                "module": ts.ModuleKind.CommonJS,
+                "lib": ["es6"],
+                "allowJs": false,
+                "checkJs": false,
+                "removeComments": false,
+                "noEmit": false,
+                "importHelpers": true,
+                "downlevelIteration": true,
+                "isolatedModules": false,
+                "strict": true,
+                "noImplicitAny": true,
+                "strictNullChecks": true,
+                "noImplicitThis": true,
+                "alwaysStrict": false,
+                "noUnusedLocals": true,
+                "noUnusedParameters": true,
+                "noImplicitReturns": true,
+                "noFallthroughCasesInSwitch": true,
+                "moduleResolution": ts.ModuleResolutionKind.NodeJs,
+                "experimentalDecorators": true,
+                "emitDecoratorMetadata": true,
+                "plugins": [
+                    {
+                        "name": "tslint-language-service",
+                    },
+                ],
+            };
+            const compilerHost = ts.createCompilerHost(compilerOptions);
+            const getSourceFile = compilerHost.getSourceFile;
+            compilerHost.getSourceFile = function (fn) {
+                if (fn === "eval.ts") {
+                    return ts.createSourceFile(fn, `${code}\r\n`, ts.ScriptTarget.ES5, false);
+                }
+                return getSourceFile.apply(this, arguments);
+            };
+            let output = "";
+            compilerHost.writeFile = (_fn, txt) => output += txt;
+            const program = ts.createProgram(["eval.ts"], compilerOptions, compilerHost);
+            const linter = new tslint.Linter({
+                fix: false,
+                formatter: "json",
+            });
+            linter.lint("eval.js", `${code}\r\n`, tslint.Configuration.findConfiguration("tslint.json", "../../").results);
+            const errs = program.getSyntacticDiagnostics(program.getSourceFile("eval.ts"));
+            errs.concat(program.getSemanticDiagnostics(program.getSourceFile("eval.ts")));
+            errs.concat(program.getDeclarationDiagnostics(program.getSourceFile("eval.ts")));
+            program.emit();
+            const out = yield vm.runInContext(output, context);
+            return {
+                eval: out,
+                ts: {
+                    errs,
+                    program,
+                },
+                tslint: linter.getResult(),
+            };
+        });
+    }
+}
+exports.Context = Context;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Sat Sep 02 2017 20:16:13 GMT+0200 (CEST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

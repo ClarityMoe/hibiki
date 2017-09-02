@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>db/PostgreSQL.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Command.html">Command</a><ul class='methods'><li data-type='method'><a href="Command.html#run">run</a></li></ul></li><li><a href="PostgreSQL.html">PostgreSQL</a><ul class='methods'><li data-type='method'><a href="PostgreSQL.html#connect">connect</a></li><li data-type='method'><a href="PostgreSQL.html#disconnect">disconnect</a></li><li data-type='method'><a href="PostgreSQL.html#insert">insert</a></li><li data-type='method'><a href="PostgreSQL.html#rawQuery">rawQuery</a></li><li data-type='method'><a href="PostgreSQL.html#select">select</a></li><li data-type='method'><a href="PostgreSQL.html#update">update</a></li></ul></li><li><a href="Shard.html">Shard</a><ul class='methods'><li data-type='method'><a href="Shard.html#connectShard">connectShard</a></li><li data-type='method'><a href="Shard.html#disconnectShard">disconnectShard</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="global.html#event:blocked">blocked</a></li></ul><h3>Namespaces</h3><ul><li><a href="ext.html">ext</a><ul class='methods'><li data-type='method'><a href="ext.html#.argument">argument</a></li><li data-type='method'><a href="ext.html#.command">command</a></li><li data-type='method'><a href="ext.html#.description">description</a></li><li data-type='method'><a href="ext.html#.ownerOnly">ownerOnly</a></li><li data-type='method'><a href="ext.html#.permission">permission</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">db/PostgreSQL.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+// PostgreSQL.ts - PostgreSQL client (noud02)
+Object.defineProperty(exports, "__esModule", { value: true });
+const child_process_1 = require("child_process");
+const pg = require("pg");
+/**
+ * PostgreSQL client class
+ *
+ * @export
+ * @class PostgreSQL
+ */
+class PostgreSQL {
+    constructor(options) {
+        this.options = options;
+        /**
+         * `pg` client
+         * @see https://node-postgres.com/
+         *
+         * @type {pg.Client}
+         */
+        this.client = new pg.Client(this.options);
+    }
+    /**
+     * Connects the client to the database
+     *
+     * @returns {Promise&lt;void>}
+     */
+    connect() {
+        return new Promise((resolve, reject) => {
+            this.client.connect((err) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve();
+            });
+        });
+    }
+    /**
+     * Disconnects the client from the database
+     *
+     * @returns {Promise&lt;void>}
+     */
+    disconnect() {
+        return new Promise((resolve, reject) => {
+            this.client.end((err) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve();
+            });
+        });
+    }
+    /**
+     * Execute a raw query (command)
+     *
+     * @param {string} query Query, eg: `SELECT * FROM guilds;`
+     * @returns {Promise&lt;string>}
+     */
+    rawQuery(query) {
+        return new Promise((resolve, reject) => {
+            child_process_1.exec(`psql ${this.options.database} -c '${query}'`, (err, stdout) => {
+                if (err) {
+                    return reject(err);
+                }
+                return resolve(stdout);
+            });
+        });
+    }
+    /**
+     * Insert data into a table
+     *
+     * @param {string} table Table to query
+     * @param {*} data Data to insert
+     * @returns {Promise&lt;pg.QueryResult>}
+     */
+    insert(table, data) {
+        const vals = [];
+        const keys = Object.keys(data);
+        for (const key of keys) {
+            vals.push(data[key]);
+        }
+        return this.client.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((_key, i) => `$${i + 1}`).join(", ")});`, vals);
+    }
+    /**
+     * Update data in a table
+     *
+     * @example PostgreSQL.update('nya', 'id = "awoo"', { reee: true });
+     *
+     * @param {string} table Table to query
+     * @param {string} expression Expression, eg: `id = 123456, name = "awoo"`
+     * @param {*} data New data
+     * @returns {Promise&lt;pg.QueryResult>}
+     */
+    update(table, expression, data) {
+        const vals = [];
+        const keys = Object.keys(data);
+        const changes = [];
+        for (const key of keys) {
+            vals.push(data[key]);
+            changes.push(`${key} = $${keys.indexOf(key) + 1}`);
+        }
+        return this.client.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expression};`, vals);
+    }
+    /**
+     * Select data from database
+     *
+     * @example PostgreSQL.select('nyan', 'id = "awoo"')
+     *
+     * @param {string} table Table to query
+     * @param {string} expression Expression, eg: `id = 123456, name = "awoo"`
+     * @returns {Promise&lt;pg.QueryResult>}
+     */
+    select(table, expression) {
+        return this.client.query(`SELECT * FROM ${table} WHERE ${expression};`);
+    }
+}
+exports.PostgreSQL = PostgreSQL;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Sat Sep 02 2017 20:16:13 GMT+0200 (CEST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

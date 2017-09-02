@@ -4,6 +4,9 @@
     "tslint.run": "onType",
     "docthis.includeTypes": true,
     "docthis.includeMemberOfOnClassMembers": false,
+    "typescript.format.insertSpaceBeforeFunctionParenthesis": true,
+    "typescript.format.insertSpaceAfterConstructor": true,
+    "docthis.inferTypesFromNames": true,
     // Please set your author name in your settings and enable this
     // "docthis.includeAuthorTag": true
 }

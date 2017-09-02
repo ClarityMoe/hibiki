@@ -3,12 +3,29 @@
 import { exec } from "child_process";
 import * as pg from "pg";
 
+/**
+ * PostgreSQL client class
+ *
+ * @export
+ * @class PostgreSQL
+ */
 export class PostgreSQL {
 
+    /**
+     * `pg` client
+     * @see https://node-postgres.com/
+     *
+     * @type {pg.Client}
+     */
     public client: pg.Client = new pg.Client(this.options);
 
     constructor (private options: pg.ClientConfig) {}
 
+    /**
+     * Connects the client to the database
+     *
+     * @returns {Promise<void>}
+     */
     public connect (): Promise<void> {
         return new Promise((resolve, reject) => {
             this.client.connect((err: Error) => {
@@ -21,6 +38,11 @@ export class PostgreSQL {
         });
     }
 
+    /**
+     * Disconnects the client from the database
+     *
+     * @returns {Promise<void>}
+     */
     public disconnect (): Promise<void> {
         return new Promise((resolve, reject) => {
             this.client.end((err: Error) => {
@@ -33,6 +55,12 @@ export class PostgreSQL {
         });
     }
 
+    /**
+     * Execute a raw query (command)
+     *
+     * @param {string} query Query, eg: `SELECT * FROM guilds;`
+     * @returns {Promise<string>}
+     */
     public rawQuery (query: string): Promise<string> {
         return new Promise((resolve, reject) => {
             exec(`psql ${this.options.database} -c '${query}'`, (err: Error, stdout: string) => {
@@ -45,6 +73,13 @@ export class PostgreSQL {
         });
     }
 
+    /**
+     * Insert data into a table
+     *
+     * @param {string} table Table to query
+     * @param {*} data Data to insert
+     * @returns {Promise<pg.QueryResult>}
+     */
     public insert (table: string, data: any): Promise<pg.QueryResult> {
         const vals: any[] = [];
         const keys: string[] = Object.keys(data);
@@ -56,6 +91,16 @@ export class PostgreSQL {
         return this.client.query(`INSERT INTO ${table} (${keys.join(", ")}) VALUES (${keys.map((_key, i) => `$${i + 1}`).join(", ")});`, vals);
     }
 
+    /**
+     * Update data in a table
+     *
+     * @example PostgreSQL.update('nya', 'id = "awoo"', { reee: true });
+     *
+     * @param {string} table Table to query
+     * @param {string} expression Expression, eg: `id = 123456, name = "awoo"`
+     * @param {*} data New data
+     * @returns {Promise<pg.QueryResult>}
+     */
     public update (table: string, expression: string, data: any): Promise<pg.QueryResult> {
         const vals: any[] = [];
         const keys: string[] = Object.keys(data);
@@ -69,6 +114,15 @@ export class PostgreSQL {
         return this.client.query(`UPDATE ${table} SET ${changes.join(", ")} WHERE ${expression};`, vals);
     }
 
+    /**
+     * Select data from database
+     *
+     * @example PostgreSQL.select('nyan', 'id = "awoo"')
+     *
+     * @param {string} table Table to query
+     * @param {string} expression Expression, eg: `id = 123456, name = "awoo"`
+     * @returns {Promise<pg.QueryResult>}
+     */
     public select (table: string, expression: string): Promise<pg.QueryResult> {
         return this.client.query(`SELECT * FROM ${table} WHERE ${expression};`);
     }

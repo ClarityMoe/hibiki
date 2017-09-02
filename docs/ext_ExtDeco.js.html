@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ext/ExtDeco.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Command.html">Command</a><ul class='methods'><li data-type='method'><a href="Command.html#run">run</a></li></ul></li><li><a href="PostgreSQL.html">PostgreSQL</a><ul class='methods'><li data-type='method'><a href="PostgreSQL.html#connect">connect</a></li><li data-type='method'><a href="PostgreSQL.html#disconnect">disconnect</a></li><li data-type='method'><a href="PostgreSQL.html#insert">insert</a></li><li data-type='method'><a href="PostgreSQL.html#rawQuery">rawQuery</a></li><li data-type='method'><a href="PostgreSQL.html#select">select</a></li><li data-type='method'><a href="PostgreSQL.html#update">update</a></li></ul></li><li><a href="Shard.html">Shard</a><ul class='methods'><li data-type='method'><a href="Shard.html#connectShard">connectShard</a></li><li data-type='method'><a href="Shard.html#disconnectShard">disconnectShard</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="global.html#event:blocked">blocked</a></li></ul><h3>Namespaces</h3><ul><li><a href="ext.html">ext</a><ul class='methods'><li data-type='method'><a href="ext.html#.argument">argument</a></li><li data-type='method'><a href="ext.html#.command">command</a></li><li data-type='method'><a href="ext.html#.description">description</a></li><li data-type='method'><a href="ext.html#.ownerOnly">ownerOnly</a></li><li data-type='method'><a href="ext.html#.permission">permission</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">ext/ExtDeco.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+// CommandDeco.ts - Decorators for commands (noud02)
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * @namespace ext
+ */
+function applyMeta(key, val) {
+    return (target) => {
+        Object.defineProperty(target.prototype, key, {
+            configurable: true,
+            enumerable: true,
+            value: val,
+            writable: true,
+        });
+        return target;
+    };
+}
+/**
+ * Sets the command name
+ *
+ * @example @Hibiki.ext.command("nya")
+ * class MyCommand extends Hibiki.Command {
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {string} name Command name
+ * @returns {ClassDecorator}
+ */
+function command(name) {
+    return applyMeta("name", name);
+}
+exports.command = command;
+/**
+ * Adds an argument to the command
+ *
+ * @example @Hibiki.ext.argument("nyan", "user", false)
+ * class MyCommand extends Hibiki.Command {
+ *
+ *      public run (ctx: Hibiki.Context): Promise&lt;any> {
+ *          // ctx.args.nyan = given user
+ *          ctx.send(ctx.args.nyan.username);
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {string} name Argument name
+ * @param {string} type Argument type (user, guild, channel, role, string, number)
+ * @param {boolean} optional Whether the argument is optional or not
+ * @returns {ClassDecorator}
+ */
+function argument(name, type, optional) {
+    return (target) => {
+        if (!target.prototype.args) {
+            Object.defineProperty(target.prototype, "args", {
+                configurable: true,
+                enumerable: true,
+                value: [{ name, optional, type }],
+                writable: true,
+            });
+            return target;
+        }
+        Object.defineProperty(target.prototype, "args", {
+            configurable: true,
+            enumerable: true,
+            value: target.prototype.args.push({ name, optional, type }),
+            writable: true,
+        });
+        return target;
+    };
+}
+exports.argument = argument;
+/**
+ * Adds a required permission
+ *
+ * @example @Hibiki.ext.permission("manageGuild", true) // set the permission to `optional` because we don't need it
+ * class MyCommand extends Hibiki.Command {
+ *
+ *      public run (ctx: Hibiki.Context): Promise&lt;any> {
+ *          ctx.send(ctx.perms.manageGuild) // sends if the user has the permission or not
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {string} name Permission name @see https://abal.moe/Eris/docs/reference
+ * @param {boolean} optional Sets the permission to optional
+ * @param {boolean} [bot] If the permission should be required by the bot rather than the user
+ * @returns {ClassDecorator}
+ */
+function permission(name, optional, bot) {
+    return (target) => {
+        if (!target.prototype.perms) {
+            Object.defineProperty(target.prototype, bot &amp;&amp; "botPerms" || "perms", {
+                configurable: true,
+                enumerable: true,
+                value: [{ name, optional }],
+                writable: true,
+            });
+            return target;
+        }
+        Object.defineProperty(target.prototype, bot &amp;&amp; "botPerms" || "perms", {
+            configurable: true,
+            enumerable: true,
+            value: target.prototype.args.push({ name, optional }),
+            writable: true,
+        });
+        return target;
+    };
+}
+exports.permission = permission;
+/**
+ * Sets the command description
+ *
+ * @example @Hibiki.ext.description("nya", "nya", "nya") // nya nya nya
+ * class MyCommand extends Hibiki.Command {
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {...any[]} args Description
+ * @returns {ClassDecorator}
+ */
+function description(...args) {
+    return applyMeta("desc", args.join("\n"));
+}
+exports.description = description;
+/**
+ * Sets the command to owner only
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @returns {ClassDecorator}
+ */
+function ownerOnly() {
+    return applyMeta("ownerOnly", true);
+}
+exports.ownerOnly = ownerOnly;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Sat Sep 02 2017 20:16:13 GMT+0200 (CEST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

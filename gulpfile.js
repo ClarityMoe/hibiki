@@ -2,39 +2,55 @@
 
 const gulp = require('gulp');
 const ts = require('gulp-typescript');
+const jsdoc = require('gulp-jsdoc3');
+const clean = require('gulp-clean');
 
-//transpile task 
+gulp.task("default", ["compile", "clean:docs", "documentation"]);
+gulp.task("documentation", ["compile", "clean:docs", "jsdoc"]);
+
+gulp.task("clean:docs", () => {
+    return gulp.src('./docs', {read:false})
+        .pipe(clean());
+})
+
+gulp.task("clean:dist", () => {
+    return gulp.src('./dist', {read:False})
+        .pipe(clean());
+})
+
+gulp.task("jsdoc", (cb) => {
+    gulp.src(["README.md", "./src/**/*.ts"], {read:false})
+        .pipe(jsdoc(require("./.jsdoc.json"), cb));
+})
+
 gulp.task('compile', () => {
-    //gulp.src() locates your file, I made it resolve through every fucking thing.
     return gulp.src('./src/**/*.ts')
-    //I'm lazy so i'm rusing tsconfig.json
-    .pipe(ts({
-        rootDir: './src',
-        experimentalDecorators: true,
-        emitDecoratorMetadata: true,
-        target: 'es6',
-        lib: ['es6'],
-        outDir: './dist/',
-        module: 'commonjs',
-        removeComments: false,
-        noUnusedParameters: true,
-        noImplicitReturns: true,
-        noFallthroughCasesInSwitch: true,
-        allowJs: false,
-        checkJs: false,
-        declaration: true,
-        importHelpers: true,
-        downlevelIteration: true,
-        noEmitOnError: true,
-        strict: true,
-        noImplicitAny: true,
-        noImplicitThis: true,
-        alwaysStrict: true,
-        allowSyntheticDefaultImports: true,
-        moduleResolution: 'node',
-        baseUrl: './',
-        typeRoots: [ './types/', './node_modules/@types/']
-    }))
-    //finally output this shit in dist
-    .pipe(gulp.dest('./dist/'));
+        .pipe(ts({
+            rootDir: './src',
+            experimentalDecorators: true,
+            emitDecoratorMetadata: true,
+            target: 'es6',
+            lib: ['es6'],
+            outDir: './dist/',
+            module: 'commonjs',
+            removeComments: false,
+            noUnusedParameters: true,
+            noImplicitReturns: true,
+            noFallthroughCasesInSwitch: true,
+            allowJs: false,
+            checkJs: false,
+            declaration: true,
+            importHelpers: true,
+            downlevelIteration: true,
+            noEmitOnError: true,
+            strict: true,
+            noImplicitAny: true,
+            noImplicitThis: true,
+            alwaysStrict: true,
+            allowSyntheticDefaultImports: true,
+            moduleResolution: 'node',
+            baseUrl: './',
+            typeRoots: [ './types/', './node_modules/@types/']
+        }))
+        .pipe(gulp.dest('./dist/'));
 });
