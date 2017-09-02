@@ -14,4 +14,4 @@ test_script:
   - tsc --version
   - gulp compile
 
-build: on
+build: off
