@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>ext/CommandHandler.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Command.html">Command</a><ul class='methods'><li data-type='method'><a href="Command.html#run">run</a></li></ul></li><li><a href="CommandHandler.html">CommandHandler</a><ul class='methods'><li data-type='method'><a href="CommandHandler.html#checkArguments">checkArguments</a></li><li data-type='method'><a href="CommandHandler.html#checkBotPermissions">checkBotPermissions</a></li><li data-type='method'><a href="CommandHandler.html#checkMessage">checkMessage</a></li><li data-type='method'><a href="CommandHandler.html#checkPermissions">checkPermissions</a></li><li data-type='method'><a href="CommandHandler.html#executeCommand">executeCommand</a></li><li data-type='method'><a href="CommandHandler.html#init">init</a></li></ul></li><li><a href="Context.html">Context</a><ul class='methods'><li data-type='method'><a href="Context.html#createMessage">createMessage</a></li><li data-type='method'><a href="Context.html#eval">eval</a></li><li data-type='method'><a href="Context.html#send">send</a></li><li data-type='method'><a href="Context.html#sendCode">sendCode</a></li></ul></li><li><a href="ExtensionManager.html">ExtensionManager</a><ul class='methods'><li data-type='method'><a href="ExtensionManager.html#init">init</a></li></ul></li><li><a href="LocaleManager.html">LocaleManager</a><ul class='methods'><li data-type='method'><a href="LocaleManager.html#init">init</a></li><li data-type='method'><a href="LocaleManager.html#localizedPerm">localizedPerm</a></li><li data-type='method'><a href="LocaleManager.html#reload">reload</a></li><li data-type='method'><a href="LocaleManager.html#str">str</a></li></ul></li><li><a href="PostgreSQL.html">PostgreSQL</a><ul class='methods'><li data-type='method'><a href="PostgreSQL.html#connect">connect</a></li><li data-type='method'><a href="PostgreSQL.html#disconnect">disconnect</a></li><li data-type='method'><a href="PostgreSQL.html#insert">insert</a></li><li data-type='method'><a href="PostgreSQL.html#rawQuery">rawQuery</a></li><li data-type='method'><a href="PostgreSQL.html#select">select</a></li><li data-type='method'><a href="PostgreSQL.html#update">update</a></li></ul></li><li><a href="Ratelimiter.html">Ratelimiter</a><ul class='methods'><li data-type='method'><a href="Ratelimiter.html#use">use</a></li></ul></li><li><a href="Shard.html">Shard</a><ul class='methods'><li data-type='method'><a href="Shard.html#connectShard">connectShard</a></li><li data-type='method'><a href="Shard.html#disconnectShard">disconnectShard</a></li></ul></li></ul><h3>Events</h3><ul><li><a href="global.html#event:blocked">blocked</a></li></ul><h3>Namespaces</h3><ul><li><a href="ext.html">ext</a><ul class='methods'><li data-type='method'><a href="ext.html#.argument">argument</a></li><li data-type='method'><a href="ext.html#.command">command</a></li><li data-type='method'><a href="ext.html#.description">description</a></li><li data-type='method'><a href="ext.html#.ownerOnly">ownerOnly</a></li><li data-type='method'><a href="ext.html#.permission">permission</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">ext/CommandHandler.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>"use strict";
+// CommandHandler.ts - Command handler (noud02)
+Object.defineProperty(exports, "__esModule", { value: true });
+const tslib_1 = require("tslib");
+const Eris = require("eris");
+const minimist = require("minimist");
+const Context_1 = require("./Context");
+const Ratelimiter_1 = require("./Ratelimiter");
+/**
+ * Command handler class
+ *
+ * @export
+ * @class CommandHandler
+ */
+class CommandHandler {
+    constructor(shard) {
+        this.shard = shard;
+        /**
+         * Map of buckets
+         *
+         * @type {Map&lt;string, Ratelimiter>}
+         */
+        this.buckets = new Map();
+    }
+    /**
+     * Initializes the command handler
+     *
+     * @returns {Promise&lt;void>}
+     */
+    init() {
+        // link the messageCreate event to checkMessage to check if the message is a command
+        // can safely void the error because I don't think there will be any important stuff
+        this.shard.on("messageCreate", (msg) => this.checkMessage(msg).catch((e) => void (e))); // tslint:disable-line:no-unused-expression
+        return Promise.resolve();
+    }
+    /**
+     * Check if a message is a command
+     *
+     * @param {Eris.Message} msg Message
+     * @returns {Promise&lt;void>}
+     */
+    checkMessage(msg) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            let guildPrefixes = [];
+            let usedPrefix = "";
+            let command = "";
+            let args;
+            if (msg.channel instanceof Eris.GuildChannel) {
+                const res = yield this.shard.pg.select("guilds", `id = ${msg.channel.guild.id}`);
+                guildPrefixes = res.rows[0].prefixes;
+            }
+            if (msg.author.bot) {
+                return;
+            }
+            if (guildPrefixes.length > 0) {
+                for (const prefix of guildPrefixes) {
+                    if (!msg.content.startsWith(prefix)) {
+                        continue;
+                    }
+                    else {
+                        usedPrefix = prefix;
+                        break;
+                    }
+                }
+            }
+            else {
+                for (const prefix of this.shard.hibikiOptions.hibiki.prefixes) {
+                    if (!msg.content.startsWith(prefix)) {
+                        continue;
+                    }
+                    else {
+                        usedPrefix = prefix;
+                        break;
+                    }
+                }
+            }
+            if (!usedPrefix) {
+                return Promise.reject(new Error("Message not a command"));
+            }
+            command = msg.content.substring(usedPrefix.length).split(" ")[0];
+            args = minimist(msg.content.substring(usedPrefix.length).split(" ").slice(1), { strings: true });
+            return this.executeCommand(msg, command, args, usedPrefix);
+        });
+    }
+    /**
+     * Execute a command
+     *
+     * @param {Eris.Message} msg Message
+     * @param {string} command Command name
+     * @param {minimist.ParsedArgs} args Arguments
+     * @param {string} prefix Prefix used
+     * @returns {Promise&lt;any>}
+     */
+    executeCommand(msg, command, args, prefix) {
+        return tslib_1.__awaiter(this, void 0, void 0, function* () {
+            const cmd = this.shard.ext.commands.get(command);
+            let bucket = this.buckets.get(msg.author.id);
+            let ok = false;
+            if (!cmd) {
+                return Promise.reject(new Error(`Command ${command} not found`));
+            }
+            const useBucket = () => {
+                if (bucket) {
+                    switch (bucket.use()) {
+                        default:
+                        case "OK": {
+                            ok = true;
+                            break;
+                        }
+                        case "RATELIMITED": {
+                            const waitTime = (bucket.lastUse + bucket.time / 2) - Date.now();
+                            ok = false;
+                            if (bucket.sentWarn) {
+                                return;
+                            }
+                            else {
+                                return msg.channel.createMessage(this.shard.lm.t("commands.cooldown", { username: msg.author.username, time: Math.round(waitTime / 1000) }))
+                                    .then(() => bucket ? bucket.sentWarn = true : true) // tslint:disable-line;no-unused-expression
+                                    .catch((e) => console.error(e)); // tslint:disable-line:no-unused-expression
+                            }
+                        }
+                    }
+                }
+                return;
+            };
+            if (this.shard.hibikiOptions.hibiki.owners.indexOf(msg.author.id) === -1) {
+                if (bucket) {
+                    useBucket();
+                }
+                else {
+                    this.buckets.set(msg.author.id, new Ratelimiter_1.Ratelimiter());
+                    bucket = this.buckets.get(msg.author.id);
+                    useBucket();
+                }
+            }
+            else {
+                ok = true;
+            }
+            if (cmd.ownerOnly &amp;&amp; this.shard.hibikiOptions.hibiki.owners.indexOf(msg.author.id) === -1) {
+                return Promise.reject(new Error("Command is owner only"));
+            }
+            let newArgs = {};
+            let newPerms = {};
+            let newBotPerms = {};
+            try {
+                newArgs = yield this.checkArguments(msg, args._, cmd.args || []);
+            }
+            catch (e) {
+                return msg.channel.createMessage(e);
+            }
+            try {
+                newPerms = yield this.checkPermissions(msg, cmd.perms || []);
+            }
+            catch (e) {
+                return msg.channel.createMessage(e);
+            }
+            try {
+                newBotPerms = yield this.checkBotPermissions(msg, cmd.botPerms || []);
+            }
+            catch (e) {
+                return msg.channel.createMessage(e);
+            }
+            const ctx = new Context_1.Context(this.shard, msg, prefix, command, args, newArgs);
+            if (ok) {
+                return cmd.run(ctx);
+            }
+            else {
+                return Promise.resolve();
+            }
+        });
+    }
+    /**
+     * Check the permissions
+     *
+     * @param {Eris.Message} msg Message
+     * @param {ICommandPermission[]} perms Array of permissions
+     * @returns {Promise&lt;map>}
+     */
+    checkPermissions(msg, perms) {
+        const newPerms = {};
+        if (!(msg.channel instanceof Eris.GuildChannel)) {
+            for (const perm of perms) {
+                newPerms[perm.name] = true;
+            }
+            return Promise.resolve(newPerms);
+        }
+        for (const perm of perms) {
+            if (!perm.optional &amp;&amp; !msg.channel.permissionsOf(msg.author.id).has(perm.name)) {
+                return Promise.reject(this.shard.lm.t("permissions.user_lack_perms", {
+                    permission: this.shard.lm.localizedPerm(perm.name),
+                    username: msg.author.username,
+                }));
+            }
+            newPerms[perm.name] = msg.channel.permissionsOf(msg.author.id).has(perm.name);
+        }
+        return Promise.resolve(newPerms);
+    }
+    /**
+     * Check the bot permissions
+     *
+     * @param {Eris.Message} msg Message
+     * @param {ICommandPermission[]} perms Array of permissions
+     * @returns {Promise&lt;map>}
+     */
+    checkBotPermissions(msg, perms) {
+        const newPerms = {};
+        if (!(msg.channel instanceof Eris.GuildChannel)) {
+            for (const perm of perms) {
+                newPerms[perm.name] = true;
+            }
+            return Promise.resolve(newPerms);
+        }
+        for (const perm of perms) {
+            if (!perm.optional &amp;&amp; !msg.channel.permissionsOf(this.shard.user.id).has(perm.name)) {
+                return Promise.reject(this.shard.lm.t("permissions.bot_lack_perms", {
+                    permission: this.shard.lm.localizedPerm(perm.name),
+                    username: msg.author.username,
+                }));
+            }
+            newPerms[perm.name] = msg.channel.permissionsOf(this.shard.user.id).has(perm.name);
+        }
+        return Promise.resolve(newPerms);
+    }
+    /**
+     * Check the arguments and return new args
+     *
+     * @param {Eris.Message} msg Message
+     * @param {string[]} given Array of given arguments
+     * @param {ICommandArg[]} args Array of command args
+     * @returns {Promise&lt;map>}
+     */
+    checkArguments(msg, given, args) {
+        const newArgs = {};
+        for (const arg of args) {
+            const i = args.indexOf(arg);
+            if (!given[i]) {
+                if (arg.optional) {
+                    continue;
+                }
+                else {
+                    return Promise.reject(this.shard.lm.t("commands.argument_not_specified", { username: msg.author.username, argument: arg.name }));
+                }
+            }
+            switch (arg.type) {
+                case "number": {
+                    if (isNaN(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+                    break;
+                }
+                case "user": {
+                    const mention = /&lt;@!?(\d+)>/i;
+                    const userdisc = /.{0,32}#\d{4}/i;
+                    const username = /.{0,32}/i;
+                    const id = /\d+/i;
+                    if (!mention.test(given[i]) &amp;&amp; !userdisc.test(given[i]) &amp;&amp; !username.test(given[i]) &amp;&amp; !id.test(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+                    // meme
+                    if (given[i] === "me") {
+                        newArgs[arg.name] = msg.author;
+                    }
+                    else if (mention.test(given[i])) {
+                        const res = mention.exec(given[i]);
+                        if (res) {
+                            const user = this.shard.users.get(res[1]);
+                            /** @todo add websockets and try to get user from other shard using them */
+                            if (user) {
+                                newArgs[arg.name] = user;
+                            }
+                        }
+                    }
+                    else if (userdisc.test(given[i])) {
+                        if (!(msg.channel instanceof Eris.GuildChannel)) {
+                            return Promise.reject(this.shard.lm.t("commands.guild_only", { username: msg.author.username }));
+                        }
+                        const user = msg.channel.guild.members.filter((member) => `${member.username}#${member.discriminator}` === given[i])[0];
+                        if (!user) {
+                            return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
+                        }
+                        newArgs[arg.name] = user;
+                    }
+                    else if (id.test(given[i])) {
+                        const user = this.shard.users.get(given[i]);
+                        if (!user) {
+                            return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
+                        }
+                        newArgs[arg.name] = user;
+                    }
+                    /** @todo add search thing if username is specified */
+                    break;
+                }
+                case "channel": {
+                    const mention = /&lt;#\d+>/i;
+                    const name = /[^\s]{0,100}/i;
+                    const id = /\d+/i;
+                    if (!mention.test(given[i]) &amp;&amp; !name.test(given[i]) &amp;&amp; !id.test(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+                    break;
+                }
+                case "role": {
+                    const mention = /&lt;&amp;\d+>/i;
+                    const name = /.{0,}/i;
+                    const id = /\d+/i;
+                    if (!mention.test(given[i]) &amp;&amp; !name.test(given[i]) &amp;&amp; !id.test(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+                    break;
+                }
+                case "string":
+                default: {
+                    newArgs[arg.name] = given[i];
+                    return Promise.resolve(newArgs);
+                }
+            }
+        }
+        return Promise.resolve(newArgs);
+    }
+}
+exports.CommandHandler = CommandHandler;
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.4</a> on Sat Sep 02 2017 21:02:20 GMT+0200 (CEST) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

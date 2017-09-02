@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>client/Shard.js - Documentation</title>
+    <title>locale/LocaleManager.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">client/Shard.js</h1>
+    <h1 class="page-title">locale/LocaleManager.js</h1>
     
 
     
@@ -38,121 +38,85 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
-// Shard.ts - Shard class (noud02)
+// LocaleManager.ts - Locales (noud02)
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const blocked = require("blocked");
-const Eris = require("eris");
-const PostgreSQL_1 = require("../db/PostgreSQL");
-const CommandHandler_1 = require("../ext/CommandHandler");
-const ExtensionManager_1 = require("../ext/ExtensionManager");
-const LocaleManager_1 = require("../locale/LocaleManager");
-const WebSocketClient_1 = require("./WebSocketClient");
+const fs = require("fs");
+const i18next = require("i18next");
+const i18backend = require("i18next-node-fs-backend");
+const path = require("path");
 /**
- * Main Shard/Client class
- * @see https://abal.moe/Eris/docs/Client
+ * Locale manager class
  *
  * @export
- * @class Shard
- * @extends {Eris.Client}
+ * @class LocaleManager
  */
-class Shard extends Eris.Client {
-    constructor(token, hibikiOptions) {
-        super(token, hibikiOptions.eris);
-        this.hibikiOptions = hibikiOptions;
-        /**
-         * PostgreSQL client
-         *
-         * @type {PostgreSQL}
-         */
-        this.pg = new PostgreSQL_1.PostgreSQL(this.hibikiOptions.postgres);
-        /**
-         * WebSocket client
-         *
-         * @type {WebSocketClient}
-         */
-        this.ws = new WebSocketClient_1.WebSocketClient(`${this.hibikiOptions.ws.ssl &amp;&amp; "wss" || "ws"}://${this.hibikiOptions.ws.host}:${this.hibikiOptions.ws.port || 8080}`, {
-            headers: {
-                token: this.token,
-            },
-        });
-        /**
-         * Extension manager
-         *
-         * @type {ExtensionManager}
-         */
-        this.ext = new ExtensionManager_1.ExtensionManager(this.hibikiOptions.ext);
-        /**
-         * Command handler
-         *
-         * @type {CommandHandler}
-         */
-        this.ch = new CommandHandler_1.CommandHandler(this);
-        /**
-         * Locale manager
-         *
-         * @type {LocaleManager}
-         */
-        this.lm = new LocaleManager_1.LocaleManager();
-        /**
-         * Event loop block detector
-         *
-         * @type {NodeJS.Timer}
-         */
-        /**
-         * Emitted when the event loop is blocked
-         *
-         * @event blocked
-         */
-        this.blocked = blocked((ms) => this.emit("blocked", ms));
-    }
+class LocaleManager {
     /**
-     * Connects the shard.
+     * Initializes the locale manager
      *
-     * @param {number} [timeout] Timeout in ms
-     * @returns {Promise&lt;void>}
+     * @returns {Promise&lt;i18next.TranslationFunction>}
      */
-    connectShard(timeout) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const connTimeout = setTimeout(() => {
-                return Promise.reject(new Error("Connect timed out"));
-            }, timeout || 10000);
-            try {
-                yield this.lm.init();
-                yield this.connect();
-                yield this.pg.connect();
-                // await this.ws.connect();
-                yield this.ext.init();
-                yield this.ch.init();
-                clearTimeout(connTimeout);
-                return Promise.resolve();
+    init() {
+        return new Promise((resolve, reject) => {
+            const opts = {
+                addPath: `${__dirname}/../../i18n/{{lng}}/{{ns}}.missing.json`,
+                jsonIndent: 4,
+                loadPath: `${__dirname}/../../i18n/{{lng}}/{{ns}}.json`,
+            };
+            const langs = [];
+            for (const dir of fs.readdirSync(path.join(__dirname, "..", "..", "i18n/"))) {
+                if (fs.statSync(path.join(__dirname, "..", "..", "i18n", dir)).isDirectory()) {
+                    langs.push(dir);
+                }
             }
-            catch (e) {
-                return Promise.reject(e);
-            }
+            i18next.use(i18backend).init({
+                backend: opts,
+                fallbackLng: "en",
+                lng: "en",
+                load: "all",
+                preload: langs,
+            }, (err, t) => {
+                if (err) {
+                    return reject(err);
+                }
+                this.t = t;
+                return resolve(t);
+            });
         });
     }
     /**
-     * Disconnects the shard
+     * Reloads the locales
      *
      * @returns {Promise&lt;void>}
      */
-    disconnectShard() {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                this.disconnect({ reconnect: false });
-                // await this.ext.break();
-                // await this.ws.disconnect();
-                yield this.pg.disconnect();
-                return Promise.resolve();
-            }
-            catch (e) {
-                return Promise.reject(e);
-            }
+    reload() {
+        return new Promise((resolve, reject) => {
+            i18next.reloadResources();
+            i18next.on("loaded", resolve);
+            i18next.on("failedLoading", reject);
         });
+    }
+    /**
+     * Returns a localized permission
+     *
+     * @param {string} perm Permission
+     * @returns {string}
+     */
+    localizedPerm(perm) {
+        return this.t(`localized_perms.${perm}`);
+    }
+    /**
+     * Returns a localized string
+     *
+     * @param {string | string[]} str string
+     * @param {map} opt options
+     * @returns {string}
+     */
+    str(str, opt) {
+        return this.t(str, opt);
     }
 }
-exports.Shard = Shard;
+exports.LocaleManager = LocaleManager;
 </code></pre>
         </article>
     </section>

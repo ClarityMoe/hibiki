@@ -59,7 +59,7 @@ export class Command {
     public perms: ICommandPermission[];
     /**
      * Permissions for the bot on the command
-     * 
+     *
      * @type {ICommandPermission[]}
      */
     public botPerms: ICommandPermission[];

@@ -5,10 +5,26 @@ import * as i18next from "i18next";
 import * as i18backend from "i18next-node-fs-backend";
 import * as path from "path";
 
+/**
+ * Locale manager class
+ * 
+ * @export
+ * @class LocaleManager
+ */
 export class LocaleManager {
 
+    /**
+     * Translation function
+     *
+     * @type {i18next.TranslationFunction}
+     */
     public t: i18next.TranslationFunction;
 
+    /**
+     * Initializes the locale manager
+     * 
+     * @returns {Promise<i18next.TranslationFunction>} 
+     */
     public init (): Promise<i18next.TranslationFunction> {
         return new Promise((resolve, reject) => {
             const opts: i18nextNodeFsBackEnd.i18nextNodeFsBackEndOptions = {
@@ -42,6 +58,11 @@ export class LocaleManager {
         });
     }
 
+    /**
+     * Reloads the locales
+     * 
+     * @returns {Promise<void>} 
+     */
     public reload (): Promise<void> {
         return new Promise((resolve, reject) => {
             i18next.reloadResources();
@@ -50,8 +71,25 @@ export class LocaleManager {
         });
     }
 
+    /**
+     * Returns a localized permission
+     *
+     * @param {string} perm Permission
+     * @returns {string}
+     */
     public localizedPerm (perm: string): string {
         return this.t(`localized_perms.${perm}`);
+    }
+
+    /**
+     * Returns a localized string
+     * 
+     * @param {string | string[]} str string
+     * @param {map} opt options
+     * @returns {string}
+     */
+    public str (str: string | string[], opt: { [key: string]: any }): string {
+        return this.t(str, opt);
     }
 
 }

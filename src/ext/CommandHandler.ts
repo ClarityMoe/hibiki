@@ -12,12 +12,28 @@ import {
 import { Context } from "./Context";
 import { Ratelimiter } from "./Ratelimiter";
 
+/**
+ * Command handler class
+ * 
+ * @export
+ * @class CommandHandler
+ */
 export class CommandHandler {
 
+    /**
+     * Map of buckets
+     *
+     * @type {Map<string, Ratelimiter>}
+     */
     public buckets: Map<string, Ratelimiter> = new Map<string, Ratelimiter>();
 
     constructor (private shard: Shard) {}
 
+    /**
+     * Initializes the command handler
+     *
+     * @returns {Promise<void>} 
+     */
     public init (): Promise<void> {
         // link the messageCreate event to checkMessage to check if the message is a command
         // can safely void the error because I don't think there will be any important stuff
@@ -26,6 +42,12 @@ export class CommandHandler {
         return Promise.resolve();
     }
 
+    /**
+     * Check if a message is a command
+     * 
+     * @param {Eris.Message} msg Message
+     * @returns {Promise<void>}
+     */
     public async checkMessage (msg: Eris.Message): Promise<void> {
         let guildPrefixes: string[] = [];
         let usedPrefix: string = "";
@@ -71,6 +93,15 @@ export class CommandHandler {
         return this.executeCommand(msg, command, args, usedPrefix);
     }
 
+    /**
+     * Execute a command
+     * 
+     * @param {Eris.Message} msg Message
+     * @param {string} command Command name
+     * @param {minimist.ParsedArgs} args Arguments
+     * @param {string} prefix Prefix used
+     * @returns {Promise<any>}
+     */
     public async executeCommand (msg: Eris.Message, command: string, args: minimist.ParsedArgs, prefix: string): Promise<any> {
         const cmd: Command | undefined = this.shard.ext.commands.get(command);
         let bucket: Ratelimiter | undefined = this.buckets.get(msg.author.id);
@@ -153,6 +184,13 @@ export class CommandHandler {
         }
     }
 
+    /**
+     * Check the permissions
+     * 
+     * @param {Eris.Message} msg Message
+     * @param {ICommandPermission[]} perms Array of permissions
+     * @returns {Promise<map>}
+     */
     public checkPermissions (msg: Eris.Message, perms: ICommandPermission[]): Promise<{ [key: string]: boolean }> {
         const newPerms: { [key: string]: boolean } = {};
 
@@ -178,6 +216,13 @@ export class CommandHandler {
         return Promise.resolve(newPerms);
     }
 
+    /**
+     * Check the bot permissions
+     * 
+     * @param {Eris.Message} msg Message
+     * @param {ICommandPermission[]} perms Array of permissions
+     * @returns {Promise<map>}
+     */
     public checkBotPermissions (msg: Eris.Message, perms: ICommandPermission[]): Promise<{ [key: string]: boolean }> {
         const newPerms: { [key: string]: boolean } = {};
 
@@ -203,6 +248,14 @@ export class CommandHandler {
         return Promise.resolve(newPerms);
     }
 
+    /**
+     * Check the arguments and return new args
+     * 
+     * @param {Eris.Message} msg Message
+     * @param {string[]} given Array of given arguments
+     * @param {ICommandArg[]} args Array of command args
+     * @returns {Promise<map>}
+     */
     public checkArguments (msg: Eris.Message, given: string[], args: ICommandArg[]): Promise<{ [key: string]: any }> {
         const newArgs: { [key: string]: any } = {};
 

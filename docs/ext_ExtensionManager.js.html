@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>client/Shard.js - Documentation</title>
+    <title>ext/ExtensionManager.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">client/Shard.js</h1>
+    <h1 class="page-title">ext/ExtensionManager.js</h1>
     
 
     
@@ -38,121 +38,51 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
-// Shard.ts - Shard class (noud02)
+// ExtensionManager.ts - Extension manager (noud02)
 Object.defineProperty(exports, "__esModule", { value: true });
-const tslib_1 = require("tslib");
-const blocked = require("blocked");
-const Eris = require("eris");
-const PostgreSQL_1 = require("../db/PostgreSQL");
-const CommandHandler_1 = require("../ext/CommandHandler");
-const ExtensionManager_1 = require("../ext/ExtensionManager");
-const LocaleManager_1 = require("../locale/LocaleManager");
-const WebSocketClient_1 = require("./WebSocketClient");
+const path = require("path");
+const rreaddirSync = require("recursive-readdir-sync");
 /**
- * Main Shard/Client class
- * @see https://abal.moe/Eris/docs/Client
+ * Extension manager class
  *
  * @export
- * @class Shard
- * @extends {Eris.Client}
+ * @class ExtensionManager
  */
-class Shard extends Eris.Client {
-    constructor(token, hibikiOptions) {
-        super(token, hibikiOptions.eris);
-        this.hibikiOptions = hibikiOptions;
+class ExtensionManager {
+    constructor(options) {
+        this.options = options;
         /**
-         * PostgreSQL client
+         * Map of commands
          *
-         * @type {PostgreSQL}
+         * @type {Map&lt;string, Command>}
          */
-        this.pg = new PostgreSQL_1.PostgreSQL(this.hibikiOptions.postgres);
-        /**
-         * WebSocket client
-         *
-         * @type {WebSocketClient}
-         */
-        this.ws = new WebSocketClient_1.WebSocketClient(`${this.hibikiOptions.ws.ssl &amp;&amp; "wss" || "ws"}://${this.hibikiOptions.ws.host}:${this.hibikiOptions.ws.port || 8080}`, {
-            headers: {
-                token: this.token,
-            },
-        });
-        /**
-         * Extension manager
-         *
-         * @type {ExtensionManager}
-         */
-        this.ext = new ExtensionManager_1.ExtensionManager(this.hibikiOptions.ext);
-        /**
-         * Command handler
-         *
-         * @type {CommandHandler}
-         */
-        this.ch = new CommandHandler_1.CommandHandler(this);
-        /**
-         * Locale manager
-         *
-         * @type {LocaleManager}
-         */
-        this.lm = new LocaleManager_1.LocaleManager();
-        /**
-         * Event loop block detector
-         *
-         * @type {NodeJS.Timer}
-         */
-        /**
-         * Emitted when the event loop is blocked
-         *
-         * @event blocked
-         */
-        this.blocked = blocked((ms) => this.emit("blocked", ms));
+        this.commands = new Map();
     }
     /**
-     * Connects the shard.
-     *
-     * @param {number} [timeout] Timeout in ms
-     * @returns {Promise&lt;void>}
-     */
-    connectShard(timeout) {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            const connTimeout = setTimeout(() => {
-                return Promise.reject(new Error("Connect timed out"));
-            }, timeout || 10000);
-            try {
-                yield this.lm.init();
-                yield this.connect();
-                yield this.pg.connect();
-                // await this.ws.connect();
-                yield this.ext.init();
-                yield this.ch.init();
-                clearTimeout(connTimeout);
-                return Promise.resolve();
-            }
-            catch (e) {
-                return Promise.reject(e);
-            }
-        });
-    }
-    /**
-     * Disconnects the shard
+     * Initializes the extension manager
      *
      * @returns {Promise&lt;void>}
      */
-    disconnectShard() {
-        return tslib_1.__awaiter(this, void 0, void 0, function* () {
-            try {
-                this.disconnect({ reconnect: false });
-                // await this.ext.break();
-                // await this.ws.disconnect();
-                yield this.pg.disconnect();
-                return Promise.resolve();
+    init() {
+        let files = [];
+        try {
+            files = rreaddirSync(path.resolve(this.options.extensionDir));
+        }
+        catch (e) {
+            return Promise.reject(e);
+        }
+        for (const file of files) {
+            if (!file.endsWith(".js")) {
+                continue;
             }
-            catch (e) {
-                return Promise.reject(e);
-            }
-        });
+            const Ext = require(file);
+            this.commands.set(Ext.prototype.name, new Ext());
+            delete require.cache[require.resolve(file)];
+        }
+        return Promise.resolve();
     }
 }
-exports.Shard = Shard;
+exports.ExtensionManager = ExtensionManager;
 </code></pre>
         </article>
     </section>

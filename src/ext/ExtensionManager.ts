@@ -8,12 +8,28 @@ export interface IExtOptions {
     extensionDir: string;
 }
 
+/**
+ * Extension manager class
+ *
+ * @export
+ * @class ExtensionManager
+ */
 export class ExtensionManager {
 
+    /**
+     * Map of commands
+     *
+     * @type {Map<string, Command>}
+     */
     public commands: Map<string, Command> = new Map<string, Command>();
 
     constructor (private options: IExtOptions) {}
 
+    /**
+     * Initializes the extension manager
+     *
+     * @returns {Promise<void>}
+     */
     public init (): Promise<void> {
         let files: string[] = [];
 
