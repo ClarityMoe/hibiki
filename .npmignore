@@ -1,0 +1,9 @@
+### things we don't want in the NPM package
+
+node_modules
+src
+gulpfile.js
+circle.yml
+tslint.json
+tsconfig.json
+CNAME

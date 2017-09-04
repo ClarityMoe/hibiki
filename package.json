@@ -1,6 +1,6 @@
 {
   "name": "hibiki",
-  "version": "2.0.0",
+  "version": "2.0.0-SNAPSHOT",
   "description": "An advanced but easy to use Discord bot framework, made in TypeScript",
   "main": "build/",
   "scripts": {
