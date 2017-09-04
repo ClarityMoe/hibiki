@@ -5,8 +5,8 @@ const ts = require('gulp-typescript');
 const jsdoc = require('gulp-jsdoc3');
 const clean = require('gulp-clean');
 
-gulp.task("default", ["compile", "clean:docs", "documentation"]);
-gulp.task("documentation", ["compile", "clean:docs", "jsdoc"]);
+gulp.task("default", ["compile", "jsdoc"]);
+gulp.task("documentation", ["compile", "jsdoc"]);
 
 gulp.task("clean:docs", () => {
     return gulp.src('./docs', {read:false})
