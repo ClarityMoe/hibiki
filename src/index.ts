@@ -1,9 +1,12 @@
 // index.ts - export all the things (noud02)
 
+
+var Promise;
 try {
-    global.Promise = require("bluebird"); // tslint:disable-line:no-var-requires
+    Promise = require("bluebird"); // tslint:disable-line:no-var-requires
 } catch (e) {
     // bluebird was not installed, using native promises instead
+    Promise = global.Promise;
 }
 
 export { IHibikiOptions, Shard } from "./client/Shard";
