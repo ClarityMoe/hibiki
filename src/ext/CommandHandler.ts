@@ -251,6 +251,9 @@ export class CommandHandler {
     /**
      * Check the arguments and return new args
      *
+     * @todo add search things
+     * @todo add websockets and try to get the guild/user from another shard
+     *
      * @param {Eris.Message} msg Message
      * @param {string[]} given Array of given arguments
      * @param {ICommandArg[]} args Array of command args
@@ -301,7 +304,6 @@ export class CommandHandler {
 
                         if (res) {
                             const user: Eris.User | undefined = this.shard.users.get(res[1]);
-                            /** @todo add websockets and try to get user from other shard using them */
                             if (user) {
                                 newArgs[arg.name] = user;
                             }
@@ -312,6 +314,14 @@ export class CommandHandler {
                         }
 
                         const user: Eris.Member | undefined = msg.channel.guild.members.filter((member: Eris.Member) => `${member.username}#${member.discriminator}` === given[i])[0];
+
+                        if (!user) {
+                            return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = user;
+                    } else if (id.test(given[i])) {
+                        const user: Eris.User | undefined = this.shard.users.get(given[i]);
 
                         if (!user) {
                             return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
@@ -330,26 +340,19 @@ export class CommandHandler {
                         }
 
                         newArgs[arg.name] = user;
-                    } else if (id.test(given[i])) {
-
-                        const user: Eris.User | undefined = this.shard.users.get(given[i]);
-
-                        if (!user) {
-                            return Promise.reject(this.shard.lm.t("search.user_not_found", { username: msg.author.username }));
-                        }
-
-                        newArgs[arg.name] = user;
                     }
-
-                    /** @todo add search thing if username is specified */
 
                     break;
                 }
 
                 case "channel": {
-                    const mention: RegExp = /<#\d+>/i;
+                    const mention: RegExp = /<#(\d+)>/i;
                     const name: RegExp = /[^\s]{0,100}/i;
                     const id: RegExp = /\d+/i;
+
+                    if (!(msg.channel instanceof Eris.GuildChannel)) {
+                        return Promise.reject(this.shard.lm.t("commands.guild_only", { username: msg.author.username }));
+                    }
 
                     if (!mention.test(given[i]) && !name.test(given[i]) && !id.test(given[i])) {
                         return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
@@ -357,6 +360,40 @@ export class CommandHandler {
                             type: arg.type,
                             username: msg.author.username,
                         }));
+                    }
+
+                    if (given[i] === "this") {
+                        newArgs[arg.name] = msg.channel;
+                    } else if (mention.test(given[i])) {
+                        const res: RegExpExecArray | null = mention.exec(given[i]);
+
+                        if (!res) {
+                            return Promise.reject(this.shard.lm.t("search.channel_not_found", { username: msg.author.username }));
+                        }
+
+                        const channel: Eris.GuildChannel = msg.channel.guild.channels.filter((c: Eris.GuildChannel) => c.type === 0 && c.id === res[0])[0];
+
+                        if (!channel) {
+                            return Promise.reject(this.shard.lm.t("search.channel_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = channel;
+                    } else if (id.test(given[i])) {
+                        const channel: Eris.GuildChannel = msg.channel.guild.channels.filter((c: Eris.GuildChannel) => c.type === 0 && c.id === given[i])[0];
+
+                        if (!channel) {
+                            return Promise.reject(this.shard.lm.t("search.channel_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = channel;
+                    } else if (name.test(given[i])) {
+                        const channel: Eris.GuildChannel = msg.channel.guild.channels.filter((c: Eris.GuildChannel) => c.type === 0 && c.name.indexOf(given[i]) > -1)[0];
+
+                        if (!channel) {
+                            return Promise.reject(this.shard.lm.t("search.channel_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = channel;
                     }
 
                     break;
@@ -364,8 +401,12 @@ export class CommandHandler {
 
                 case "role": {
                     const mention: RegExp = /<&\d+>/i;
-                    const name: RegExp = /.{0,}/i;
+                    const name: RegExp = /.{0,100}/i;
                     const id: RegExp = /\d+/i;
+
+                    if (!(msg.channel instanceof Eris.GuildChannel)) {
+                        return Promise.reject(this.shard.lm.t("commands.guild_only", { username: msg.author.username }));
+                    }
 
                     if (!mention.test(given[i]) && !name.test(given[i]) && !id.test(given[i])) {
                         return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
@@ -373,6 +414,63 @@ export class CommandHandler {
                             type: arg.type,
                             username: msg.author.username,
                         }));
+                    }
+
+                    if (mention.test(given[i])) {
+                        const res: RegExpExecArray | null = mention.exec(given[i]);
+
+                        if (!res) {
+                            return Promise.reject(this.shard.lm.t("search.role_not_found", { username: msg.author.username }));
+                        }
+
+                        const role: Eris.Role | undefined = msg.channel.guild.roles.get(res[0]);
+
+                        if (!role) {
+                            return Promise.reject(this.shard.lm.t("search.role_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = role;
+                    } else if (name.test(given[i])) {
+                        const role: Eris.Role = msg.channel.guild.roles.filter((r: Eris.Role) => r.name.indexOf(given[i]) > -1)[0];
+
+                        if (!role) {
+                            return Promise.reject(this.shard.lm.t("search.role_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = role;
+                    }
+
+                    break;
+                }
+
+                case "guild": {
+                    const name: RegExp = /.{0,100}/i;
+                    const id: RegExp = /\d+/i;
+
+                    if (!name.test(given[i]) && !id.test(given[i])) {
+                        return Promise.reject(this.shard.lm.t("commands.invalid_argument_type", {
+                            argument: arg.name,
+                            type: arg.type,
+                            username: msg.author.username,
+                        }));
+                    }
+
+                    if (id.test(given[i])) {
+                        const guild: Eris.Guild | undefined = this.shard.guilds.get(given[i]);
+
+                        if (!guild) {
+                            return Promise.reject(this.shard.lm.t("search.guild_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = guild;
+                    } else if (name.test(given[i])) {
+                        const guild: Eris.Guild = this.shard.guilds.filter((g: Eris.Guild) => g.name.indexOf(given[i]) > -1)[0];
+
+                        if (!guild) {
+                            return Promise.reject(this.shard.lm.t("search.guild_not_found", { username: msg.author.username }));
+                        }
+
+                        newArgs[arg.name] = guild;
                     }
 
                     break;
