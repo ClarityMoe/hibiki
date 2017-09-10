@@ -22,11 +22,11 @@ export interface IHibikiOptions {
         prefixes: string[];
         owners: string[];
     };
-    eris: Eris.ClientOptions;
+    eris?: Eris.ClientOptions;
     ws: {
         host: string;
-        port: number;
-        ssl: boolean;
+        port?: number;
+        ssl?: boolean;
     };
     postgres: ClientConfig;
     ext: IExtOptions;
@@ -89,7 +89,7 @@ export class Shard extends Eris.Client {
     public blocked: NodeJS.Timer = blocked((ms: number) => this.emit("blocked", ms));
 
     constructor (token: string, public hibikiOptions: IHibikiOptions) {
-        super(token, hibikiOptions.eris);
+        super(token, hibikiOptions.eris || {});
     }
 
     /**
@@ -103,19 +103,15 @@ export class Shard extends Eris.Client {
             return Promise.reject(new Error("Connect timed out"));
         }, timeout || 10000);
 
-        try {
-            await this.lm.init();
-            await this.connect();
-            await this.pg.connect();
-            // await this.ws.connect();
-            await this.ext.init();
-            await this.ch.init();
-            clearTimeout(connTimeout);
+        await this.lm.init();
+        await this.connect();
+        await this.pg.connect();
+        // await this.ws.connect();
+        await this.ext.init();
+        await this.ch.init();
+        clearTimeout(connTimeout);
 
-            return Promise.resolve();
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        return Promise.resolve();
     }
 
     /**
@@ -124,15 +120,11 @@ export class Shard extends Eris.Client {
      * @returns {Promise<void>}
      */
     public async disconnectShard (): Promise<void> {
-        try {
-            this.disconnect({ reconnect: false });
-            // await this.ext.break();
-            // await this.ws.disconnect();
-            await this.pg.disconnect();
+        this.disconnect({ reconnect: false });
+        // await this.ext.break();
+        // await this.ws.disconnect();
+        await this.pg.disconnect();
 
-            return Promise.resolve();
-        } catch (e) {
-            return Promise.reject(e);
-        }
+        return Promise.resolve();
     }
 }
