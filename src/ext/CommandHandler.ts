@@ -36,8 +36,7 @@ export class CommandHandler {
      */
     public init (): Promise<void> {
         // link the messageCreate event to checkMessage to check if the message is a command
-        // can safely void the error because I don't think there will be any important stuff
-        this.shard.on("messageCreate", (msg: Eris.Message) => this.checkMessage(msg).catch((e: Error) => void(e))); // tslint:disable-line:no-unused-expression
+        this.shard.on("messageCreate", (msg: Eris.Message) => this.checkMessage(msg).catch((e: Error) => console.error(e)));
 
         return Promise.resolve();
     }
@@ -55,7 +54,7 @@ export class CommandHandler {
         let args: minimist.ParsedArgs;
 
         if (msg.channel instanceof Eris.GuildChannel) {
-            const res: pg.QueryResult = await this.shard.pg.select("guilds", `id = ${msg.channel.guild.id}`);
+            const res: pg.QueryResult = await this.shard.pg.select("guilds", `id = '${msg.channel.guild.id}'`);
             guildPrefixes = res.rows[0].prefixes;
         }
 
