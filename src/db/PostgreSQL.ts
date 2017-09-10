@@ -140,7 +140,6 @@ export class PostgreSQL {
             id: guild.id,
             name: guild.name,
             prefixes: [],
-            queue: [],
         };
 
         const query: pg.QueryResult = await this.select("guilds", `id = '${guild.id}'`);
