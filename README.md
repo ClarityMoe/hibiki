@@ -8,7 +8,7 @@ A Powerful but easy to use Discord bot framework
 
 ```bash
 $ npm i hibiki --save
-# install from NPM
+# Install from NPM
 
 $ npm i ClarityMoe/hibiki --save
 # Install from github
