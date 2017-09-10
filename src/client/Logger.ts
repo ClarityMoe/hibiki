@@ -9,6 +9,8 @@ const clk: Chalk = new ChalkClass({ enabled: true });
 /**
  * Logger
  *
+ * @param {string} prefix Prefix to use
+ * @param {boolean} debugMode Enable debug mode
  * @export
  * @class Logger
  */

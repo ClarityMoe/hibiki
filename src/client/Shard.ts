@@ -38,6 +38,8 @@ export interface IHibikiOptions {
  * Main Shard/Client class
  * @see https://abal.moe/Eris/docs/Client
  *
+ * @param {string} token Token to use
+ * @param {IHibikiOptions} hibikiOptions Options
  * @export
  * @class Shard
  * @extends {Eris.Client}
