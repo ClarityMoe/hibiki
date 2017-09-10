@@ -8,7 +8,7 @@ export interface IDBGuild {
     id: string;
     prefixes: string[];
     name: string;
-    queue: Array<{ [key: string]: any }>; /** @todo add music things and replace this with a proper queue interface */
+    // queue: Array<{ [key: string]: any }>; /** @todo add music things and replace this with a proper queue interface */
 }
 
 /**
