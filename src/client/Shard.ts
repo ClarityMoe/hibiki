@@ -9,6 +9,7 @@ import { PostgreSQL } from "../db/PostgreSQL";
 import { CommandHandler } from "../ext/CommandHandler";
 import { ExtensionManager, IExtOptions } from "../ext/ExtensionManager";
 import { LocaleManager } from "../locale/LocaleManager";
+import { Logger } from "./Logger";
 import { WebSocketClient } from "./WebSocketClient";
 
 /**
@@ -21,6 +22,7 @@ export interface IHibikiOptions {
     hibiki: {
         prefixes: string[];
         owners: string[];
+        debug: boolean;
     };
     eris?: Eris.ClientOptions;
     ws: {
@@ -84,9 +86,17 @@ export class Shard extends Eris.Client {
     /**
      * Emitted when the event loop is blocked
      *
+     * @memberof Hibiki
      * @event blocked
      */
     public blocked: NodeJS.Timer = blocked((ms: number) => this.emit("blocked", ms));
+
+    /**
+     * Logger that logs things
+     *
+     * @type {Logger}
+     */
+    public logger: Logger = new Logger("shard", this.hibikiOptions.hibiki.debug);
 
     constructor (token: string, public hibikiOptions: IHibikiOptions) {
         super(token, hibikiOptions.eris || {});
@@ -109,6 +119,9 @@ export class Shard extends Eris.Client {
         // await this.ws.connect();
         await this.ext.init();
         await this.ch.init();
+
+        this.on("guildCreate", (guild: Eris.Guild) => this.pg.addGuild(guild));
+
         clearTimeout(connTimeout);
 
         return Promise.resolve();
@@ -128,6 +141,11 @@ export class Shard extends Eris.Client {
         return Promise.resolve();
     }
 
+    /**
+     * Checks if all guilds are in the database
+     *
+     * @returns {Promise<void>}
+     */
     public async checkGuilds (): Promise<void> {
         for (const guild of this.guilds.map((g: Eris.Guild) => g)) {
             await this.pg.addGuild(guild);
