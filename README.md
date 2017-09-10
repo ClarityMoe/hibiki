@@ -7,8 +7,12 @@ A Powerful but easy to use Discord bot framework
 ## Installation
 
 ```bash
+$ npm i hibiki --save
+# install from NPM
+
 $ npm i ClarityMoe/hibiki --save
-# installs the framework
+# Install from github
+
 ```
 
 ## Usage
@@ -38,19 +42,19 @@ Run these commands to set up the database.
 ```bash
 
 # Install Postgres
-sudo pacman -S postgresql
+$ sudo pacman -S postgresql
 # or
-sudo apt-get install postgresql
+$ sudo apt-get install postgresql
 # I assume you know enough about your package manager to install postgresql
 # not gonna list them all, sorry
 
 # Now follow this on how to get postgres ready for use
 # https://wiki.archlinux.org/index.php/PostgreSQL#Installing_PostgreSQL
 
-createdb hibiki
+$ createdb hibiki
 # Create the database, you can change 'hibiki' to whatever you want your db name to be
 
-psql hibiki
+$ psql hibiki
 # When you're in, please run the commands below this code block
 
 ```
