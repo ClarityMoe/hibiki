@@ -135,6 +135,12 @@ export class PostgreSQL {
         return this.client.query(`SELECT * FROM ${table} WHERE ${expression};`);
     }
 
+    /**
+     * Adds a guild to the database if it isn't in there already
+     *
+     * @param {Eris.Guild} guild
+     * @returns {Promise<pg.QueryResult>}
+     */
     public async addGuild (guild: Eris.Guild): Promise<pg.QueryResult> {
         const data: IDBGuild = {
             id: guild.id,
