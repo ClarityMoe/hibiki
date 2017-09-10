@@ -127,7 +127,7 @@ export function permission (name: string, optional: boolean, bot?: boolean): Cla
  * @decorator
  * @memberof ext
  * @export
- * @param {new () => Command} Subcommand Command class to use
+ * @param {Command} Subcommand Command class to use
  * @returns {ClassDecorator}
  */
 export function subcommand (Subcommand: new () => Command): ClassDecorator {
