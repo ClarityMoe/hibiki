@@ -1,6 +1,6 @@
 {
   "name": "hibiki",
-  "version": "2.0.0-SNAPSHOT4",
+  "version": "2.0.0-SNAPSHOT5",
   "description": "An advanced but easy to use Discord bot framework, made in TypeScript",
   "main": "./dist/index.js",
   "scripts": {
@@ -26,6 +26,11 @@
   },
   "homepage": "https://github.com/ClarityMoe/hibiki#readme",
   "dependencies": {
+    "@types/i18next": "^8.4.2",
+    "@types/i18next-node-fs-backend": "0.0.29",
+    "@types/node": "^8.0.28",
+    "@types/pg": "^7.1.0",
+    "@types/ws": "^3.0.2",
     "blocked": "^1.2.1",
     "eris": "github:abalabahaha/eris#dev",
     "i18next": "^9.0.0",
@@ -39,12 +44,6 @@
     "ws": "^3.1.0"
   },
   "devDependencies": {
-    "@types/bluebird": "^3.5.10",
-    "@types/i18next": "^8.4.2",
-    "@types/i18next-node-fs-backend": "0.0.29",
-    "@types/node": "^8.0.28",
-    "@types/pg": "^7.1.0",
-    "@types/ws": "^3.0.2",
     "docdash": "^0.4.0",
     "gulp": "^3.9.1",
     "gulp-clean": "^0.3.2",
@@ -53,6 +52,7 @@
     "jsdoc": "^3.5.4"
   },
   "optionalDependencies": {
+    "@types/bluebird": "^3.5.10",
     "bluebird": "^3.5.0",
     "bufferutil": "^3.0.2",
     "erlpack": "hammerandchisel/erlpack",
