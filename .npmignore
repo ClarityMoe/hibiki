@@ -7,3 +7,4 @@ circle.yml
 tslint.json
 tsconfig.json
 CNAME
+example
