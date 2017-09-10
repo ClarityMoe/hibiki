@@ -65,5 +65,3 @@ dist/**/*.d.ts
 
 # Config files
 config.json
-
-example/
