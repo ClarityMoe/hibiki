@@ -62,7 +62,7 @@ psql hibiki
 CREATE TABLE guilds (
     id          text,
     prefixes    text[],
-    name        text,
+    name        text
 );
 
 -- Create an unique index
