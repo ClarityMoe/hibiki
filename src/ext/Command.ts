@@ -66,9 +66,9 @@ export class Command {
     /**
      * Subcommands on the command
      *
-     * @type {Array<(ctx: Context) => any>}
+     * @type {map<Command>}
      */
-    public subcommands: Array<(ctx: Context) => any>;
+    public subcommands: { [key: string]: Command };
     /**
      * Whether the command is owner only or not
      *

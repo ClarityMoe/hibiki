@@ -102,12 +102,31 @@ export class CommandHandler {
      * @returns {Promise<any>}
      */
     public async executeCommand (msg: Eris.Message, command: string, args: minimist.ParsedArgs, prefix: string): Promise<any> {
-        const cmd: Command | undefined = this.shard.ext.commands.get(command);
+        let subcommand: string | undefined = undefined; // tslint:disable-line:no-unnecessary-initializer
+
+        if (command.indexOf(".") > -1) {
+            subcommand = command.split(".")[1];
+            command = command.split(".")[0];
+        }
+
+        let cmd: Command | undefined = this.shard.ext.commands.get(command);
+
+        if (subcommand && cmd) {
+            cmd = cmd.subcommands[subcommand];
+        }
+
         let bucket: Ratelimiter | undefined = this.buckets.get(msg.author.id);
         let ok: boolean = false;
 
         if (!cmd) {
             return Promise.reject(new Error(`Command ${command} not found`));
+        }
+
+        if (args._.length > 0 && Object.keys(cmd.subcommands).indexOf(args._[0]) > -1) {
+            const arg: string = args._[0];
+            args._ = args._.slice(1);
+
+            return this.executeCommand(msg, `${command}.${arg}`, args, prefix);
         }
 
         const useBucket: any = () => {
@@ -177,6 +196,8 @@ export class CommandHandler {
         const ctx: Context = new Context(this.shard, msg, prefix, command, args, newArgs);
 
         if (ok) {
+            this.shard.logger.msg(msg);
+
             return cmd.run(ctx);
         } else {
             return Promise.resolve();
