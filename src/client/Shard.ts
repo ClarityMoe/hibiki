@@ -88,7 +88,7 @@ export class Shard extends Eris.Client {
     /**
      * Emitted when the event loop is blocked
      *
-     * @memberof Hibiki
+     * @memberof Shard
      * @event blocked
      */
     public blocked: NodeJS.Timer = blocked((ms: number) => this.emit("blocked", ms));
