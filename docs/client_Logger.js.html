@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8">
-    <title>ext/Ratelimiter.js - Documentation</title>
+    <title>client/Logger.js - Documentation</title>
 
     <script src="scripts/prettify/prettify.js"></script>
     <script src="scripts/prettify/lang-css.js"></script>
@@ -27,7 +27,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">ext/Ratelimiter.js</h1>
+    <h1 class="page-title">client/Logger.js</h1>
     
 
     
@@ -38,72 +38,143 @@
     <section>
         <article>
             <pre class="prettyprint source linenums"><code>"use strict";
-// Ratelimiter.ts - cuz b1nzy (noud02)
+// Logger.ts - Logger (noud02)
 Object.defineProperty(exports, "__esModule", { value: true });
+const chalk_1 = require("chalk");
+const Eris = require("eris");
+const moment = require("moment");
+const clk = new chalk_1.constructor({ enabled: true });
 /**
- * Ratelimiter bucket
+ * Logger
  *
  * @export
- * @class Ratelimiter
+ * @class Logger
  */
-class Ratelimiter {
-    constructor(max = 10, time = 10000) {
-        this.max = max;
-        this.time = time;
-        /**
-         * If the bucket is soft ratelimited or not
-         *
-         * @type {boolean}
-         */
-        this.soft = false;
-        /**
-         * If the warning was sent
-         *
-         * @type {boolean}
-         */
-        this.sentWarn = false;
-        /**
-         * Last use (timestamp)
-         *
-         * @type {number}
-         */
-        this.lastUse = 0;
-        /**
-         * Uses
-         *
-         * @type {number}
-         */
-        this.uses = 0;
-        /**
-         * Bucket reset interval
-         *
-         * @type {NodeJS.Timer}
-         */
-        this.interval = setInterval(() => { this.uses = 0; this.sentWarn = false; this.soft = false; }, this.time);
+class Logger {
+    constructor(prefix, debugMode = false) {
+        this.prefix = prefix;
+        this.debugMode = debugMode;
     }
     /**
-     * Use the bucket
+     * Normal log
      *
+     * @param {...any[]} args
+     * @returns {void}
+     */
+    log(...args) {
+        return console.log(this.base("log", ...args));
+    }
+    /**
+     * Logs as error
+     *
+     * @param {...any[]} args
+     * @returns {void}
+     */
+    err(...args) {
+        return console.error(this.base("err", ...args));
+    }
+    /**
+     * Logs as debug (only if debug mode is enabled)
+     *
+     * @param {...any[]} args
+     * @returns {void}
+     */
+    debug(...args) {
+        if (this.debugMode) {
+            return console.log(this.base("debug", ...args));
+        }
+    }
+    /**
+     * Logs as fail
+     *
+     * @param {...any[]} args
+     * @returns {void}
+     */
+    fail(...args) {
+        return console.error(this.base("fail", ...args));
+    }
+    /**
+     * Logs as info
+     *
+     * @param {...any[]} args
+     * @returns {void}
+     */
+    info(...args) {
+        return console.info(this.base("info", ...args));
+    }
+    /**
+     * Logs as ok
+     *
+     * @param {...any[]} args
+     * @returns {void}
+     */
+    ok(...args) {
+        return console.log(this.base("ok", ...args));
+    }
+    /**
+     * Logs a message
+     *
+     * @param {Eris.Message} msg
+     * @returns {void}
+     */
+    msg(msg) {
+        const str = [];
+        if (msg.channel instanceof Eris.GuildChannel) {
+            str.push(clk.bold.magenta(msg.channel.guild.name));
+            str.push("->");
+            str.push(clk.bold.cyan(msg.channel.name));
+            str.push("->");
+        }
+        str.push(clk.bold.green(`${msg.author.username}#${msg.author.discriminator}`));
+        str.push("->");
+        str.push(msg.cleanContent || clk.italic.dim("empty"));
+        return console.log(this.base("msg", ...str));
+    }
+    /**
+     * Get a colored label based on type
+     *
+     * @private
+     * @param {string} type
      * @returns {string}
      */
-    use() {
-        if (this.uses &lt; this.max) {
-            this.uses++;
-            if (this.lastUse !== 0 ? (this.lastUse + this.time / 2) - Date.now() &lt;= 0 : true) {
-                this.soft = false;
-                this.lastUse = Date.now();
-                return "OK";
-            }
-            else {
-                this.soft = true;
-                return "RATELIMITED";
-            }
+    getLabel(type) {
+        switch (type) {
+            case "info":
+                return clk.bgMagenta(" INF ");
+            case "msg":
+                return clk.bgCyan(" MSG ");
+            case "ok":
+                return clk.bgGreen(" OK! ");
+            case "fail":
+                return clk.bgRed(" FAI ");
+            case "err":
+                return clk.bgRed(" ERR ");
+            case "debug":
+                return clk.black.bgWhite(" DBG ");
+            case "log":
+            default:
+                return clk.black.bgWhite(" LOG ");
         }
-        this.lastUse = Date.now();
-        return "RATELIMITED";
+    }
+    /**
+     * Base log thing
+     *
+     * @private
+     * @param {string} type
+     * @param {...any[]} args
+     * @returns {string}
+     */
+    base(type, ...args) {
+        const date = clk.cyan(moment().format("L"));
+        const time = clk.cyan(moment().format("LTS"));
+        const m = (str) => clk.magenta.bold(str);
+        const now = `${m("[")} ${date} ${m("@")} ${time} ${m("]")}`;
+        const prefix = clk.yellow(this.prefix);
+        const label = this.getLabel(type);
+        return `${prefix} ${now} ${label} ${args.join(" ")}`;
     }
 }
-exports.Ratelimiter = Ratelimiter;
+exports.Logger = Logger;
 </code></pre>
         </article>
     </section>
