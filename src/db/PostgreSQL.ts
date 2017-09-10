@@ -1,7 +1,15 @@
 // PostgreSQL.ts - PostgreSQL client (noud02)
 
 import { exec } from "child_process";
+import * as Eris from "eris";
 import * as pg from "pg";
+
+export interface IDBGuild {
+    id: string;
+    prefixes: string[];
+    name: string;
+    queue: Array<{ [key: string]: any }>; /** @todo add music things and replace this with a proper queue interface */
+}
 
 /**
  * PostgreSQL client class
@@ -80,7 +88,7 @@ export class PostgreSQL {
      * @param {*} data Data to insert
      * @returns {Promise<pg.QueryResult>}
      */
-    public insert (table: string, data: any): Promise<pg.QueryResult> {
+    public insert (table: string, data: { [key: string]: any }): Promise<pg.QueryResult> {
         const vals: any[] = [];
         const keys: string[] = Object.keys(data);
 
@@ -101,7 +109,7 @@ export class PostgreSQL {
      * @param {*} data New data
      * @returns {Promise<pg.QueryResult>}
      */
-    public update (table: string, expression: string, data: any): Promise<pg.QueryResult> {
+    public update (table: string, expression: string, data: { [key: string]: any }): Promise<pg.QueryResult> {
         const vals: any[] = [];
         const keys: string[] = Object.keys(data);
         const changes: string[] = [];
@@ -125,5 +133,22 @@ export class PostgreSQL {
      */
     public select (table: string, expression: string): Promise<pg.QueryResult> {
         return this.client.query(`SELECT * FROM ${table} WHERE ${expression};`);
+    }
+
+    public async addGuild (guild: Eris.Guild): Promise<pg.QueryResult> {
+        const data: IDBGuild = {
+            id: guild.id,
+            name: guild.name,
+            prefixes: [],
+            queue: [],
+        };
+
+        const query: pg.QueryResult = await this.select("guilds", `id = '${guild.id}'`);
+
+        if (query.rows.length > 0) {
+            return query;
+        } else {
+            return this.insert("guilds", data);
+        }
     }
 }

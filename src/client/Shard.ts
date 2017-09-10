@@ -93,19 +93,19 @@ export class Shard extends Eris.Client {
     }
 
     /**
-     * Connects the shard.
+     * Initializes the framework
      *
      * @param {number} [timeout] Timeout in ms
      * @returns {Promise<void>}
      */
-    public async connectShard (timeout?: number): Promise<void> {
+    public async init (timeout?: number): Promise<void> {
         const connTimeout: any = setTimeout(() => {
             return Promise.reject(new Error("Connect timed out"));
         }, timeout || 10000);
 
         await this.lm.init();
-        await this.connect();
         await this.pg.connect();
+        await this.checkGuilds();
         // await this.ws.connect();
         await this.ext.init();
         await this.ch.init();
@@ -124,6 +124,14 @@ export class Shard extends Eris.Client {
         // await this.ext.break();
         // await this.ws.disconnect();
         await this.pg.disconnect();
+
+        return Promise.resolve();
+    }
+
+    public async checkGuilds (): Promise<void> {
+        for (const guild of this.guilds.map((g: Eris.Guild) => g)) {
+            await this.pg.addGuild(guild);
+        }
 
         return Promise.resolve();
     }
