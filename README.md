@@ -16,14 +16,75 @@ $ npm i ClarityMoe/hibiki --save
 ```ts
 import { Shard as Hibiki } from "hibiki";
 
-const bot: Hibiki = new Hibiki("token", require("./config.json"));
+const bot: Hibiki = new Hibiki("token", {
+    // ...
+});
+
+bot.connect();
 
 bot.on("ready", () => {
+    bot.init();
     console.log("Ready!");
 });
 
-bot.on("blocked", (ms) => {
-    console.log("Blocked for", `${ms}ms`);
-});
+```
+
+More examples can be found in /examples
+
+## Database
+
+Run these commands to set up the database.
+
+```bash
+
+# Install Postgres
+sudo pacman -S postgresql
+# or
+sudo apt-get install postgresql
+# I assume you know enough about your package manager to install postgresql
+# not gonna list them all, sorry
+
+# Now follow this on how to get postgres ready for use
+# https://wiki.archlinux.org/index.php/PostgreSQL#Installing_PostgreSQL
+
+createdb hibiki
+# Create the database, you can change 'hibiki' to whatever you want your db name to be
+
+psql hibiki
+# When you're in, please run the commands below this code block
+
+```
+
+```sql
+
+-- Create the 'guilds' table
+
+CREATE TABLE guilds (
+    id          text,
+    prefixes    text[],
+    name        text,
+);
+
+-- Create an unique index
+
+CREATE UNIQUE INDEX IN guilds (id);
+
+-- Create the 'users' table
+
+CREATE TABLE users (
+    id              text,
+    discriminator   text,
+    username        text,
+    blocked         boolean
+);
+
+-- Create an unique index again
+
+CREATE UNIQUE INDEX IN users (id);
+
+-- Check if the tables are there
+
+SELECT * FROM guilds;
+SELECT * FROM users;
 
 ```
