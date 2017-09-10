@@ -36,7 +36,7 @@ export class CommandHandler {
      */
     public init (): Promise<void> {
         // link the messageCreate event to checkMessage to check if the message is a command
-        this.shard.on("messageCreate", (msg: Eris.Message) => this.checkMessage(msg).catch((e: Error) => console.error(e)));
+        this.shard.on("messageCreate", (msg: Eris.Message) => this.checkMessage(msg).catch((e: Error) => void(e))); // tslint:disable-line:no-unused-expression
 
         return Promise.resolve();
     }
