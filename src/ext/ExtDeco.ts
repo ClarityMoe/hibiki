@@ -110,7 +110,45 @@ export function permission (name: string, optional: boolean, bot?: boolean): Cla
         Object.defineProperty(target.prototype, bot && "botPerms" || "perms", {
             configurable: true,
             enumerable: true,
-            value: target.prototype.args.push({ name, optional }),
+            value: target.prototype[bot && "botPerms" || "perms"].push({ name, optional }),
+            writable: true,
+        });
+
+        return target;
+    };
+}
+
+/**
+ * Adds a subcommand on the command
+ *
+ * @example @Hibiki.ext.subcommand(MySubcommand)
+ * class MyCommand extends Hibiki.Command {
+ *
+ * @decorator
+ * @memberof ext
+ * @export
+ * @param {new () => Command} Subcommand Command class to use
+ * @returns {ClassDecorator}
+ */
+export function subcommand (Subcommand: new () => Command): ClassDecorator {
+    return <T extends Function>(target: T) => { // tslint:disable-line:ban-types
+        if (!target.prototype.subcommands) {
+            Object.defineProperty(target.prototype, "subcommands", {
+                configurable: true,
+                enumerable: true,
+                value: { [Subcommand.prototype.name]: new Subcommand() },
+                writable: true,
+            });
+
+            return target;
+        }
+
+        target.prototype.subcommands[Subcommand.prototype.name] = new Subcommand();
+
+        Object.defineProperty(target.prototype, "subcommands", {
+            configurable: true,
+            enumerable: true,
+            value: target.prototype.subcommands,
             writable: true,
         });
 
