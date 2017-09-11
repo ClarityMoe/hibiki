@@ -36,7 +36,7 @@ export class CommandHandler {
      */
     public init (): Promise<void> {
         // link the messageCreate event to checkMessage to check if the message is a command
-        this.shard.on("messageCreate", (msg: Eris.Message) => this.checkMessage(msg).catch((e: Error) => void(e))); // tslint:disable-line:no-unused-expression
+        this.shard.on("messageCreate", (msg: Eris.Message) => this.checkMessage(msg).catch((e: Error) => this.shard.logger.debug(e.stack))); // tslint:disable-line:no-unused-expression
 
         return Promise.resolve();
     }
@@ -122,7 +122,7 @@ export class CommandHandler {
             return Promise.reject(new Error(`Command ${command} not found`));
         }
 
-        if (args._.length > 0 && Object.keys(cmd.subcommands).indexOf(args._[0]) > -1) {
+        if (args._.length > 0 && cmd.subcommands && Object.keys(cmd.subcommands).indexOf(args._[0]) > -1) {
             const arg: string = args._[0];
             args._ = args._.slice(1);
 
