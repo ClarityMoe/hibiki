@@ -38,6 +38,16 @@ export class Logger {
     }
 
     /**
+     * Logs as warning
+     *
+     * @param {...any[]} args
+     * @returns {void}
+     */
+    public warn (...args: any[]): void {
+        return console.warn(this.base("warn", ...args))
+    }
+
+    /**
      * Logs as debug (only if debug mode is enabled)
      *
      * @param {...any[]} args
@@ -111,10 +121,12 @@ export class Logger {
      */
     private getLabel (type: string): string {
         switch (type) {
+            case "warn":
+                return clk.black.bgYellow(" WRN ");
             case "info":
                 return clk.bgMagenta(" INF ");
             case "msg":
-                return clk. bgCyan(" MSG ");
+                return clk.bgCyan(" MSG ");
             case "ok":
                 return clk.bgGreen(" OK! ");
             case "fail":
