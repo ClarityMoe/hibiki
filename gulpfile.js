@@ -14,7 +14,7 @@ gulp.task("clean:docs", () => {
 })
 
 gulp.task("clean:dist", () => {
-    return gulp.src('./dist', {read:False})
+    return gulp.src('./dist', {read:false})
         .pipe(clean());
 })
 
