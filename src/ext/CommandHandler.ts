@@ -87,7 +87,7 @@ export class CommandHandler {
         }
 
         command = msg.content.substring(usedPrefix.length).split(" ")[0];
-        args = minimist(msg.content.substring(usedPrefix.length).split(" ").slice(1), { strings: true });
+        args = minimist(msg.content.substring(usedPrefix.length).split(" ").slice(1).join(" "), { strings: true });
 
         return this.executeCommand(msg, command, args, usedPrefix);
     }
