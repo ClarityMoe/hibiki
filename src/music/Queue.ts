@@ -6,6 +6,7 @@ import { Track } from "./Track";
 export class Queue extends EventEmitter {
 
     public tracks: Track[] = [];
+    public current: Track | undefined;
 
     constructor (private max: number = 100) {
         super();
