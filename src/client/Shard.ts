@@ -9,6 +9,7 @@ import { PostgreSQL } from "../db/PostgreSQL";
 import { CommandHandler } from "../ext/CommandHandler";
 import { ExtensionManager, IExtOptions } from "../ext/ExtensionManager";
 import { LocaleManager } from "../locale/LocaleManager";
+import { Player } from "../music/Player";
 import { Logger } from "./Logger";
 import { WebSocketClient } from "./WebSocketClient";
 
@@ -99,6 +100,8 @@ export class Shard extends Eris.Client {
      * @type {Logger}
      */
     public logger: Logger = new Logger("shard", this.hibikiOptions.hibiki.debug);
+
+    public players: Eris.Collection<Player> = new Eris.Collection<Player>(Player);
 
     constructor (token: string, public hibikiOptions: IHibikiOptions) {
         super(token, hibikiOptions.eris || {});
