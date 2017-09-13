@@ -1,6 +1,6 @@
 // Track.ts - Music track (noud02)
 
-import { Writable } from "stream";
+import { Duplex } from "stream";
 import * as nyan from "./NyanDL";
 
 export interface ITrackInfo {
@@ -13,11 +13,11 @@ export interface ITrackInfo {
 
 export class Track {
 
-    public stream: Writable = new Writable();
+    public stream: Duplex = new Duplex();
 
     constructor (public url: string) {}
 
-    public download (): Writable {
+    public download (): Duplex {
         nyan.getStream(this.url).pipe(this.stream);
 
         return this.stream;
