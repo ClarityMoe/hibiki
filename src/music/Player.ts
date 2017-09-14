@@ -36,6 +36,16 @@ export class Player extends EventEmitter {
             return Promise.reject(new Error("Voicechannel is not a voice channel"));
         }
 
+        if (this.connection && this.connection.channelID !== channel.id) {
+            this.connection.switchChannel(channel.id);
+
+            return Promise.resolve(this.connection);
+        }
+
+        if (this.connection && this.connection.channelID === channel.id) {
+            return Promise.resolve(this.connection);
+        }
+
         return this.shard.joinVoiceChannel(channel.id);
     }
 
@@ -60,7 +70,13 @@ export class Player extends EventEmitter {
             return Promise.reject(new Error("Still downloading music!"));
         }
 
-        this.connection.play(track.download(), {});
+        this.connection.play(track.download(), {
+            encoderArgs: [
+                "-filter_complex", "acrossfade=d=10", // fade
+                "-af", "bass=g=10", // bass boost
+            ],
+            inlineVolume: true,
+        });
 
         return Promise.resolve(this.queue.next());
     }
