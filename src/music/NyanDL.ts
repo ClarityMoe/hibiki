@@ -1,7 +1,7 @@
 // NyanDL.ts - YTDL Wrapper (noud02)
 
 import { ChildProcess, execSync, spawn } from "child_process";
-import { Writable } from "stream";
+import { Duplex } from "stream";
 
 export interface INyanInfo {
     id: string;
@@ -25,8 +25,8 @@ export interface INyanInfo {
     fulltitle: string;
 }
 
-export function getStream (url: string): Writable {
-    const stream: Writable = new Writable();
+export function getStream (url: string): Duplex {
+    const stream: Duplex = new Duplex();
 
     const ytdl: ChildProcess = spawn("youtube-dl", [url, "-q", "-o", "-"]);
     const flac: ChildProcess = spawn("flac", ["-0", "-", "-"]);
