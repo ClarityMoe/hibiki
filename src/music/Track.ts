@@ -25,7 +25,11 @@ export class Track {
 
     public get info (): ITrackInfo {
         try {
-            const data: nyan.INyanInfo = nyan.getInfo(this.url);
+            const data: nyan.INyanInfo | nyan.INyanInfo[] = nyan.getInfo(this.url);
+
+            if (Array.isArray(data)) {
+                throw new Error("Track is a playlist!");
+            }
 
             return {
                 artist: data.uploader,

@@ -1,6 +1,7 @@
 // Queue.ts - Queue (noud02)
 
 import { EventEmitter } from "events";
+import * as nyan from "./NyanDL";
 import { Track } from "./Track";
 
 export class Queue extends EventEmitter {
@@ -20,8 +21,25 @@ export class Queue extends EventEmitter {
         return track;
     }
 
-    public add (url: string): Promise<Track> {
+    public add (url: string): Promise<Track | void> {
         if (this.tracks.length <= this.max) {
+
+            let info: nyan.INyanInfo | nyan.INyanInfo[];
+
+            try {
+                info = nyan.getInfo(url);
+            } catch (e) {
+                return Promise.reject(e);
+            }
+
+            if (Array.isArray(info)) {
+                for (const entry of info) {
+                    this.add(entry.webpage_url);
+                }
+
+                return Promise.resolve();
+            }
+
             const track: Track = new Track(url);
 
             this.tracks.push(track);

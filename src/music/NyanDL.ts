@@ -37,8 +37,22 @@ export function getStream (url: string): Writable {
     return stream;
 }
 
-export function getInfo (url: string): INyanInfo {
-    const res: string = execSync(`youtube-dl ${url} -j`).toString();
+export function getInfo (url: string): INyanInfo | INyanInfo[] {
+    let res: string = execSync(`youtube-dl ${url} -j`).toString().trim();
+
+    if (res.indexOf("\n") > -1) {
+        res = `[${res.split("\n").join(",")}]`;
+    }
+
+    try {
+        return JSON.parse(res);
+    } catch (e) {
+        throw e;
+    }
+}
+
+export function search (query: string, provider: string = "ytsearch"): INyanInfo {
+    const res: string = execSync(`youtube-dl '${provider}:${query.replace(/'/g, "\\'")}' -j`).toString();
 
     try {
         return JSON.parse(res);
