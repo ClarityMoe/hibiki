@@ -8,6 +8,7 @@ import * as tslint from "tslint";
 import * as ts from "typescript";
 import * as vm from "vm";
 import { Shard } from "../client/Shard";
+import { Player } from "../music/Player";
 
 export interface IEvalContext extends vm.Context {
     [key: string]: any;
@@ -105,6 +106,12 @@ export class Context {
      * @type {string}
      */
     public suffix: string = this.flags._.join(" ");
+    /**
+     * Music player of the guild the command was executed in
+     *
+     * @type {(Player | undefined)}
+     */
+    public player: Player | undefined = this.guild && this.shard.players.get(this.guild.id) || undefined;
 
     constructor (public shard: Shard, public msg: Eris.Message, public prefix: string, public command: string, public flags: minimist.ParsedArgs, public args: { [key: string]: any }) { }
 
