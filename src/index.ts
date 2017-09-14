@@ -21,3 +21,9 @@ export { ExtensionManager } from "./ext/ExtensionManager";
 export { Ratelimiter } from "./ext/Ratelimiter";
 
 export { LocaleManager } from "./locale/LocaleManager";
+
+import * as nyan from "./music/NyanDL";
+export { nyan };
+export { Track } from "./music/Track";
+export { Queue } from "./music/Queue";
+export { Player } from "./music/Player";
