@@ -24,8 +24,12 @@ export class Queue extends EventEmitter {
         return track;
     }
 
-    public remove (pos: number): Track {
-        return this.tracks.splice(pos, 1)[0];
+    public remove (pos: number): Track | undefined {
+        const track: Track | undefined = this.tracks.splice(pos, 1)[0];
+
+        this.emit("remove", track);
+
+        return track;
     }
 
     public add (url: string): Promise<Track | void> {
