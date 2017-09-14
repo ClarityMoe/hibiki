@@ -7,10 +7,13 @@ import { Track } from "./Track";
 export class Queue extends EventEmitter {
 
     public tracks: Track[] = [];
-    public current: Track | undefined;
 
     constructor (private max: number = 100) {
         super();
+    }
+
+    public get current (): Track | undefined {
+        return this.tracks[0];
     }
 
     public next (): Track | undefined {
@@ -19,6 +22,10 @@ export class Queue extends EventEmitter {
         this.emit("next", this.tracks[0]);
 
         return track;
+    }
+
+    public remove (pos: number): Track {
+        return this.tracks.splice(pos, 1)[0];
     }
 
     public add (url: string): Promise<Track | void> {
